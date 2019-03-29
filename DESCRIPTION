@@ -1,0 +1,26 @@
+Package: quanteda.svm
+Type: Package
+Title: SVM models for text classification
+Version: 0.1
+Authors@R: c(person("Kenneth", "Benoit", email = "kbenoit@lse.ac.uk", role = c("aut", "cre")))
+Description: A test package for developing textmodel_svm before integrating this into quanteda.
+Encoding: UTF-8
+License: GPL-3
+Depends:
+    R (>= 3.4.0),
+    quanteda (>= 1.4.1),
+    methods
+Imports:
+    LiblineaR,
+    RSSL,
+    SparseM
+Suggests:
+    spelling,
+    testthat
+Remotes:
+    quanteda/quanteda.corpora
+URL: http://github.com/quanteda/quanteda.svm
+BugReports: https://github.com/quanteda/quanteda.svm/issues
+LazyData: TRUE
+RoxygenNote: 6.1.1
+Language: en-GB

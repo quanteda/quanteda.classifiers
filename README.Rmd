@@ -1,5 +1,16 @@
+---
+output: github_document
+---
 
-# quanteda.svm: textmodel\_svm extension for quanteda
+```{r, echo = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "##",
+  fig.path = "man/images/"
+)
+```
+
+# quanteda.svm: textmodel_svm extension for quanteda
 
 <!--
 [![Travis-CI Build Status](https://travis-ci.org/quanteda/quanteda.svg?branch=master)](https://travis-ci.org/quanteda/quanteda)
@@ -9,7 +20,7 @@
 
 ## Installation
 
-``` r
+```{r eval = FALSE}
 # devtools package required to install quanteda from Github 
 devtools::install_github("quanteda/quanteda.svm") 
 ```
@@ -18,17 +29,8 @@ devtools::install_github("quanteda/quanteda.svm")
 
 Examples:
 
-``` r
+```{r}
 library("quanteda.svm")
-## Loading required package: quanteda
-## Package version: 1.4.3
-## Parallel computing: 2 of 12 threads used.
-## See https://quanteda.io for tutorials and examples.
-## 
-## Attaching package: 'quanteda'
-## The following object is masked from 'package:utils':
-## 
-##     View
 
 performance <- function(mytable, verbose = TRUE) {
   truePositives <- mytable[1, 1]
@@ -64,15 +66,6 @@ dfm(data_corpus_dailnoconf1991) %>%
   predict() %>%
   table(truth) %>%
   performance()
-##       truth
-## .      Govt Opp
-##   Govt    6   0
-##   Opp    19  33
-## 
-##     precision = 1 
-##        recall = 0.24 
-##      accuracy = 0.67 
-##     bal. acc. = 1
 
 # proportions: poor, predicts everyone to be opposition
 dfm(data_corpus_dailnoconf1991) %>%
@@ -81,14 +74,6 @@ dfm(data_corpus_dailnoconf1991) %>%
   predict() %>%
   table(truth) %>%
   performance()
-##      truth
-## .     Govt Opp
-##   Opp   25  33
-## 
-##     precision = 0.43 
-##        recall = 1 
-##      accuracy = 0.43 
-##     bal. acc. = 0.22
 
 # scaled - results in a fully dense dfm, and poor performance
 dfm(data_corpus_dailnoconf1991) %>%
@@ -98,15 +83,6 @@ dfm(data_corpus_dailnoconf1991) %>%
   predict() %>%
   table(truth) %>%
   performance()
-##       truth
-## .      Govt Opp
-##   Govt   24  25
-##   Opp     1   8
-## 
-##     precision = 0.49 
-##        recall = 0.96 
-##      accuracy = 0.55 
-##     bal. acc. = 0.37
 
 # tf-idf: better
 dfm(data_corpus_dailnoconf1991) %>%
@@ -115,15 +91,6 @@ dfm(data_corpus_dailnoconf1991) %>%
   predict() %>%
   table(truth) %>%
   performance()
-##       truth
-## .      Govt Opp
-##   Govt   16   3
-##   Opp     9  30
-## 
-##     precision = 0.84 
-##        recall = 0.64 
-##      accuracy = 0.79 
-##     bal. acc. = 0.88
 
 # tf-idf: best with document frequency weights
 dfm(data_corpus_dailnoconf1991) %>%
@@ -132,18 +99,8 @@ dfm(data_corpus_dailnoconf1991) %>%
   predict() %>%
   table(truth) %>%
   performance()
-##       truth
-## .      Govt Opp
-##   Govt   15   2
-##   Opp    10  31
-## 
-##     precision = 0.88 
-##        recall = 0.6 
-##      accuracy = 0.79 
-##     bal. acc. = 0.91
 ```
 
 ## Issues
 
-  - Please file an issue (with a bug, wish list, etc.) [via
-    GitHub](https://github.com/quanteda/quanteda.svm/issues).
+*  Please file an issue (with a bug, wish list, etc.) [via GitHub](https://github.com/quanteda/quanteda.svm/issues).
