@@ -16,7 +16,8 @@ Imports:
     SparseM
 Suggests:
     spelling,
-    testthat
+    testthat,
+    covr
 Remotes:
     quanteda/quanteda.corpora
 URL: http://github.com/quanteda/quanteda.svm

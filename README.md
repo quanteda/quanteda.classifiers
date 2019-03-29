@@ -1,11 +1,14 @@
 
 # quanteda.svm: textmodel\_svm extension for quanteda
 
-<!--
-[![Travis-CI Build Status](https://travis-ci.org/quanteda/quanteda.svg?branch=master)](https://travis-ci.org/quanteda/quanteda)
-[![Appveyor Build status](https://ci.appveyor.com/api/projects/status/e3tf2h1ff0nlv249/branch/master?svg=true)](https://ci.appveyor.com/project/kbenoit/quanteda/branch/master)
-[![codecov](https://codecov.io/gh/quanteda/quanteda/branch/master/graph/badge.svg)](https://codecov.io/gh/quanteda/quanteda) 
--->
+[![CRAN
+Version](https://www.r-pkg.org/badges/version/quanteda.svm)](https://CRAN.R-project.org/package=quanteda.svm)
+[![Travis build
+status](https://travis-ci.org/quanteda/quanteda.svm.svg?branch=master)](https://travis-ci.org/quanteda/quanteda.svm)
+[![AppVeyor build
+status](https://ci.appveyor.com/api/projects/status/github/quanteda/quanteda.svm?branch=master&svg=true)](https://ci.appveyor.com/project/quanteda/quanteda.svm)
+[![Coverage
+status](https://codecov.io/gh/quanteda/quanteda.svm/branch/master/graph/badge.svg)](https://codecov.io/github/quanteda/quanteda.svm?branch=master)
 
 ## Installation
 
