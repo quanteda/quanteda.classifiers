@@ -9,11 +9,14 @@ License: GPL-3
 Depends:
     R (>= 3.4.0),
     quanteda (>= 1.4.1),
-    methods
+    methods,
+    keras (>= 2.1.0)
 Imports:
     LiblineaR,
     RSSL,
-    SparseM
+    SparseM,
+    magrittr,
+    caret
 Suggests:
     spelling,
     testthat,
