@@ -1,9 +1,9 @@
-Package: quanteda.svm
+Package: quanteda.classifiers
 Type: Package
-Title: SVM models for text classification
+Title: Models for text classification
 Version: 0.1
 Authors@R: c(person("Kenneth", "Benoit", email = "kbenoit@lse.ac.uk", role = c("aut", "cre")))
-Description: A test package for developing textmodel_svm before integrating this into quanteda.
+Description: A test package for developing additional text classifier models (textmodels) including linear SVMs and neural network-based methods.
 Encoding: UTF-8
 License: GPL-3
 Depends:

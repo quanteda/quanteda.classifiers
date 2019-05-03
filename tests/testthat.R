@@ -1,4 +1,4 @@
 library("testthat")
-library("quanteda.svm")
+library("quanteda.classifiers")
 
-test_check("quanteda.svm")
+test_check("quanteda.classifiers")
