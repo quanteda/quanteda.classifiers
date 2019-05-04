@@ -35,7 +35,7 @@ textmodel_seq <- function(x, y, Seed = 17,
     
   classes <- length(unique(y2)) + 1
     
-  y2 <- to_categorical(y2, num_classes = classes)
+  y2 <- to_categorical(y2, num_classes = classes, dtype = "factor")
 #  test_y <- to_categorical(as.numeric(con_test_y), num_classes = classes)
   
   model <- keras_model_sequential() 
@@ -60,4 +60,52 @@ textmodel_seq <- function(x, y, Seed = 17,
     validation_split = Valsplit
   )
   return(model)
+}
+
+#' Prediction from a fitted textmodel_seq object
+#' 
+#' \code{predict.textmodel_seq()} implements class predictions from a fitted
+#' SEQ model.
+#' @param object a fitted linear SEQ textmodel 
+#' @param newdata dfm on which prediction should be made
+#' @param type the type of predicted values to be returned; see Value
+#' @param force make newdata's feature set conformant to the model terms
+#' @param ... not used
+#' @return \code{predict.textmodel_seq} returns either a vector of class
+#'   predictions for each row of \code{newdata} (when \code{type = "class"}), or
+#'   a document-by-class matrix of class probabilities (when \code{type =
+#'   "probability"}).
+#' @seealso \code{\link{textmodel_seq}}
+#' @keywords textmodel internal
+#' @importFrom SparseM as.matrix.csr
+#' @export
+predict.textmodel_seq <- function(object, newdata = NULL, 
+                                  type = c("class", "probability"), 
+                                  force = TRUE,
+                                  ...) {
+  quanteda:::unused_dots(...)
+  
+  type <- match.arg(type)
+  
+  if (!is.null(newdata)) {
+    data <- as.dfm(newdata)
+  } else {
+    cat("New data required to make prediction.")
+    break
+  }
+  
+  
+  if (type == "class") {
+    pred_y <- predict_classes(object = object, 
+                              x = data)
+    pred_y <- as.character(pred_y)
+    names(pred_y) <- docnames(data)
+  } else if (type == "probability") {
+    pred_y <- predict_proba(object = object, 
+                              x = data)
+    #pred_y <- pred_y$probabilities
+    rownames(pred_y) <- docnames(data)
+  }
+  
+  pred_y
 }
