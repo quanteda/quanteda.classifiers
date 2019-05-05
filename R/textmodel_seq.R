@@ -32,10 +32,18 @@ textmodel_seq <- function(x, y, Seed = 17,
     break
   }
   y2 <- as.numeric(as.factor(y))
-    
+  
+  na_ind <- which(is.na(y2))
+  
+  if(length(na_ind) > 0) {
+    cat(length(na_ind),"observations with the value 'NA' were removed.")
+    y2 <- y2[-na_ind]
+    x <- x[-na_ind]
+    }
+  
   classes <- length(unique(y2)) + 1
     
-  y2 <- to_categorical(y2, num_classes = classes, dtype = "factor")
+  y2 <- to_categorical(y2, num_classes = classes)
 #  test_y <- to_categorical(as.numeric(con_test_y), num_classes = classes)
   
   model <- keras_model_sequential() 
