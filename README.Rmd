@@ -10,7 +10,7 @@ knitr::opts_chunk$set(
 )
 ```
 
-# quanteda.classifers: text classification textmodel extensions for quanteda
+# quanteda.classifiers: text classification textmodel extensions for quanteda
 
 [![CRAN Version](https://www.r-pkg.org/badges/version/quanteda.classifiers)](https://CRAN.R-project.org/package=quanteda.classifiers)
 [![Travis build status](https://travis-ci.org/quanteda/quanteda.classifiers.svg?branch=master)](https://travis-ci.org/quanteda/quanteda.classifiers)

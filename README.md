@@ -1,5 +1,5 @@
 
-# quanteda.classifers: text classification textmodel extensions for quanteda
+# quanteda.classifiers: text classification textmodel extensions for quanteda
 
 [![CRAN
 Version](https://www.r-pkg.org/badges/version/quanteda.classifiers)](https://CRAN.R-project.org/package=quanteda.classifiers)
@@ -32,7 +32,6 @@ library("quanteda.classifiers")
 ## The following object is masked from 'package:utils':
 ## 
 ##     View
-## Loading required package: keras
 
 performance <- function(mytable, verbose = TRUE) {
   truePositives <- mytable[1, 1]
