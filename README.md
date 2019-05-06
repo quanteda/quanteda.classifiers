@@ -1,20 +1,20 @@
 
-# quanteda.svm: textmodel\_svm extension for quanteda
+# quanteda.classifers: text classification textmodel extensions for quanteda
 
 [![CRAN
-Version](https://www.r-pkg.org/badges/version/quanteda.svm)](https://CRAN.R-project.org/package=quanteda.svm)
+Version](https://www.r-pkg.org/badges/version/quanteda.classifiers)](https://CRAN.R-project.org/package=quanteda.classifiers)
 [![Travis build
-status](https://travis-ci.org/quanteda/quanteda.svm.svg?branch=master)](https://travis-ci.org/quanteda/quanteda.svm)
+status](https://travis-ci.org/quanteda/quanteda.classifiers.svg?branch=master)](https://travis-ci.org/quanteda/quanteda.classifiers)
 [![AppVeyor build
-status](https://ci.appveyor.com/api/projects/status/github/quanteda/quanteda.svm?branch=master&svg=true)](https://ci.appveyor.com/project/quanteda/quanteda.svm)
+status](https://ci.appveyor.com/api/projects/status/github/quanteda/quanteda.classifiers?branch=master&svg=true)](https://ci.appveyor.com/project/quanteda/quanteda.classifiers)
 [![Coverage
-status](https://codecov.io/gh/quanteda/quanteda.svm/branch/master/graph/badge.svg)](https://codecov.io/github/quanteda/quanteda.svm?branch=master)
+status](https://codecov.io/gh/quanteda/quanteda.classifiers/branch/master/graph/badge.svg)](https://codecov.io/github/quanteda/quanteda.classifiers?branch=master)
 
 ## Installation
 
 ``` r
 # devtools package required to install quanteda from Github 
-devtools::install_github("quanteda/quanteda.svm") 
+devtools::install_github("quanteda/quanteda.classifiers") 
 ```
 
 ## How to use
@@ -22,7 +22,7 @@ devtools::install_github("quanteda/quanteda.svm")
 Examples:
 
 ``` r
-library("quanteda.svm")
+library("quanteda.classifiers")
 ## Loading required package: quanteda
 ## Package version: 1.4.3
 ## Parallel computing: 2 of 12 threads used.
@@ -32,6 +32,7 @@ library("quanteda.svm")
 ## The following object is masked from 'package:utils':
 ## 
 ##     View
+## Loading required package: keras
 
 performance <- function(mytable, verbose = TRUE) {
   truePositives <- mytable[1, 1]
@@ -149,4 +150,4 @@ dfm(data_corpus_dailnoconf1991) %>%
 ## Issues
 
   - Please file an issue (with a bug, wish list, etc.) [via
-    GitHub](https://github.com/quanteda/quanteda.svm/issues).
+    GitHub](https://github.com/quanteda/quanteda.classifiers/issues).
