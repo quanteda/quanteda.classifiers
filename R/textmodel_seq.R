@@ -22,7 +22,7 @@ textmodel_seq <- function(x, y, Seed = 17,
                         Epochs = 3, Units = 512, Batch = 32, Dropout = .2, Valsplit = .1,
                         Metric = "categorical_accuracy",Loss = "categorical_crossentropy", Optimizer = "adam", 
                         Verbose = TRUE){
-  
+  call <- match.call()
   set.seed(Seed)
   
   v <- ifelse(Verbose, 1, 0)
@@ -38,7 +38,7 @@ textmodel_seq <- function(x, y, Seed = 17,
   if(length(na_ind) > 0) {
     cat(length(na_ind),"observations with the value 'NA' were removed.")
     y2 <- y2[-na_ind]
-    x <- x[-na_ind]
+    x <- x[-na_ind, ]
     }
   
   classes <- length(unique(y2)) + 1
@@ -67,7 +67,13 @@ textmodel_seq <- function(x, y, Seed = 17,
     verbose = v,
     validation_split = Valsplit
   )
-  return(model)
+  result <- list(
+    x = x, y = y,
+    seqfitted = model,
+    call = call
+  )
+  class(result) <- c("textmodel_seq", "textmodel", "list")
+  result
 }
 
 #' Prediction from a fitted textmodel_seq object
