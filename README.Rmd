@@ -10,19 +10,19 @@ knitr::opts_chunk$set(
 )
 ```
 
-# quanteda.svm: textmodel_svm extension for quanteda
+# quanteda.classifiers: text classification textmodel extensions for quanteda
 
-[![CRAN Version](https://www.r-pkg.org/badges/version/quanteda.svm)](https://CRAN.R-project.org/package=quanteda.svm)
-[![Travis build status](https://travis-ci.org/quanteda/quanteda.svm.svg?branch=master)](https://travis-ci.org/quanteda/quanteda.svm)
-[![AppVeyor build status](https://ci.appveyor.com/api/projects/status/github/quanteda/quanteda.svm?branch=master&svg=true)](https://ci.appveyor.com/project/quanteda/quanteda.svm)
-[![Coverage status](https://codecov.io/gh/quanteda/quanteda.svm/branch/master/graph/badge.svg)](https://codecov.io/github/quanteda/quanteda.svm?branch=master)
+[![CRAN Version](https://www.r-pkg.org/badges/version/quanteda.classifiers)](https://CRAN.R-project.org/package=quanteda.classifiers)
+[![Travis build status](https://travis-ci.org/quanteda/quanteda.classifiers.svg?branch=master)](https://travis-ci.org/quanteda/quanteda.classifiers)
+[![AppVeyor build status](https://ci.appveyor.com/api/projects/status/github/quanteda/quanteda.classifiers?branch=master&svg=true)](https://ci.appveyor.com/project/quanteda/quanteda.classifiers)
+[![Coverage status](https://codecov.io/gh/quanteda/quanteda.classifiers/branch/master/graph/badge.svg)](https://codecov.io/github/quanteda/quanteda.classifiers?branch=master)
 
 
 ## Installation
 
 ```{r eval = FALSE}
 # devtools package required to install quanteda from Github 
-devtools::install_github("quanteda/quanteda.svm") 
+devtools::install_github("quanteda/quanteda.classifiers") 
 ```
 
 ## How to use
@@ -30,7 +30,7 @@ devtools::install_github("quanteda/quanteda.svm")
 Examples:
 
 ```{r}
-library("quanteda.svm")
+library("quanteda.classifiers")
 
 performance <- function(mytable, verbose = TRUE) {
   truePositives <- mytable[1, 1]
@@ -103,4 +103,4 @@ dfm(data_corpus_dailnoconf1991) %>%
 
 ## Issues
 
-*  Please file an issue (with a bug, wish list, etc.) [via GitHub](https://github.com/quanteda/quanteda.svm/issues).
+*  Please file an issue (with a bug, wish list, etc.) [via GitHub](https://github.com/quanteda/quanteda.classifiers/issues).

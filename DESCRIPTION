@@ -2,21 +2,20 @@ Package: quanteda.classifiers
 Type: Package
 Title: Models for text classification
 Version: 0.1
-Authors@R: c(person("Kenneth", "Benoit", email = "kbenoit@lse.ac.uk", role = c("aut", "cre")))
+Authors@R: c(person("Kenneth", "Benoit", email = "kbenoit@lse.ac.uk", role = c("aut", "cre")),
+             person("Patrick", "Chester", email = "pjc468@nyu.edu", role = c("aut")))
 Description: A test package for developing additional text classifier models (textmodels) including linear SVMs and neural network-based methods.
 Encoding: UTF-8
 License: GPL-3
 Depends:
     R (>= 3.4.0),
     quanteda (>= 1.4.1),
-    methods,
-    keras (>= 2.1.0)
+    methods
 Imports:
+    keras (>= 2.1.0),
     LiblineaR,
     RSSL,
-    SparseM,
-    magrittr,
-    caret
+    SparseM
 Suggests:
     spelling,
     testthat,
