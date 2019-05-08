@@ -2,13 +2,13 @@
 #' 
 #' A text corpus of publicly available, machine-readable party manifestos from the 
 #' United Kingdom, published between 1945 and 2017. 
-#' Manifestos from the three main parties (Lab, Con, LD) between 1978 and 2010 are crowdcoded 
+#' Manifestos from the three main parties (Lab, Con, LD) between 1978 and 2010 are crowd-sourced 
 #' in terms of Economic Policy and Social Policy, and the direction of Economic Policy 
 #' and Social Policy. All manifestos from the 2010 General Election have been 
-#' crowdcoded in terms of immigration policy, and the direction of immigration policy. 
+#' crowd coded in terms of immigration policy, and the direction of immigration policy. 
 #' For more information on the coding approach see 
 #' \href{https://doi.org/10.1017/S0003055416000058}{Benoit et al. (2016)}.  
-#' The corpus contains the aggregated crowdcodings on the level of sentences.
+#' The corpus contains the aggregated labels on the level of sentences.
 #' Note that the segmentation into sentences does not always work correctly due to missing punctuation. 
 #' Very short or long sentences can be removed by subsetting the corpus based on the 
 #' document-level variable "ntoken_sent" using \link[quanteda]{corpus_subset}.
@@ -32,8 +32,7 @@
 #'   "class_policyarea_direction". The variable has missing values (NA) for all non-annotated manifestos or 
 #'   if a sentence was coded as "Not Economic or Social".}
 #'   \item{class_immigration}{A factor variable indicating whether the majority of crowd workers
-#'   labeled a sentence as referring to immigration. Only manifestos from the 2010 General Election 
-#'   have been crowdcoded. The variable has missing values (NA) for all non-annotated manifestos.}
+#'   labeled a sentence as referring to immigration. The variable has missing values (NA) for all non-annotated manifestos.}
 #'   \item{class_immigration_direction}{A factor indicating the direction of a sentence 
 #'   (Against, Neutral, Supportive) if it was coded as referring to immigration. 
 #'   The variable has missing values (NA) for all non-annotated manifestos or if a sentence was coded not 
@@ -42,7 +41,7 @@
 #'   0 implies that none of the crowdcoders labeled the sentence as referring to immigration;
 #'   1 implies that all crowdcoders labeled the sentence as referring to immigration. 
 #'   The variable has missing values (NA) for all non-annotated manifestos or if a sentence was
-#'   coded not coded as referring to immigration policy.}
+#'   not coded as referring to immigration policy.}
 #'   \item{class_immigration_direction_mean}{A numeric variable, ranging between -1 and 1; a value of 
 #'   - 1 indicates that all crowdcoders labeled the sentence as "Supportive" of immigration, 
 #'   a value of 1 means that all coders labeled the sentences as "Against" immigration.}
