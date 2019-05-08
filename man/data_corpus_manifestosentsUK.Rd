@@ -16,7 +16,7 @@
   \item{class_policyarea_mean}{The average evaluation used to construct "class_policyarea". 
   The variable has missing values (NA) for all non-annotated manifestos.}
   \item{class_policyarea_direction}{A factor indicating the direction of a sentence if it was coded as 
-  Economic Policy or Social Policy by a majority of crowdworkers. 
+  Economic Policy or Social Policy by a majority of crowd coders. 
   The variable has missing values (NA) for all non-annotated manifestos or if a sentence was coded as
   "Not Economic or Social".}
   \item{class_policyarea_direction_mean}{The average evaluation used to construct 
@@ -29,18 +29,18 @@
   The variable has missing values (NA) for all non-annotated manifestos or if a sentence was coded not 
   coded as referring to immigration policy.}
   \item{class_immigration_mean}{A numeric variable, ranging between 0 and 1. 
-  0 implies that none of the crowdcoders labeled the sentence as referring to immigration;
-  1 implies that all crowdcoders labeled the sentence as referring to immigration. 
+  0 implies that none of the crowd coders labeled the sentence as referring to immigration;
+  1 implies that all crowd coders labeled the sentence as referring to immigration. 
   The variable has missing values (NA) for all non-annotated manifestos or if a sentence was
   not coded as referring to immigration policy.}
   \item{class_immigration_direction_mean}{A numeric variable, ranging between -1 and 1; a value of 
-  - 1 indicates that all crowdcoders labeled the sentence as "Supportive" of immigration, 
+  - 1 indicates that all crowd coders labeled the sentence as "Supportive" of immigration, 
   a value of 1 means that all coders labeled the sentences as "Against" immigration.}
-  \item{crowdcoded_policyares}{A variable containing logical values indicating whether a sentence 
-  has been crowdcoded with regard to Economic Policy, Social Policy, or Not Economic or Social (TRUE) 
+  \item{crowdcoded_policyarea}{A variable containing logical values indicating whether a sentence 
+  has been crowd coded with regard to Economic Policy, Social Policy, or Not Economic or Social (TRUE) 
   or whether a sentence is unlabeled (FALSE).}
   \item{crowdcoded_immigration}{A variable containing logical values indicating whether a sentence 
-  has been crowdcoded with regard to immigration policy (TRUE) or whether a sentence is 
+  has been crowd coded with regard to immigration policy (TRUE) or whether a sentence is 
   unlabeled (FALSE).}
   \item{ntoken_sent}{A numeric variable with the number of tokens of the sentence after 
   removing punctuation characters.}
