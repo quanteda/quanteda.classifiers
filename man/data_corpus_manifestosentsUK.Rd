@@ -37,7 +37,7 @@
   \item{crowd_immigration_dir_mean}{A numeric variable, ranging between -1 and 1; a value of 
   - 1 indicates that all crowd coders labeled the sentence as "Supportive" of immigration, 
   a value of 1 means that all coders labeled the sentences as "Against" immigration. 
-  This variable indicates the (dis)agreement between crowd wokers.}
+  This variable indicates the (dis)agreement between crowd workers.}
   }}
 \usage{
 data_corpus_manifestosentsUK
