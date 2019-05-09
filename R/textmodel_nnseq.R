@@ -65,7 +65,7 @@ textmodel_nnseq <- function(x, y, Seed = 17,
                    x_train, y_train,
                    batch_size = Batch,
                    epochs = Epochs,
-                   verbose = v=as.numeric(Verbose),
+                   verbose = as.numeric(Verbose),
                    validation_split = Valsplit
     )
     
@@ -74,7 +74,7 @@ textmodel_nnseq <- function(x, y, Seed = 17,
         seqfitted = model,
         call = call
     )
-    class(result) <- c("textmodel_seq", "textmodel", "list")
+    class(result) <- c("textmodel_nnseq", "textmodel", "list")
     return(model)
 }
 

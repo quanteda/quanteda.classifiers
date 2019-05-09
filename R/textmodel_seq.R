@@ -60,7 +60,7 @@ textmodel_svm <- function(x, y, Seed = 17,
                    x_train, y_train,
                    batch_size = Batch,
                    epochs = Epochs,
-                   verbose = v=as.numeric(Verbose),
+                   verbose =as.numeric(Verbose),
                    validation_split = Valsplit
                    )
     
