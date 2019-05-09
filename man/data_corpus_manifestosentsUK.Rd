@@ -18,11 +18,11 @@
   "Not Economic or Social".}
   \item{crowd_econsocial_mean}{The average evaluation used to construct "crowd_econsocial". 
   The variable has missing values (NA) for all non-annotated manifestos. This variable indicates 
-  the (dis)agreement between crowd wokers.}
+  the (dis)agreement between crowd workers.}
   \item{crowd_econsocial_dir_mean}{The average evaluation used to construct 
   "crowd_econsocial_dir". The variable has missing values (NA) for all non-annotated manifestos or 
   if a sentence was coded as "Not Economic or Social". This variable indicates 
-  the (dis)agreement between crowd wokers.}
+  the (dis)agreement between crowd workers.}
   \item{crowd_immigration}{A factor variable indicating whether the majority of crowd workers
   labeled a sentence as referring to immigration. The variable has missing values (NA) for all non-annotated manifestos.}
   \item{crowd_immigration_dir}{A factor indicating the direction of a sentence 
