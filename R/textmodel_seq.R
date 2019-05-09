@@ -17,64 +17,62 @@
 #' @importFrom caret confusionMatrix
 #' @keywords neural networks
 #' @export
-
-textmodel_seq <- function(x, y, Seed = 17, 
-                        Epochs = 3, Units = 512, Batch = 32, Dropout = .2, Valsplit = .1,
-                        Metric = "categorical_accuracy",Loss = "categorical_crossentropy", Optimizer = "adam", 
-                        Verbose = TRUE){
-  call <- match.call()
-  set.seed(Seed)
-  
-  v <- ifelse(Verbose, 1, 0)
-  
-  if(dim(x)[1] != length(y)) {
-    cat("The length of x and y are not the same.")
-    break
-  }
-  y2 <- as.numeric(as.factor(y))
-  
-  na_ind <- which(is.na(y2))
-  
-  if(length(na_ind) > 0) {
-    cat(length(na_ind),"observations with the value 'NA' were removed.")
-    y2 <- y2[-na_ind]
-    x <- x[-na_ind, ]
-    }
-  
-  classes <- length(unique(y2)) + 1
+textmodel_svm <- function(x, y, Seed = 17, 
+                            Epochs = 3, Units = 512, Batch = 32, Dropout = .2, Valsplit = .1,
+                            Metric = "categorical_accuracy",Loss = "categorical_crossentropy", Optimizer = "adam", 
+                            Verbose = TRUE, 
+                            ...) {
+    x <- as.dfm(x)
+    if (!sum(x)) stop(quanteda:::message_error("dfm_empty"))
+    call <- match.call()
     
-  y2 <- to_categorical(y2, num_classes = classes)
-#  test_y <- to_categorical(as.numeric(con_test_y), num_classes = classes)
-  
-  model <- keras_model_sequential() 
-  model %>%
-    layer_dense(units = Units, input_shape = dim(x)[2]) %>% 
-    layer_activation(activation = 'relu') %>% 
-    layer_dropout(rate = Dropout) %>% 
-    layer_dense(units = classes) %>% 
-    layer_activation(activation = 'softmax')
-  
-  model %>% compile(
-    loss = Loss,
-    optimizer = Optimizer,
-    metrics = Metric
-  )
-  
-  history <- model %>% fit(
-    x, y2,
-    batch_size = Batch,
-    epochs = Epochs,
-    verbose = v,
-    validation_split = Valsplit
-  )
-  result <- list(
-    x = x, y = y,
-    seqfitted = model,
-    call = call
-  )
-  class(result) <- c("textmodel_seq", "textmodel", "list")
-  result
+    # exclude NA in training labels
+    x_train <- suppressWarnings(
+        dfm_trim(x[!is.na(y), ], min_termfreq = .0000000001, termfreq_type = "prop")
+    )
+    y_train <- y[!is.na(y)]
+    
+    # remove zero-variance features
+    constant_features <- which(apply(x_train, 2, stats::var) == 0)
+    if (length(constant_features)) x_train <- x_train[, -constant_features]
+    
+    # creating dummy matrix for multinomial classification 
+    y_train <- as.numeric(as.factor(y_train))
+    
+    classes <- length(unique(y_train)) + 1
+    
+    y_train <- to_categorical(y_train - 1, num_classes = classes)
+    
+    # define seqential neural network model
+    model <- keras_model_sequential()
+    model %>%
+        layer_dense(units = units, input_shape = dim(x)[2]) %>%
+        layer_activation(activation = "relu") %>%
+        layer_dropout(rate = dropout) %>%
+        layer_dense(units = classes) %>%
+        layer_activation(activation = "softmax")
+    
+    # compile model with optimization and lost metrics
+    compile(model, loss = loss, optimizer = optimizer, metrics = metrics)
+    
+    # fit model to training data
+    history <- fit(model, 
+                   x_train, y_train,
+                   batch_size = Batch,
+                   epochs = Epochs,
+                   verbose = v=as.numeric(Verbose),
+                   validation_split = Valsplit
+                   )
+    
+    result <- list(
+        x = x, y = y,
+        seqfitted = model,
+        call = call
+    )
+    class(result) <- c("textmodel_seq", "textmodel", "list")
+    return(model)
 }
+
 
 #' Prediction from a fitted textmodel_seq object
 #' 

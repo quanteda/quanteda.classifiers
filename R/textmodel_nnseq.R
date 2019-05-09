@@ -1,6 +1,6 @@
-#' stacked LSTM neural network model for text
+#' sequential neural network model for text
 #'
-#' This function is a wrapper for a stacked Long Short-Term Memory (LSTM) neural
+#' This function is a wrapper for a sequential neural network model with a single hidden layer
 #' network with two layers, implemented in the \pkg{keras} package.
 #' @inheritParams textmodel_svm
 #' @param units The number of network nodes used in the first layer of the
@@ -22,30 +22,33 @@
 #' @export
 #' @examples 
 #' # need examples here
-textmodel_slstm <- function(x, y, Seed = 17, 
-                            Epochs = 3, Units = 512, Batch = 32, Dropout = .2, Valsplit = .1,
-                            Metric = "categorical_accuracy",Loss = "categorical_crossentropy", Optimizer = "adam", 
-                            Verbose = TRUE, 
+textmodel_nnseq <- function(x, y, Seed = 17, 
+                          Epochs = 3, Units = 512, Batch = 32, Dropout = .2, Valsplit = .1,
+                          Metric = "categorical_accuracy",Loss = "categorical_crossentropy", Optimizer = "adam", 
+                          Verbose = TRUE, 
                           ...) {
+    x <- as.dfm(x)
+    if (!sum(x)) stop(quanteda:::message_error("dfm_empty"))
+    call <- match.call()
     
-    if (dim(x)[1] != length(y)) {
-        stop("The length of x and y are not the same.")
-    }
-    y2 <- as.numeric(as.factor(y))
+    # exclude NA in training labels
+    x_train <- suppressWarnings(
+        dfm_trim(x[!is.na(y), ], min_termfreq = .0000000001, termfreq_type = "prop")
+    )
+    y_train <- y[!is.na(y)]
     
-    na_ind <- which(is.na(y2))
+    # remove zero-variance features
+    constant_features <- which(apply(x_train, 2, stats::var) == 0)
+    if (length(constant_features)) x_train <- x_train[, -constant_features]
     
-    if (length(na_ind) > 0) {
-        cat(length(na_ind), "observations with the value 'NA' were removed.")
-        y2 <- y2[-na_ind]
-        x <- x[-na_ind]
-    }
+    # creating dummy matrix for multinomial classification 
+    y_train <- as.numeric(as.factor(y_train))
     
-    classes <- length(unique(y2)) + 1
+    classes <- length(unique(y_train)) + 1
     
-    y2 <- to_categorical(y2, num_classes = classes)
-    #  test_y <- to_categorical(as.numeric(con_test_y), num_classes = classes)
+    y_train <- to_categorical(y_train - 1, num_classes = classes)
     
+    # define seqential neural network model
     model <- keras_model_sequential()
     model %>%
         layer_dense(units = units, input_shape = dim(x)[2]) %>%
@@ -54,29 +57,46 @@ textmodel_slstm <- function(x, y, Seed = 17,
         layer_dense(units = classes) %>%
         layer_activation(activation = "softmax")
     
+    # compile model with optimization and lost metrics
     compile(model, loss = loss, optimizer = optimizer, metrics = metrics)
-    history <- fit(x, y2, ...)
+    
+    # fit model to training data
+    history <- fit(model, 
+                   x_train, y_train,
+                   batch_size = Batch,
+                   epochs = Epochs,
+                   verbose = v=as.numeric(Verbose),
+                   validation_split = Valsplit
+    )
+    
+    result <- list(
+        x = x, y = y,
+        seqfitted = model,
+        call = call
+    )
+    class(result) <- c("textmodel_seq", "textmodel", "list")
     return(model)
 }
 
-#' Prediction from a fitted textmodel_slstm object
+
+#' Prediction from a fitted textmodel_nnseq object
 #'
-#' \code{predict.textmodel_slstm()} implements class predictions from a fitted
+#' \code{predict.textmodel_nnseq()} implements class predictions from a fitted
 #' sequential neural network model.
-#' @param object a fitted \link{textmodel_slstm} model
+#' @param object a fitted \link{textmodel_nnseq} model
 #' @param newdata dfm on which prediction should be made
 #' @param type the type of predicted values to be returned; see Value
 #' @param force make \code{newdata}'s feature set conformant to the model terms
 #' @param ... not used
-#' @return \code{predict.textmodel_slstm} returns either a vector of class
+#' @return \code{predict.textmodel_nnseq} returns either a vector of class
 #'   predictions for each row of \code{newdata} (when \code{type = "class"}), or
 #'   a document-by-class matrix of class probabilities (when \code{type =
 #'   "probability"}).
-#' @seealso \code{\link{textmodel_slstm}}
+#' @seealso \code{\link{textmodel_nnseq}}
 #' @keywords textmodel internal
 #' @importFrom keras predict_classes predict_proba 
 #' @export
-predict.textmodel_slstm <- function(object, newdata = NULL,
+predict.textmodel_nnseq <- function(object, newdata = NULL,
                                   type = c("class", "probability"),
                                   force = TRUE,
                                   ...) {
