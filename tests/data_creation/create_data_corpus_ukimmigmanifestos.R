@@ -1,6 +1,7 @@
 # load packages
 library(dplyr)
 library(tidyr)
+library(car)
 library(readtext)
 library(quanteda)
 library(quanteda.corpora)
@@ -39,25 +40,38 @@ data_readtext_uk_econsocial <- data_readtext_uk_econsocial %>%
                                         ifelse(policy_area == 2, -1,
                                                ifelse(policy_area == 3, 1, NA))))
 
-# create numeric indicator for aggregation of direction
-data_readtext_uk_econsocial <- data_readtext_uk_econsocial %>% 
+# # create numeric indicator for aggregation of direction
+data_readtext_uk_econsocial <- data_readtext_uk_econsocial %>%
     mutate(class_policyarea_direction_num = ifelse(!is.na(soc_scale), soc_scale,
                                                   ifelse(!is.na(econ_scale), econ_scale, NA)))
 
 # aggregate data to the level of sentences
-data_uk_econsocial <- data_readtext_uk_econsocial %>% 
+data_readtext_uk_econsocial <- data_readtext_uk_econsocial %>% 
     group_by(manifestoid, sentenceid, sentence_text, pre_sentence, post_sentence) %>% 
-    summarise(n_codings = n(),
-              class_policyarea_mean = mean(class_policyarea_num, na.rm = TRUE),
-              class_policyarea_direction_mean = mean(class_policyarea_direction_num, na.rm = TRUE))
-
+    mutate(n_codings = n(),
+           class_policyarea_mean = mean(class_policyarea_num, na.rm = TRUE))
 
 # create variable with the policy area based on the aggregated coding
-data_uk_econsocial <- data_uk_econsocial %>% 
+data_readtext_uk_econsocial <- data_readtext_uk_econsocial %>% 
     mutate(class_policyarea = ifelse(class_policyarea_mean < 0, "Economic",
                                        ifelse(class_policyarea_mean == 0, "Not Economic or Social",
                                               ifelse(class_policyarea_mean > 0, "Social", NA))))
 
+
+# here I make sure that the policy direction mean only takes 
+# into account the majority category and not also the minority category position values
+
+data_readtext_uk_econsocial <- data_readtext_uk_econsocial %>% 
+  mutate(class_policy_direction_num = 
+           ifelse(class_policyarea == "Economic" & class_policyarea_num == -1, class_policyarea_direction_num, 
+                  ifelse(class_policyarea == "Social" & class_policyarea_num == 1, class_policyarea_direction_num,
+                         NA)))
+
+# aggregate data to the level of sentences
+data_uk_econsocial <- data_readtext_uk_econsocial %>% 
+  group_by(manifestoid, sentenceid, sentence_text, pre_sentence, post_sentence,
+           class_policyarea, n_codings) %>% 
+  summarise(class_policyarea_direction_mean = mean(class_policy_direction_num, na.rm = TRUE))
 
 # create variable with the direction of the policy area based on the aggregated coding
 data_uk_econsocial <- data_uk_econsocial %>% 
@@ -238,16 +252,12 @@ data_uk_man_1517$Year <- as.factor(data_uk_man_1517$Year)
 data_uk_manifestos <- bind_rows(data_uk_man, dat_uk_man_crowdcoded_clean, data_uk_man_1517)
 
 data_uk_manifestos <- data_uk_manifestos %>% 
-    mutate(Country = "UK",
-           Language = "En") %>% 
     select(-c(party_year, sentenceid))
 
 
 # create unique id for each sentence and select only necessary variables
 data_uk_manifestos_selectvars <- data_uk_manifestos %>% 
     select(text,
-           country = Country,
-           language = Language, 
            party = Party,
            year = Year,
            starts_with("class_"))
@@ -269,16 +279,13 @@ data_uk_manifestos_selectvars <- data_uk_manifestos_selectvars %>%
     mutate(party_year = paste(party, year, sep = "_"))
 
 ## create variable indicating whether sentence was crowdsourced for one or both exercises
-data_uk_manifestos_selectvars <- data_uk_manifestos_selectvars %>% 
-    mutate(crowdcoded_policyarea = ifelse(party_year %in% man_crowdcoded_policyarea$party_year, 
-                                          TRUE, FALSE)) %>%
-    mutate(crowdcoded_immigration = ifelse(party_year %in% man_crowdcoded_immig$party_year,
-                                         TRUE, FALSE)) %>% 
-    select(-party_year)
-      
-table(data_uk_manifestos_selectvars$crowdcoded_immigration)   
-table(data_uk_manifestos_selectvars$crowdcoded_policyarea)   
+# data_uk_manifestos_selectvars <- data_uk_manifestos_selectvars %>% 
+    # mutate(crowdcoded_policyarea = ifelse(party_year %in% man_crowdcoded_policyarea$party_year, 
+    #                                       TRUE, FALSE)) %>%
+    # mutate(crowdcoded_immigration = ifelse(party_year %in% man_crowdcoded_immig$party_year,
+    #                                      TRUE, FALSE)) %>% 
 
+      
 # create text corpus
 corp <- corpus(data_uk_manifestos_selectvars)
 
@@ -302,18 +309,108 @@ dat_corpus <- dat_corpus %>%
     group_by(party, year) %>% 
     mutate(sentence_no = 1:n()) %>% 
     mutate(doc_id = paste(party, year, sentence_no, sep = "_")) %>% 
-    select(-sentence_no) %>% 
+    select(-c(sentence_no, ntoken_sent, party_year)) %>% 
     ungroup()
 
-dat_corpus$class_policyarea <- factor(dat_corpus$class_policyarea)
-dat_corpus$class_policyarea_direction <- factor(dat_corpus$class_policyarea_direction)
-dat_corpus$class_immigration <- factor(dat_corpus$class_immigration)
-dat_corpus$class_immigration_direction <- factor(dat_corpus$class_immigration_direction)
+# rename some variables based on https://github.com/quanteda/quanteda.classifiers/pull/8
 
-dat_corpus$text <- as.character(dat_corpus$text)
+dat_corpus_renamed <- dat_corpus %>% 
+  rename(crowd_econsocial = class_policyarea,
+         crowd_econsocial_mean = class_policyarea_mean,
+         crowd_econsocial_dir_mean = class_policyarea_direction_mean,
+         crowd_econsocial_dir = class_policyarea_direction,
+         crowd_immigration = class_immigration,
+         crowd_immigration_mean = class_immigration_mean,
+         crowd_immigration_dir = class_immigration_direction,
+         crowd_immigration_dir_mean = class_immigration_direction_mean)
 
-data_corpus_manifestosentsUK <- corpus(dat_corpus,
+
+table(dat_corpus$party)
+
+dat_corpus_renamed <- dat_corpus_renamed %>% 
+  mutate(party = ifelse(party == "Comm", "CP", party)) %>% 
+  mutate(party = ifelse(party == "Gr", "Greens", party)) %>% 
+  mutate(party = ifelse(party == "OMRL", "MRLP", party)) %>% 
+  mutate(party = ifelse(party == "PCy", "PC", party))
+
+
+recode_party <- c("
+                  'BNP'='British National Party';
+                  'CAP'='Community Action Party';
+                  'Con'='Conservative Party';
+                  'Comm'='Communist Party';
+                  'CP'='Communist Party';
+                  'Dem'='Democratic Party';
+                  'DUP'='Democratic Unionist Party';
+                  'EDP'='English Democrats';
+                  'EIP'='English Independence Party';
+                  'FSP'='Free Scotland Party';
+                  'FW'='Forward Wales';
+                  'Greens'='Green Party';
+                  'IGV'='Independent Green Voice';
+                  'LA'='Left Alliance';
+                  'Lab'='Labour Party';
+                  'Lib'='Liberal Party';
+                  'LD'='Liberal Demoracts';
+                  'LibSDP'='Social Democratic Party';
+                  'MK'='Mebyon Kernow - the Party for Cornwall';
+                  'MRLP'='Official Monster Raving Loony Party';
+                  'ND'='National Democrats';
+                  'NIA'='Northern Ireland Alliance';
+                  'PA'='Prolife Alliance';
+                  'PC'='Plaid Cymru';
+                  'PP'='Peace Party';
+                  'PUP'='Progressive Unionist Party';
+                  'PVP'='Protest Vote Party';
+                  'Resp'='Respect';
+                  'RT'='Richard Taylor Personal Manifesto';
+                  'Scon'='Scottish Conservative Party';
+                  'SDLP'='Social Democratic and Labour Party';
+                  'SEP'='Socialist Equality Party';
+                  'SF'='Sinn Féin';
+                  'SGr'='Scottish Green Party';
+                  'SLab'='Scottish Labour Party';
+                  'SLD'='Scottish Liberal Democrats';
+                  'SNP'='Scottish National Party';
+                  'SP'='Socialist Party';
+                  'SCon'='Scottish Conservative Party';
+                  'SSoc'='Scottish Socialist Party';
+                  'SSP'='Scottish Socialist Party';
+                  'Stuck'='Stuckist Party';
+                  'TW'='Third Way';
+                  'UKIP'='UK Independence Party';
+                  'UUP'='Ulster Unionist Party';
+                  'Ver'='Veritas Party'")
+
+
+
+dat_corpus_renamed <- dat_corpus_renamed %>% 
+  mutate(partyname = car::recode(party, recode_party))
+
+table(dat_corpus_renamed$partyname)
+
+length(unique(dat_corpus_renamed$partyname))
+
+dat_corpus_renamed <- dat_corpus_renamed %>% 
+  select(doc_id, text, party, partyname, year, 
+         crowd_econsocial, crowd_econsocial_dir,
+         crowd_econsocial_mean, crowd_econsocial_dir_mean,
+         crowd_immigration, crowd_immigration_dir,
+         crowd_immigration_mean, crowd_immigration_dir_mean)
+
+dat_corpus_renamed$crowd_econsocial <- factor(dat_corpus_renamed$crowd_econsocial)
+dat_corpus_renamed$crowd_econsocial_dir <- factor(dat_corpus_renamed$crowd_econsocial_dir)
+dat_corpus_renamed$crowd_immigration <- factor(dat_corpus_renamed$crowd_immigration)
+dat_corpus_renamed$crowd_immigration_dir <- factor(dat_corpus_renamed$crowd_immigration_dir)
+dat_corpus_renamed$year <- as.integer(dat_corpus_renamed$year)
+dat_corpus_renamed$party <- as.factor(dat_corpus_renamed$party)
+dat_corpus_renamed$partyname <- as.factor(dat_corpus_renamed$partyname)
+dat_corpus_renamed$text <- as.character(dat_corpus_renamed$text)
+
+data_corpus_manifestosentsUK <- corpus(dat_corpus_renamed,
                                        docid_field = "doc_id")
 
 # add corpus to package
 usethis::use_data(data_corpus_manifestosentsUK, overwrite = TRUE)
+
+table(docvars(data_corpus_manifestosentsUK, "crowd_econsocial_dir"))
