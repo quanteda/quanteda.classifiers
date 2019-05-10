@@ -48,7 +48,7 @@ data_readtext_uk_econsocial <- data_readtext_uk_econsocial %>%
 # aggregate data to the level of sentences
 data_readtext_uk_econsocial <- data_readtext_uk_econsocial %>% 
     group_by(manifestoid, sentenceid, sentence_text, pre_sentence, post_sentence) %>% 
-    mutate(n_codings = n(),
+    mutate(crowd_econsocial_n = n(),
            class_policyarea_mean = mean(class_policyarea_num, na.rm = TRUE))
 
 # create variable with the policy area based on the aggregated coding
@@ -70,17 +70,23 @@ data_readtext_uk_econsocial <- data_readtext_uk_econsocial %>%
 # aggregate data to the level of sentences
 data_uk_econsocial <- data_readtext_uk_econsocial %>% 
   group_by(manifestoid, sentenceid, sentence_text, pre_sentence, post_sentence,
-           class_policyarea, n_codings) %>% 
-  summarise(class_policyarea_direction_mean = mean(class_policy_direction_num, na.rm = TRUE))
+           class_policyarea, crowd_econsocial_n) %>% 
+  summarise(class_policyarea_direction_mean = mean(class_policy_direction_num, na.rm = TRUE),
+            class_policyarea_mean = mean(class_policyarea_num, na.rm = TRUE))
 
 # create variable with the direction of the policy area based on the aggregated coding
 data_uk_econsocial <- data_uk_econsocial %>% 
-    mutate(class_policyarea_direction = ifelse(class_policyarea == "Economic" & class_policyarea_direction_mean < 0, "Left",
-                                           ifelse(class_policyarea == "Economic" & class_policyarea_direction_mean > 0, "Right",
+    mutate(class_policyarea_direction = ifelse(class_policyarea == "Economic" & between(class_policyarea_direction_mean, -2, -1.00000000011), "Very left",
+                                               ifelse(class_policyarea == "Economic" & between(class_policyarea_direction_mean, 1, 0.0000000001), "Left",
                                                   ifelse(class_policyarea == "Economic" & class_policyarea_direction_mean == 0, "Neither left nor right",
-                                                         ifelse(class_policyarea == "Social" & class_policyarea_direction_mean < 0, "Liberal",
-                                                                ifelse(class_policyarea == "Social" & class_policyarea_direction_mean > 0, "Conservative",
-                                                                       ifelse(class_policyarea == "Social" & class_policyarea_direction_mean == 0, "Neither liberal nor conservative", NA)))))))
+                                                         ifelse(class_policyarea == "Economic" & between(class_policyarea_direction_mean, 0.00000001, 1), "Right",
+                                                         ifelse(class_policyarea == "Economic"& between(class_policyarea_direction_mean, 1.00000001, 2), "Very right",
+                                                                ifelse(class_policyarea == "Social" & between(class_policyarea_direction_mean, -2, -1.00000000011), "Very liberal",
+                                                                       ifelse(class_policyarea == "Social" & between(class_policyarea_direction_mean, 1, 0.0000000001), "Liberal",
+                                                                              ifelse(class_policyarea == "Social" & class_policyarea_direction_mean == 0, "Neither liberal nor conservative",
+                                                                                     ifelse(class_policyarea == "Social" & between(class_policyarea_direction_mean, 0.00000001, 1), "Conservative",
+                                                                                            ifelse(class_policyarea == "Social" & between(class_policyarea_direction_mean, 1.0000001, 2), "Very conservative", 
+                                                                                                   NA)))))))))))
 
 # seperate the variable manifestoid into Party and Year
 data_uk_econsocial <- data_uk_econsocial %>% 
@@ -92,7 +98,8 @@ data_uk_man_econsocial <- data_uk_econsocial %>%
     ungroup() %>% 
     select(text = sentence_text, sentenceid, Party, Year, 
            class_policyarea, class_policyarea_mean,
-           class_policyarea_direction, class_policyarea_direction_mean) 
+           class_policyarea_direction, class_policyarea_direction_mean,
+           crowd_econsocial_n) 
 
 # replace nan values in class_direction_mean with na
 data_uk_man_econsocial$class_policyarea_direction_mean[is.nan(data_uk_man_econsocial$class_policyarea_direction_mean)] <- NA
@@ -119,7 +126,7 @@ data_readtext_uk_immigration <- data_readtext_uk_immigration %>%
 # aggregate to the level of setence
 data_uk_immigration <- data_readtext_uk_immigration %>% 
     group_by(Party, Year, sentenceid, sentence_text) %>% 
-    summarise(n_codings = n(),
+    summarise(crowd_immigration_n = n(),
               class_immigration_mean = mean(class_immigration_num, na.rm = TRUE),
               class_immigration_direction_mean = mean(immigr_scale, na.rm = TRUE))
 
@@ -140,7 +147,8 @@ data_uk_immig_man_2010 <- data_uk_immigration %>%
     select(text = sentence_text, sentenceid, Party, Year, class_immigration, 
            class_immigration_mean,
            class_immigration_direction,
-           class_immigration_direction_mean) 
+           class_immigration_direction_mean, 
+           crowd_immigration_n) 
 
 
 ########################
@@ -152,7 +160,8 @@ data_uk_immig_man_2010 <- data_uk_immigration %>%
 
 # select certain variables needed for the manifesto coding
 data_uk_immig_man_2010_select <- data_uk_immig_man_2010 %>% 
-    select(sentenceid, text, starts_with("class_"), "Party", "Year")
+    select(sentenceid, text, starts_with("class_"), Party, Year,
+           crowd_immigration_n)
 
 # full join of both crowdcoded datasets
 dat_uk_crowdcoded <- full_join(data_uk_man_econsocial,
@@ -260,32 +269,12 @@ data_uk_manifestos_selectvars <- data_uk_manifestos %>%
     select(text,
            party = Party,
            year = Year,
-           starts_with("class_"))
+           starts_with("class_"),
+           crowd_immigration_n,
+           crowd_econsocial_n)
 
 # create binary indicator whether sentence was crowdcoded
 
-man_crowdcoded_immig <- data_uk_immig_man_2010_select %>% 
-    select(Party, Year) %>% 
-    unique() %>% 
-    mutate(party_year = paste(Party, Year, sep = "_"))
-
-man_crowdcoded_policyarea <- data_uk_econsocial %>% 
-    ungroup() %>% 
-    select(Party, Year) %>% 
-    unique() %>% 
-    mutate(party_year = paste(Party, Year, sep = "_"))
-
-data_uk_manifestos_selectvars <- data_uk_manifestos_selectvars %>% 
-    mutate(party_year = paste(party, year, sep = "_"))
-
-## create variable indicating whether sentence was crowdsourced for one or both exercises
-# data_uk_manifestos_selectvars <- data_uk_manifestos_selectvars %>% 
-    # mutate(crowdcoded_policyarea = ifelse(party_year %in% man_crowdcoded_policyarea$party_year, 
-    #                                       TRUE, FALSE)) %>%
-    # mutate(crowdcoded_immigration = ifelse(party_year %in% man_crowdcoded_immig$party_year,
-    #                                      TRUE, FALSE)) %>% 
-
-      
 # create text corpus
 corp <- corpus(data_uk_manifestos_selectvars)
 
@@ -309,17 +298,17 @@ dat_corpus <- dat_corpus %>%
     group_by(party, year) %>% 
     mutate(sentence_no = 1:n()) %>% 
     mutate(doc_id = paste(party, year, sentence_no, sep = "_")) %>% 
-    select(-c(sentence_no, ntoken_sent, party_year)) %>% 
+    select(-c(sentence_no, ntoken_sent)) %>% 
     ungroup()
 
 # rename some variables based on https://github.com/quanteda/quanteda.classifiers/pull/8
 
 dat_corpus_renamed <- dat_corpus %>% 
-  rename(crowd_econsocial = class_policyarea,
+  rename(crowd_econsocial_label = class_policyarea,
          crowd_econsocial_mean = class_policyarea_mean,
          crowd_econsocial_dir_mean = class_policyarea_direction_mean,
          crowd_econsocial_dir = class_policyarea_direction,
-         crowd_immigration = class_immigration,
+         crowd_immigration_label = class_immigration,
          crowd_immigration_mean = class_immigration_mean,
          crowd_immigration_dir = class_immigration_direction,
          crowd_immigration_dir_mean = class_immigration_direction_mean)
@@ -393,24 +382,31 @@ length(unique(dat_corpus_renamed$partyname))
 
 dat_corpus_renamed <- dat_corpus_renamed %>% 
   select(doc_id, text, party, partyname, year, 
-         crowd_econsocial, crowd_econsocial_dir,
+         crowd_econsocial_label, crowd_econsocial_dir,
          crowd_econsocial_mean, crowd_econsocial_dir_mean,
-         crowd_immigration, crowd_immigration_dir,
-         crowd_immigration_mean, crowd_immigration_dir_mean)
+         crowd_econsocial_n,
+         crowd_immigration_label, crowd_immigration_dir,
+         crowd_immigration_mean, crowd_immigration_dir_mean,
+         crowd_immigration_n)
 
-dat_corpus_renamed$crowd_econsocial <- factor(dat_corpus_renamed$crowd_econsocial)
+dat_corpus_renamed$crowd_econsocial_label <- factor(dat_corpus_renamed$crowd_econsocial_label)
 dat_corpus_renamed$crowd_econsocial_dir <- factor(dat_corpus_renamed$crowd_econsocial_dir)
-dat_corpus_renamed$crowd_immigration <- factor(dat_corpus_renamed$crowd_immigration)
+dat_corpus_renamed$crowd_immigration_label <- factor(dat_corpus_renamed$crowd_immigration_label)
 dat_corpus_renamed$crowd_immigration_dir <- factor(dat_corpus_renamed$crowd_immigration_dir)
 dat_corpus_renamed$year <- as.integer(dat_corpus_renamed$year)
 dat_corpus_renamed$party <- as.factor(dat_corpus_renamed$party)
 dat_corpus_renamed$partyname <- as.factor(dat_corpus_renamed$partyname)
+dat_corpus_renamed$crowd_immigration_n <- as.integer(dat_corpus_renamed$crowd_immigration_n)
+dat_corpus_renamed$crowd_econsocial_n <- as.integer(dat_corpus_renamed$crowd_econsocial_n)
+
 dat_corpus_renamed$text <- as.character(dat_corpus_renamed$text)
+
+
+table(dat_corpus_renamed$crowd_econsocial_dir_mean,
+      dat_corpus_renamed$crowd_econsocial_dir)
 
 data_corpus_manifestosentsUK <- corpus(dat_corpus_renamed,
                                        docid_field = "doc_id")
 
 # add corpus to package
 usethis::use_data(data_corpus_manifestosentsUK, overwrite = TRUE)
-
-table(docvars(data_corpus_manifestosentsUK, "crowd_econsocial_dir"))
