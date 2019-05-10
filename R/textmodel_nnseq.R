@@ -47,9 +47,9 @@ textmodel_nnseq <- function(x, y, seed = 17,
     if (length(constant_features)) x_train <- x_train[, -constant_features]
     
     # creating dummy matrix for multinomial classification 
-    y_train <- as.numeric(as.factor(y_train))
+    y_train <- as.numeric(as.factor(y_train)) - 1
     
-    classes <- length(unique(y_train)) + 1
+    classes <- length(unique(y_train))
     
     y_train <- to_categorical(y_train, num_classes = classes)
     
@@ -100,7 +100,7 @@ textmodel_nnseq <- function(x, y, seed = 17,
 #'   "probability"}).
 #' @seealso \code{\link{textmodel_nnseq}}
 #' @keywords textmodel internal
-#' @importFrom keras predict_classes predict_proba 
+#' @importFrom keras predict_classes predict_proba
 #' @export
 predict.textmodel_nnseq <- function(object, newdata = NULL,
                                   type = c("class", "probability"),
@@ -117,25 +117,65 @@ predict.textmodel_nnseq <- function(object, newdata = NULL,
     }
     
     # the seq_along is because this will have an added term "bias" at end if bias > 0
-    model_featnames <- colnames(object$weights)
-    if (object$bias > 0) model_featnames <- model_featnames[-length(model_featnames)]
+    model_featnames <- object$weights
+    #if (object$bias > 0) model_featnames <- model_featnames[-length(model_featnames)]
     
-    data <- if (is.null(newdata))
+    data <- if (is.null(newdata)) {
         suppressWarnings(quanteda:::force_conformance(data, model_featnames, force))
-    else 
+    } else {
         quanteda:::force_conformance(data, model_featnames, force)
-    
-    pred_y <- predict(object$svmlinfitted, 
-                      newx = as.matrix.csr.dfm(data),
-                      proba = (type == "probability"))
+    }
     
     if (type == "class") {
-        pred_y <- as.character(pred_y$predictions)
+        pred_y <- predict_classes(object$seqfitted, # Was unable to convert as.matrix.csr to python object for predict_classes function
+                                  x = data)
+        pred_y <- as.character(factor(pred_y, 
+                                      levels = 1:length(names(table(object$y))), 
+                                      labels = names(table(object$y))))
         names(pred_y) <- docnames(data)
     } else if (type == "probability") {
-        pred_y <- pred_y$probabilities
-        rownames(pred_y) <- docnames(data)
+        pred_y <- predict_proba(object$seqfitted, # Was unable to convert as.matrix.csr to python object for predict_classes function
+                                  x = data)
+        colnames(pred_y) <- names(table(object$y))
+        names(pred_y) <- docnames(data)
     }
     
     pred_y
+}
+
+#' @export
+#' @method print textmodel_nnseq
+print.textmodel_nnseq <- function(x, ...) {
+    layer_names <- gsub(pattern = "_\\d*", "", lapply(model$seqfitted$layers, function(x) x$name))
+    cat("\nCall:\n")
+    print(x$call)
+    cat("\n",
+        format(length(na.omit(x$y)), big.mark = ","), " training documents; ",
+        format(length(x$weights), big.mark = ","), " fitted features",
+        ".\n",
+        "Structure: ", paste(layer_names, collapse = " -> "), "\n",
+        sep = "")
+}
+
+#' summary method for textmodel_svm objects
+#' @param object output from \code{\link{textmodel_svm}}
+#' @param n how many coefficients to print before truncating
+#' @param ... additional arguments not used
+#' @keywords textmodel internal
+#' @method summary textmodel_svm
+#' @export
+summary.textmodel_nnseq <- function(object, ...) {
+    layer_names <- gsub(pattern = "_\\d*", "", lapply(model$seqfitted$layers, function(x) x$name))
+    
+    result <- list(
+        "call" = object$call,
+        "model structure" = paste(layer_names, collapse = " -> ")
+    )
+    as.summary.textmodel(result)
+}
+
+#' @export
+#' @method print predict.textmodel_nnseq
+print.predict.textmodel_nnseq <- function(x, ...) {
+    print(unclass(x))
 }

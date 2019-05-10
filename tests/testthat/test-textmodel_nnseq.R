@@ -1,6 +1,6 @@
-context("test textmodel_svm")
+context("test textmodel_nnseq")
 
-test_that("the svm model works", {
+test_that("the nnseq model works", {
     ## Example from 13.1 of _An Introduction to Information Retrieval_
     corp <- corpus(c(d1 = "Chinese Beijing Chinese",
                      d2 = "Chinese Chinese Shanghai",
@@ -9,21 +9,14 @@ test_that("the svm model works", {
                      d5 = "Chinese Chinese Chinese Tokyo Japan"), 
                    docvars = data.frame(train = factor(c("Y", "Y", "Y", "N", NA))))
     dfmat <- dfm(corp, tolower = FALSE)
-    tmod <- textmodel_nnseq(dfmat, y = docvars(dfmat, "train"), scale = TRUE)
+    tmod <- textmodel_nnseq(dfmat, y = docvars(dfmat, "train"), epochs = 10,units = 100, loss = "binary_crossentropy", metrics = "binary_accuracy")
     
     expect_output(
         print(tmod),
         "Call:"
     )
     
-    expect_equal(
-        coef(tmod)[1, 1:3, drop = FALSE],
-        matrix(c(0.5535941, 0.1857624, 0.1857624), nrow = 1, 
-               dimnames = list(NULL, c("Chinese", "Beijing", "Shanghai"))),
-        tol = .0000001
-    )
-    
-    expect_equal(names(summary(tmod)), c("call", "estimated.feature.scores"))
+    expect_equal(names(summary(tmod)), c("call", "model structure"))
     expect_identical(
         predict(tmod, type = "class"),
         c(d1 = "Y", d2 = "Y", d3 = "Y", d4 = "N", d5 = "Y")
