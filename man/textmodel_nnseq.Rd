@@ -10,9 +10,7 @@ textmodel_nnseq(x, y, seed = 17, epochs = 3, units = 512,
   optimizer = "adam", verbose = TRUE, ...)
 }
 \arguments{
-\item{x}{The data that will be used as training and test data.}
-
-\item{y}{The outcome that will be used as outcomes to be predicted by the NN model.}
+\item{epochs}{number of iterations the model is run to fit weights to training data}
 
 \item{units}{The number of network nodes used in the first layer of the
 sequential model}
@@ -20,6 +18,9 @@ sequential model}
 \item{dropout}{A floating variable bound between 0 and 1. It determines the
 rate at which units are dropped for the linear transformation of the
 inputs.}
+
+\item{valsplit}{for each epoch, the training data is split into training and 
+validation data at a ratio determined by this parameter}
 
 \item{metrics}{metric used to train algorithm, see
 \code{\link[keras]{compile.keras.engine.training.Model}}}
@@ -29,6 +30,8 @@ inputs.}
 
 \item{optimizer}{optimizer used to fit model to training data, see
 \code{\link[keras]{compile.keras.engine.training.Model}}}
+
+\item{verbose}{if set to true, output for each epoch will be provided}
 
 \item{...}{additional options passed to
 \code{\link[keras]{fit.keras.engine.training.Model}}}

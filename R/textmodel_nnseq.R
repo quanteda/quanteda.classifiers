@@ -2,18 +2,22 @@
 #'
 #' This function is a wrapper for a sequential neural network model with a single hidden layer
 #' network with two layers, implemented in the \pkg{keras} package.
-#' @inheritParams textmodel_svm
+#' @param epochs number of iterations the model is run to fit weights to training data
 #' @param units The number of network nodes used in the first layer of the
 #'   sequential model
+#' @param batch
 #' @param dropout A floating variable bound between 0 and 1. It determines the
 #'   rate at which units are dropped for the linear transformation of the
 #'   inputs.
+#' @param valsplit for each epoch, the training data is split into training and 
+#'   validation data at a ratio determined by this parameter
 #' @param optimizer optimizer used to fit model to training data, see
 #'   \code{\link[keras]{compile.keras.engine.training.Model}}
 #' @param loss objective loss function, see
 #'   \code{\link[keras]{compile.keras.engine.training.Model}}
 #' @param metrics metric used to train algorithm, see
 #'   \code{\link[keras]{compile.keras.engine.training.Model}}
+#' @param verbose if set to true, output for each epoch will be provided
 #' @param ... additional options passed to
 #'   \code{\link[keras]{fit.keras.engine.training.Model}}
 #' @keywords textmodel
@@ -73,7 +77,8 @@ textmodel_nnseq <- function(x, y, seed = 17,
     result <- list(
         x = x, y = y,
         seqfitted = model,
-        call = call
+        call = call,
+        weights = featnames(x_train)
     )
     class(result) <- c("textmodel_nnseq", "textmodel", "list")
     return(result)
@@ -108,16 +113,27 @@ predict.textmodel_nnseq <- function(object, newdata = NULL,
     if (!is.null(newdata)) {
         data <- as.dfm(newdata)
     } else {
-        stop("New data required to make prediction.")
+        data <- as.dfm(object$x)
     }
     
+    # the seq_along is because this will have an added term "bias" at end if bias > 0
+    model_featnames <- colnames(object$weights)
+    if (object$bias > 0) model_featnames <- model_featnames[-length(model_featnames)]
+    
+    data <- if (is.null(newdata))
+        suppressWarnings(quanteda:::force_conformance(data, model_featnames, force))
+    else 
+        quanteda:::force_conformance(data, model_featnames, force)
+    
+    pred_y <- predict(object$svmlinfitted, 
+                      newx = as.matrix.csr.dfm(data),
+                      proba = (type == "probability"))
+    
     if (type == "class") {
-        pred_y <- predict_classes(object = object, x = data)
-        pred_y <- as.character(pred_y)
+        pred_y <- as.character(pred_y$predictions)
         names(pred_y) <- docnames(data)
     } else if (type == "probability") {
-        pred_y <- predict_proba(object = object, x = data)
-        #pred_y <- pred_y$probabilities
+        pred_y <- pred_y$probabilities
         rownames(pred_y) <- docnames(data)
     }
     
