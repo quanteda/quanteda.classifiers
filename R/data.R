@@ -50,6 +50,7 @@
 #'   This variable indicates the (dis)agreement between crowd workers.}
 #'   }
 #' @examples 
+#' \donttest{
 #' # remove very short and very long sentences
 #' corp_trimmed <- data_corpus_manifestosentsUK %>% 
 #'     quanteda::corpus_trim(min_ntoken = 1, max_ntoken = 80)
@@ -61,6 +62,7 @@
 #' # keep only crowd coded manifestos (with respect to immigration policy)
 #' corp_crowdimmig <- data_corpus_manifestosentsUK %>% 
 #'     corpus_subset(!is.na(crowd_immigration))
+#' }
 #' @references Benoit, K., Conway, D., Lauderdale, B.E., Laver, M., & Mikhaylov, S. (2016). 
 #' "\href{https://doi.org/10.1017/S0003055416000058}{Crowd-sourced Text Analysis: 
 #'   Reproducible and Agile Production of Political Data}." 

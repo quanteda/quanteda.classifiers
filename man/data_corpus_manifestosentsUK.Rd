@@ -58,6 +58,7 @@ The Examples below show to use \link[quanteda]{corpus_trim} for removing very sh
 very long sentences.
 }
 \examples{
+\donttest{
 # remove very short and very long sentences
 corp_trimmed <- data_corpus_manifestosentsUK \%>\% 
     quanteda::corpus_trim(min_ntoken = 1, max_ntoken = 80)
@@ -69,6 +70,7 @@ corp_crowdeconsocial <- data_corpus_manifestosentsUK \%>\%
 # keep only crowd coded manifestos (with respect to immigration policy)
 corp_crowdimmig <- data_corpus_manifestosentsUK \%>\% 
     corpus_subset(!is.na(crowd_immigration))
+}
 }
 \references{
 Benoit, K., Conway, D., Lauderdale, B.E., Laver, M., & Mikhaylov, S. (2016). 
