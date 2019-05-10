@@ -22,18 +22,19 @@
 #' @export
 #' @examples 
 #' # need examples here
-textmodel_nnseq <- function(x, y, Seed = 17, 
-                          Epochs = 3, Units = 512, Batch = 32, Dropout = .2, Valsplit = .1,
-                          Metric = "categorical_accuracy",Loss = "categorical_crossentropy", Optimizer = "adam", 
-                          Verbose = TRUE, 
+textmodel_nnseq <- function(x, y, seed = 17, 
+                          epochs = 3, units = 512, batch = 32, dropout = .2, valsplit = .1,
+                          metrics = "categorical_accuracy", loss = "categorical_crossentropy", optimizer = "adam", 
+                          verbose = TRUE, 
                           ...) {
+    set.seed(seed)
     x <- as.dfm(x)
     if (!sum(x)) stop(quanteda:::message_error("dfm_empty"))
     call <- match.call()
     
     # exclude NA in training labels
     x_train <- suppressWarnings(
-        dfm_trim(x[!is.na(y), ], min_termfreq = .0000000001, termfreq_type = "prop")
+        dfm_trim(x[!is.na(y), ], min_termfreq = .0000000001)
     )
     y_train <- y[!is.na(y)]
     
@@ -46,12 +47,12 @@ textmodel_nnseq <- function(x, y, Seed = 17,
     
     classes <- length(unique(y_train)) + 1
     
-    y_train <- to_categorical(y_train - 1, num_classes = classes)
+    y_train <- to_categorical(y_train, num_classes = classes)
     
     # define seqential neural network model
     model <- keras_model_sequential()
     model %>%
-        layer_dense(units = units, input_shape = dim(x)[2]) %>%
+        layer_dense(units = units, input_shape = dim(x_train)[2]) %>%
         layer_activation(activation = "relu") %>%
         layer_dropout(rate = dropout) %>%
         layer_dense(units = classes) %>%
@@ -63,10 +64,10 @@ textmodel_nnseq <- function(x, y, Seed = 17,
     # fit model to training data
     history <- fit(model, 
                    x_train, y_train,
-                   batch_size = Batch,
-                   epochs = Epochs,
-                   verbose = as.numeric(Verbose),
-                   validation_split = Valsplit
+                   batch_size = batch,
+                   epochs = epochs,
+                   verbose = as.numeric(verbose),
+                   validation_split = valsplit
     )
     
     result <- list(
@@ -75,7 +76,7 @@ textmodel_nnseq <- function(x, y, Seed = 17,
         call = call
     )
     class(result) <- c("textmodel_nnseq", "textmodel", "list")
-    return(model)
+    return(result)
 }
 
 

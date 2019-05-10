@@ -4,34 +4,15 @@
 \alias{textmodel_nnseq}
 \title{sequential neural network model for text}
 \usage{
-textmodel_nnseq(x, y, Seed = 17, Epochs = 3, Units = 512,
-  Batch = 32, Dropout = 0.2, Valsplit = 0.1,
-  Metric = "categorical_accuracy", Loss = "categorical_crossentropy",
-  Optimizer = "adam", Verbose = TRUE, ...)
+textmodel_nnseq(x, y, seed = 17, epochs = 3, units = 512,
+  batch = 32, dropout = 0.2, valsplit = 0.1,
+  metrics = "categorical_accuracy", loss = "categorical_crossentropy",
+  optimizer = "adam", verbose = TRUE, ...)
 }
 \arguments{
 \item{x}{The data that will be used as training and test data.}
 
 \item{y}{The outcome that will be used as outcomes to be predicted by the NN model.}
-
-\item{Seed}{The seed used in the model. Defaults to 17}
-
-\item{Epochs}{The number of epochs used in the NN model.}
-
-\item{Units}{The number of network nodes used in the first layer of the sequential model}
-
-\item{Batch}{The number of batches estimated}
-
-\item{Dropout}{A floating variable bound between 0 and 1. It determines the rate at which units are dropped for the linear tranformation of the inputs.}
-
-\item{Metric}{Metric used to train algorithm}
-
-\item{Loss}{Metric used to train algorithm}
-
-\item{Optimizer}{Optimizer used to fit model to training data}
-
-\item{...}{additional options passed to
-\code{\link[keras]{fit.keras.engine.training.Model}}}
 
 \item{units}{The number of network nodes used in the first layer of the
 sequential model}
@@ -40,14 +21,17 @@ sequential model}
 rate at which units are dropped for the linear transformation of the
 inputs.}
 
-\item{optimizer}{optimizer used to fit model to training data, see
+\item{metrics}{metric used to train algorithm, see
 \code{\link[keras]{compile.keras.engine.training.Model}}}
 
 \item{loss}{objective loss function, see
 \code{\link[keras]{compile.keras.engine.training.Model}}}
 
-\item{metrics}{metric used to train algorithm, see
+\item{optimizer}{optimizer used to fit model to training data, see
 \code{\link[keras]{compile.keras.engine.training.Model}}}
+
+\item{...}{additional options passed to
+\code{\link[keras]{fit.keras.engine.training.Model}}}
 }
 \description{
 This function is a wrapper for a sequential neural network model with a single hidden layer
