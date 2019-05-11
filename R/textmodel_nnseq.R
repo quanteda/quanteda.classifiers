@@ -129,7 +129,7 @@ predict.textmodel_nnseq <- function(object, newdata = NULL,
     if (type == "class") {
         pred_y <- predict_classes(object$seqfitted, # Was unable to convert as.matrix.csr to python object for predict_classes function
                                   x = data)
-        pred_y <- as.character(factor(pred_y, 
+        pred_y <- as.character(factor(pred_y + 1, 
                                       levels = 1:length(names(table(object$y))), 
                                       labels = names(table(object$y))))
         names(pred_y) <- docnames(data)
@@ -137,7 +137,7 @@ predict.textmodel_nnseq <- function(object, newdata = NULL,
         pred_y <- predict_proba(object$seqfitted, # Was unable to convert as.matrix.csr to python object for predict_classes function
                                   x = data)
         colnames(pred_y) <- names(table(object$y))
-        names(pred_y) <- docnames(data)
+        rownames(pred_y) <- docnames(data)
     }
     
     pred_y
@@ -146,7 +146,7 @@ predict.textmodel_nnseq <- function(object, newdata = NULL,
 #' @export
 #' @method print textmodel_nnseq
 print.textmodel_nnseq <- function(x, ...) {
-    layer_names <- gsub(pattern = "_\\d*", "", lapply(model$seqfitted$layers, function(x) x$name))
+    layer_names <- gsub(pattern = "_\\d*", "", lapply(x$seqfitted$layers, function(z) z$name))
     cat("\nCall:\n")
     print(x$call)
     cat("\n",
@@ -165,7 +165,7 @@ print.textmodel_nnseq <- function(x, ...) {
 #' @method summary textmodel_svm
 #' @export
 summary.textmodel_nnseq <- function(object, ...) {
-    layer_names <- gsub(pattern = "_\\d*", "", lapply(model$seqfitted$layers, function(x) x$name))
+    layer_names <- gsub(pattern = "_\\d*", "", lapply(object$seqfitted$layers, function(x) x$name))
     
     result <- list(
         "call" = object$call,

@@ -2,14 +2,23 @@ context("test textmodel_nnseq")
 
 test_that("the nnseq model works", {
     ## Example from 13.1 of _An Introduction to Information Retrieval_
-    corp <- corpus(c(d1 = "Chinese Beijing Chinese",
-                     d2 = "Chinese Chinese Shanghai",
-                     d3 = "Chinese Macao",
-                     d4 = "Tokyo Japan Chinese",
-                     d5 = "Chinese Chinese Chinese Tokyo Japan"), 
-                   docvars = data.frame(train = factor(c("Y", "Y", "Y", "N", NA))))
+    text <- c("Chinese Beijing Chinese",
+              "Chinese Chinese Shanghai",
+              "Chinese Macao",
+              "Tokyo Japan",
+              "Chinese Chinese Chinese Tokyo Japan")
+    text <- rep(text, times = 25)
+    train <- c("Y", "Y", "Y", "N", NA)
+    train <- rep(train, times = 25)
+    test <- c("Y", "Y", "Y", "N", "Y")
+    test <- rep(test, times = 25)
+    
+    corp <- corpus(text, 
+                   docvars = data.frame(train = factor(train)))
+    
     dfmat <- dfm(corp, tolower = FALSE)
-    tmod <- textmodel_nnseq(dfmat, y = docvars(dfmat, "train"), epochs = 10,units = 100, loss = "binary_crossentropy", metrics = "binary_accuracy")
+    
+    tmod <- textmodel_nnseq(dfmat, y = docvars(dfmat, "train"), epochs = 3, verbose = F)
     
     expect_output(
         print(tmod),
@@ -18,74 +27,16 @@ test_that("the nnseq model works", {
     
     expect_equal(names(summary(tmod)), c("call", "model structure"))
     expect_identical(
-        predict(tmod, type = "class"),
-        c(d1 = "Y", d2 = "Y", d3 = "Y", d4 = "N", d5 = "Y")
+        as.character(predict(tmod, type = "class")),
+        test
     )
     set.seed(10)
+    pred_out <- predict(tmod, type = "probability")
+    pred_max <- apply(pred_out, 1, function(x) colnames(pred_out)[which.max(x)])
+    names(test) <- paste0("text", 1:length(test))
     expect_equal(
-        predict(tmod, type = "probability"),
-        matrix(c(.8, .8, .7, .5, .7, .2, .2, .3, .5, .3), ncol = 2,
-               dimnames = list(paste0("d", 1:5), c("Y", "N"))),
-        tol = .1
-    )
-})
-
-test_that("the svm model works with different weights", {
-    ## Example from 13.1 of _An Introduction to Information Retrieval_
-    corp <- corpus(c(d1 = "Chinese Beijing Chinese",
-                     d2 = "Chinese Chinese Shanghai",
-                     d3 = "Chinese Macao",
-                     d4 = "Tokyo Japan Chinese",
-                     d5 = "Chinese Chinese Chinese Tokyo Japan"), 
-                   docvars = data.frame(train = factor(c("Y", "Y", "Y", "N", NA))))
-    dfmat <- dfm(corp, tolower = FALSE)
-    
-    tmod <- textmodel_nnseq(dfmat, y = docvars(dfmat, "train"), weight = "docfreq")
-    expect_identical(
-        predict(tmod, type = "class"),
-        c(d1 = "Y", d2 = "Y", d3 = "Y", d4 = "Y", d5 = "Y")
-    )
-    set.seed(10)
-    expect_equal(
-        predict(tmod, type = "probability"),
-        matrix(c(.8, .8, .7, .5, .8, .2, .2, .3, .4, .2), ncol = 2,
-               dimnames = list(paste0("d", 1:5), c("Y", "N"))),
-        tol = .1
-    )
-    tmod <- textmodel_nnseq(dfmat, y = docvars(dfmat, "train"), weight = "termfreq")
-    expect_identical(
-        predict(tmod, type = "class"),
-        c(d1 = "Y", d2 = "Y", d3 = "Y", d4 = "Y", d5 = "Y")
-    )
-    set.seed(10)
-    expect_equal(
-        predict(tmod, type = "probability"),
-        matrix(c(.8, .8, .7, .6, .8, .2, .2, .3, .4, .2), ncol = 2,
-               dimnames = list(paste0("d", 1:5), c("Y", "N"))),
-        tol = .1
-    )
-})
-
-test_that("the svm model works with bias = 0", {
-    ## Example from 13.1 of _An Introduction to Information Retrieval_
-    corp <- corpus(c(d1 = "Chinese Beijing Chinese",
-                     d2 = "Chinese Chinese Shanghai",
-                     d3 = "Chinese Macao",
-                     d4 = "Tokyo Japan Chinese",
-                     d5 = "Chinese Chinese Chinese Tokyo Japan"), 
-                   docvars = data.frame(train = factor(c("Y", "Y", "Y", "N", NA))))
-    dfmat <- dfm(corp, tolower = FALSE)
-    tmod <- textmodel_nnseq(dfmat, y = docvars(dfmat, "train"), bias = 0)
-    expect_identical(
-        predict(tmod, type = "class"),
-        c(d1 = "Y", d2 = "Y", d3 = "Y", d4 = "N", d5 = "Y")
-    )
-    set.seed(10)
-    expect_equal(
-        predict(tmod, type = "probability"),
-        matrix(c(.8, .8, .7, .4, .7, .2, .2, .3, .6, .3), ncol = 2,
-               dimnames = list(paste0("d", 1:5), c("Y", "N"))),
-        tol = .1
+        pred_max,
+        test
     )
 })
 
@@ -94,7 +45,7 @@ test_that("multiclass prediction works", {
         dfm_tfidf()
     tmod2 <- textmodel_nnseq(dfmat, 
                            y = c(rep(NA, 3), "SF", "FF", "FG", NA, "LAB", NA, NA, "Green", rep(NA, 3)),
-                           weight = "docfreq")
+                           verbose = FALSE)
     expect_equal(
         head(predict(tmod2), 3),
         c("Lenihan, Brian (FF)" = "FF", 
@@ -103,45 +54,5 @@ test_that("multiclass prediction works", {
     )
 })
 
-context("test textmodel_svmlin")
 
-test_that("the svmlin model works", {
-    ## Example from 13.1 of _An Introduction to Information Retrieval_
-    corp <- corpus(c(d1 = "Chinese Beijing Chinese",
-                     d2 = "Chinese Chinese Shanghai",
-                     d3 = "Chinese Macao",
-                     d4 = "Tokyo Japan Chinese",
-                     d5 = "Chinese Chinese Chinese Tokyo Japan"), 
-                   docvars = data.frame(train = factor(c("Y", "Y", "Y", "N", NA))))
-    dfmat <- dfm(corp, tolower = FALSE)
-    tmod <- textmodel_svmlin(dfmat, y = docvars(dfmat, "train"), pos_frac = 0.75)
-    
-    expect_output(
-        print(tmod),
-        "Call:"
-    )
-    
-    expect_equal(
-        head(coef(tmod), 3),
-        c(intercept = 0.16666667, Chinese = 0.09649123, Beijing = 0.09649123),
-        tol = .0000001
-    )
-    
-    tmod2 <- textmodel_svmlin(dfmat, y = docvars(dfmat, "train"), intercept = FALSE, pos_frac = 0.75)
-    expect_identical(
-        predict(tmod2),
-        c(d1 = "Y", d2 = "Y", d3 = "Y", d4 = "N", d5 = "N")
-    )
-    expect_equal(names(summary(tmod)), c("call", "estimated.feature.scores"))
-    
-    expect_identical(
-        predict(tmod),
-        c(d1 = "Y", d2 = "Y", d3 = "N", d4 = "N", d5 = "N")
-    )
-    
-    expect_error(
-        textmodel_svmlin(dfmat, y = c("Y", "N", "Maybe", NA, NA)),
-        "y must contain two values only"
-    )
-})
 
