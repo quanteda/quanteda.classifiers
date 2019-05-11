@@ -2,20 +2,26 @@
 #'
 #' This function is a wrapper for a sequential neural network model with a single hidden layer
 #' network with two layers, implemented in the \pkg{keras} package.
+#' @param x the \link{dfm} on which the model will be fit.  Does not need to
+#'   contain only the training documents.
+#' @param y vector of training labels associated with each document identified 
+#'   in \code{train}.  (These will be converted to factors if not already 
+#'   factors.)
+#' @param seed seed used for this particular model iteration 
 #' @param epochs number of iterations the model is run to fit weights to training data
 #' @param units The number of network nodes used in the first layer of the
 #'   sequential model
-#' @param batch
+#' @param batch default value set to 32
 #' @param dropout A floating variable bound between 0 and 1. It determines the
 #'   rate at which units are dropped for the linear transformation of the
 #'   inputs.
 #' @param valsplit for each epoch, the training data is split into training and 
 #'   validation data at a ratio determined by this parameter
-#' @param optimizer optimizer used to fit model to training data, see
+#' @param metrics metric used to train algorithm, see
 #'   \code{\link[keras]{compile.keras.engine.training.Model}}
 #' @param loss objective loss function, see
 #'   \code{\link[keras]{compile.keras.engine.training.Model}}
-#' @param metrics metric used to train algorithm, see
+#' @param optimizer optimizer used to fit model to training data, see
 #'   \code{\link[keras]{compile.keras.engine.training.Model}}
 #' @param verbose if set to true, output for each epoch will be provided
 #' @param ... additional options passed to

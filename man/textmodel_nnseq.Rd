@@ -10,10 +10,21 @@ textmodel_nnseq(x, y, seed = 17, epochs = 3, units = 512,
   optimizer = "adam", verbose = TRUE, ...)
 }
 \arguments{
+\item{x}{the \link{dfm} on which the model will be fit.  Does not need to
+contain only the training documents.}
+
+\item{y}{vector of training labels associated with each document identified 
+in \code{train}.  (These will be converted to factors if not already 
+factors.)}
+
+\item{seed}{seed used for this particular model iteration}
+
 \item{epochs}{number of iterations the model is run to fit weights to training data}
 
 \item{units}{The number of network nodes used in the first layer of the
 sequential model}
+
+\item{batch}{default value set to 32}
 
 \item{dropout}{A floating variable bound between 0 and 1. It determines the
 rate at which units are dropped for the linear transformation of the
