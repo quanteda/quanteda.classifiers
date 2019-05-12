@@ -403,10 +403,10 @@ length(unique(dat_corpus_renamed$partyname))
 dat_corpus_renamed <- dat_corpus_renamed %>% 
   select(doc_id, text, party, partyname, year, 
          crowd_econsocial_label, crowd_econsocial_dir,
-         crowd_econsocial_mean, crowd_econsocial_dir_mean,
+         crowd_econsocial_mean,
          crowd_econsocial_n,
          crowd_immigration_label, crowd_immigration_dir,
-         crowd_immigration_mean, crowd_immigration_dir_mean,
+         crowd_immigration_mean,
          crowd_immigration_n)
 
 dat_corpus_renamed$crowd_econsocial_label <- factor(dat_corpus_renamed$crowd_econsocial_label)
@@ -420,10 +420,6 @@ dat_corpus_renamed$crowd_immigration_n <- as.integer(dat_corpus_renamed$crowd_im
 dat_corpus_renamed$crowd_econsocial_n <- as.integer(dat_corpus_renamed$crowd_econsocial_n)
 
 dat_corpus_renamed$text <- as.character(dat_corpus_renamed$text)
-
-
-table(dat_corpus_renamed$crowd_econsocial_dir_mean,
-      dat_corpus_renamed$crowd_econsocial_dir)
 
 data_corpus_manifestosentsUK <- corpus(dat_corpus_renamed,
                                        docid_field = "doc_id")
