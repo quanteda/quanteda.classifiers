@@ -15,6 +15,22 @@ library(quanteda.corpora)
 data_readtext_uk_econsocial <- readtext("tests/data_creation/data_uk_policyarea.zip",
                                          ignore_missing_files = TRUE, encoding = "utf-8")
 
+# exclude screeners from data frame
+data_readtext_uk_econsocial <- data_readtext_uk_econsocial %>% 
+  dplyr::filter(!grepl('Code this sentence as', sentence_text))
+
+# number of codings
+nrow(data_readtext_uk_econsocial)
+
+length(unique(data_readtext_uk_econsocial$sentenceid))
+
+## for some sentences, special characters are displayed differently depending on the
+## crowd coding job. Therefore, I remove sentence_text here and merge it later 
+## using "master.sentences.Rdata" which does not contain these encoding errors
+
+data_readtext_uk_econsocial <- data_readtext_uk_econsocial %>% 
+  select(-sentence_text)
+
 # load the "master sentences" with meta data on manifestos and years
 load("tests/data_creation/master.sentences.Rdata")
 
@@ -24,15 +40,15 @@ sentences_metadata <- sentences %>%
 # merge metadata on manifestos with crowd coded texts
 data_readtext_uk_econsocial <- left_join(data_readtext_uk_econsocial, sentences_metadata, by = "sentenceid")
 
-# exclude screeners from data frame
-data_readtext_uk_econsocial <- data_readtext_uk_econsocial %>% 
-    dplyr::filter(!grepl('Code this sentence as', sentence_text))
+length(unique(data_readtext_uk_econsocial$sentenceid))
 
 # recode policy area
 data_readtext_uk_econsocial <- data_readtext_uk_econsocial %>% 
     mutate(class_policyarea = ifelse(policy_area == 1, "Not Economic or Social",
                                        ifelse(policy_area == 2, "Economic",
                                               ifelse(policy_area == 3, "Social", NA))))
+
+nrow(data_readtext_uk_econsocial)
 
 # create numeric indicator for aggregation
 data_readtext_uk_econsocial <- data_readtext_uk_econsocial %>% 
@@ -47,7 +63,7 @@ data_readtext_uk_econsocial <- data_readtext_uk_econsocial %>%
 
 # aggregate data to the level of sentences
 data_readtext_uk_econsocial <- data_readtext_uk_econsocial %>% 
-    group_by(manifestoid, sentenceid, sentence_text, pre_sentence, post_sentence) %>% 
+    group_by(manifestoid, sentenceid) %>% 
     mutate(crowd_econsocial_n = n(),
            class_policyarea_mean = mean(class_policyarea_num, na.rm = TRUE))
 
@@ -57,10 +73,8 @@ data_readtext_uk_econsocial <- data_readtext_uk_econsocial %>%
                                        ifelse(class_policyarea_mean == 0, "Not Economic or Social",
                                               ifelse(class_policyarea_mean > 0, "Social", NA))))
 
-
 # here I make sure that the policy direction mean only takes 
 # into account the majority category and not also the minority category position values
-
 data_readtext_uk_econsocial <- data_readtext_uk_econsocial %>% 
   mutate(class_policy_direction_num = 
            ifelse(class_policyarea == "Economic" & class_policyarea_num == -1, class_policyarea_direction_num, 
@@ -69,10 +83,10 @@ data_readtext_uk_econsocial <- data_readtext_uk_econsocial %>%
 
 # aggregate data to the level of sentences
 data_uk_econsocial <- data_readtext_uk_econsocial %>% 
-  group_by(manifestoid, sentenceid, sentence_text, pre_sentence, post_sentence,
-           class_policyarea, crowd_econsocial_n) %>% 
+  group_by(manifestoid, sentenceid, crowd_econsocial_n, class_policyarea) %>% 
   summarise(class_policyarea_direction_mean = mean(class_policy_direction_num, na.rm = TRUE),
-            class_policyarea_mean = mean(class_policyarea_num, na.rm = TRUE))
+         class_policyarea_mean = mean(class_policyarea_num, na.rm = TRUE)) %>% 
+  ungroup() 
 
 # create variable with the direction of the policy area based on the aggregated coding
 data_uk_econsocial <- data_uk_econsocial %>% 
@@ -88,10 +102,18 @@ data_uk_econsocial <- data_uk_econsocial %>%
                                                                                             ifelse(class_policyarea == "Social" & between(class_policyarea_direction_mean, 1.0000001, 2), "Very conservative", 
                                                                                                    NA)))))))))))
 
-# seperate the variable manifestoid into Party and Year
+# separate the variable manifestoid into Party and Year
 data_uk_econsocial <- data_uk_econsocial %>% 
     separate(manifestoid, into = c("Party", "Year"),
              remove = FALSE)
+
+# merge text from "sentences" data frame which does not contain encoding errors
+
+dat_sentences <- sentences %>% 
+  select(sentence_text, sentenceid)
+
+data_uk_econsocial <- left_join(data_uk_econsocial, dat_sentences, 
+                                    by = "sentenceid")
 
 # select some of the variables and add three additional variables
 data_uk_man_econsocial <- data_uk_econsocial %>% 
@@ -105,7 +127,6 @@ data_uk_man_econsocial <- data_uk_econsocial %>%
 data_uk_man_econsocial$class_policyarea_direction_mean[is.nan(data_uk_man_econsocial$class_policyarea_direction_mean)] <- NA
 
 
-
 ## 1.2 Load APSR data on immigration ----
 data_readtext_uk_immigration <- readtext("tests/data_creation/data_uk_immigration.zip",
                                          ignore_missing_files = TRUE)
@@ -116,8 +137,8 @@ data_readtext_uk_immigration <- data_readtext_uk_immigration %>%
 
 # use manifestoid to create a party and year variable
 data_readtext_uk_immigration <- data_readtext_uk_immigration %>% 
-    separate(manifestoid, into = c("Party", "Year")) %>% 
-    filter(Party != "Coalition") # remove coalition agreement
+    separate(manifestoid, into = c("Party", "Year")) # %>% 
+   # filter(Party != "Coalition") # remove coalition agreement
 
 # get the class
 data_readtext_uk_immigration <- data_readtext_uk_immigration %>% 
@@ -298,7 +319,7 @@ dat_corpus <- dat_corpus %>%
     group_by(party, year) %>% 
     mutate(sentence_no = 1:n()) %>% 
     mutate(doc_id = paste(party, year, sentence_no, sep = "_")) %>% 
-    select(-c(sentence_no, ntoken_sent)) %>% 
+    select(-c(sentence_no, ntoken_sent, class_policyarea_direction_mean)) %>% 
     ungroup()
 
 # rename some variables based on https://github.com/quanteda/quanteda.classifiers/pull/8
@@ -306,7 +327,6 @@ dat_corpus <- dat_corpus %>%
 dat_corpus_renamed <- dat_corpus %>% 
   rename(crowd_econsocial_label = class_policyarea,
          crowd_econsocial_mean = class_policyarea_mean,
-         crowd_econsocial_dir_mean = class_policyarea_direction_mean,
          crowd_econsocial_dir = class_policyarea_direction,
          crowd_immigration_label = class_immigration,
          crowd_immigration_mean = class_immigration_mean,
@@ -323,7 +343,7 @@ dat_corpus_renamed <- dat_corpus_renamed %>%
   mutate(party = ifelse(party == "PCy", "PC", party))
 
 
-recode_party <- c("
+recode_party <- c("'Coalition'='Coalition Agreement';
                   'BNP'='British National Party';
                   'CAP'='Community Action Party';
                   'Con'='Conservative Party';
@@ -410,3 +430,6 @@ data_corpus_manifestosentsUK <- corpus(dat_corpus_renamed,
 
 # add corpus to package
 usethis::use_data(data_corpus_manifestosentsUK, overwrite = TRUE)
+
+
+table(docvars(data_corpus_manifestosentsUK, "party"))
