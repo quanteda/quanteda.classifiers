@@ -14,7 +14,7 @@
 #' The Examples below show to use \link[quanteda]{corpus_trim} for removing very short and 
 #' very long sentences.
 #' @format 
-#'   The corpus consists of 68,947 documents (i.e. sentences) and includes the following 
+#'   The corpus consists of 69,280 documents (i.e. sentences) and includes the following 
 #'   document-level variables: \describe{
 #'   \item{party}{factor; abbreviation of the party that wrote the manifesto.}
 #'   \item{partyname}{factor; party that wrote the manifesto.}
@@ -26,33 +26,23 @@
 #'   Economic Policy or Social Policy by a majority of crowd coders. 
 #'   The variable has missing values (NA) for all non-annotated manifestos or if a sentence was coded as
 #'   "Not Economic or Social".}
-#'   \item{crowd_econsocial_mean}{Integer indicating the average evaluation used to construct "crowd_econsocial_label". 
+#'   \item{crowd_econsocial_mean}{A numeric variable indicating the average evaluation used to construct "crowd_econsocial_label". 
 #'   The variable has missing values (NA) for all non-annotated manifestos. This variable indicates 
 #'   the (dis)agreement between crowd workers. The variable ranges from -1 (all coders labeled sentence 
 #'   as referring to Economic Policy) to +1 (all coders labeled sentence as Social Policy).}
-#'   \item{crowd_econsocial_dir_mean}{Integer indicating the average evaluation used to construct 
-#'   "crowd_econsocial_dir". The variable has missing values (NA) for all non-annotated manifestos or 
-#'   if a sentence was coded as "Not Economic or Social". This variable indicates 
-#'   the (dis)agreement between crowd workers. The variable ranges from -2 (all coders labeled sentence 
-#'   as "Very left" (for Economic Policy) or "Very liberal (for Social Policy)) to +2 
-#'   (all coders assigned the label "Very right"/"Very conservative").}
 #'   \item{crowd_econsocial_n}{Integer representing the number of coders who contributed to the 
 #'   mean score for the sentence.}
-#'   \item{crowd_immigration}{Integer indicating whether the majority of crowd workers
+#'   \item{crowd_immigration}{Factor indicating whether the majority of crowd workers
 #'   labeled a sentence as referring to immigration. The variable has missing values (NA) for all non-annotated manifestos.}
-#'   \item{crowd_immigration_dir}{Integer indicating the direction of a sentence 
+#'   \item{crowd_immigration_dir}{Factor indicating the direction of a sentence 
 #'   (Against, Neutral, Supportive) if it was coded as referring to immigration. 
 #'   The variable has missing values (NA) for all non-annotated manifestos or if a sentence was coded not 
 #'   coded as referring to immigration policy.}
-#'   \item{crowd_immigration_mean}{Integer ranging between 0 and 1. 
+#'   \item{crowd_immigration_mean}{A numeric variable ranging between 0 and 1. 
 #'   0 implies that none of the crowd coders labeled the sentence as referring to immigration;
 #'   1 implies that all crowd coders labeled the sentence as referring to immigration. 
 #'   The variable has missing values (NA) for all non-annotated manifestos or if a sentence was 
 #'   not coded as referring to immigration policy.}
-#'   \item{crowd_immigration_dir_mean}{Integer ranging between -1 and 1; a value of 
-#'   - 1 indicates that all crowd coders labeled the sentence as "Supportive" of immigration, 
-#'   a value of 1 means that all coders labeled the sentences as "Against" immigration. 
-#'   This variable indicates the (dis)agreement between crowd workers.}
 #'   \item{crowd_immigration_n}{Integer representing the number of coders who contributed to the 
 #'   mean score for the sentence.}
 #'   }
