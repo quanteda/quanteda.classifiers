@@ -10,8 +10,6 @@
 \item{object}{output from \code{\link{textmodel_svm}}}
 
 \item{...}{additional arguments not used}
-
-\item{n}{how many coefficients to print before truncating}
 }
 \description{
 summary method for textmodel_svm objects

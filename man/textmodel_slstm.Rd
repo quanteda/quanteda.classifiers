@@ -10,25 +10,12 @@ textmodel_slstm(x, y, Seed = 17, Epochs = 3, Units = 512,
   Optimizer = "adam", Verbose = TRUE, ...)
 }
 \arguments{
-\item{x}{The data that will be used as training and test data.}
+\item{x}{the \link{dfm} on which the model will be fit.  Does not need to
+contain only the training documents.}
 
-\item{y}{The outcome that will be used as outcomes to be predicted by the NN model.}
-
-\item{Seed}{The seed used in the model. Defaults to 17}
-
-\item{Epochs}{The number of epochs used in the NN model.}
-
-\item{Units}{The number of network nodes used in the first layer of the sequential model}
-
-\item{Batch}{The number of batches estimated}
-
-\item{Dropout}{A floating variable bound between 0 and 1. It determines the rate at which units are dropped for the linear tranformation of the inputs.}
-
-\item{Metric}{Metric used to train algorithm}
-
-\item{Loss}{Metric used to train algorithm}
-
-\item{Optimizer}{Optimizer used to fit model to training data}
+\item{y}{vector of training labels associated with each document identified 
+in \code{train}.  (These will be converted to factors if not already 
+factors.)}
 
 \item{...}{additional options passed to
 \code{\link[keras]{fit.keras.engine.training.Model}}}

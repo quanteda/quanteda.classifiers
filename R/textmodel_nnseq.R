@@ -165,7 +165,6 @@ print.textmodel_nnseq <- function(x, ...) {
 
 #' summary method for textmodel_svm objects
 #' @param object output from \code{\link{textmodel_svm}}
-#' @param n how many coefficients to print before truncating
 #' @param ... additional arguments not used
 #' @keywords textmodel internal
 #' @method summary textmodel_svm
