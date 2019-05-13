@@ -42,12 +42,6 @@ data_readtext_uk_econsocial <- left_join(data_readtext_uk_econsocial, sentences_
 
 length(unique(data_readtext_uk_econsocial$sentenceid))
 
-# recode policy area
-data_readtext_uk_econsocial <- data_readtext_uk_econsocial %>% 
-    mutate(class_policyarea = ifelse(policy_area == 1, "Not Economic or Social",
-                                       ifelse(policy_area == 2, "Economic",
-                                              ifelse(policy_area == 3, "Social", NA))))
-
 nrow(data_readtext_uk_econsocial)
 
 # create numeric indicator for aggregation
@@ -69,7 +63,7 @@ data_readtext_uk_econsocial <- data_readtext_uk_econsocial %>%
 
 # create variable with the policy area based on the aggregated coding
 data_readtext_uk_econsocial <- data_readtext_uk_econsocial %>% 
-    mutate(class_policyarea = ifelse(class_policyarea_mean < 0, "Economic",
+    mutate(crowd_econsocial_label = ifelse(class_policyarea_mean < 0, "Economic",
                                        ifelse(class_policyarea_mean == 0, "Not Economic or Social",
                                               ifelse(class_policyarea_mean > 0, "Social", NA))))
 
@@ -77,30 +71,15 @@ data_readtext_uk_econsocial <- data_readtext_uk_econsocial %>%
 # into account the majority category and not also the minority category position values
 data_readtext_uk_econsocial <- data_readtext_uk_econsocial %>% 
   mutate(class_policy_direction_num = 
-           ifelse(class_policyarea == "Economic" & class_policyarea_num == -1, class_policyarea_direction_num, 
-                  ifelse(class_policyarea == "Social" & class_policyarea_num == 1, class_policyarea_direction_num,
+           ifelse(crowd_econsocial_label == "Economic" & class_policyarea_num == -1, class_policyarea_direction_num, 
+                  ifelse(crowd_econsocial_label == "Social" & class_policyarea_num == 1, class_policyarea_direction_num,
                          NA)))
 
 # aggregate data to the level of sentences
 data_uk_econsocial <- data_readtext_uk_econsocial %>% 
-  group_by(manifestoid, sentenceid, crowd_econsocial_n, class_policyarea) %>% 
-  summarise(class_policyarea_direction_mean = mean(class_policy_direction_num, na.rm = TRUE),
-         class_policyarea_mean = mean(class_policyarea_num, na.rm = TRUE)) %>% 
+  group_by(manifestoid, sentenceid, crowd_econsocial_n, crowd_econsocial_label) %>% 
+  summarise(crowd_econsocial_mean = mean(class_policy_direction_num, na.rm = TRUE)) %>% 
   ungroup() 
-
-# create variable with the direction of the policy area based on the aggregated coding
-data_uk_econsocial <- data_uk_econsocial %>% 
-    mutate(class_policyarea_direction = ifelse(class_policyarea == "Economic" & between(class_policyarea_direction_mean, -2, -1.00000000011), "Very left",
-                                               ifelse(class_policyarea == "Economic" & between(class_policyarea_direction_mean, 1, 0.0000000001), "Left",
-                                                  ifelse(class_policyarea == "Economic" & class_policyarea_direction_mean == 0, "Neither left nor right",
-                                                         ifelse(class_policyarea == "Economic" & between(class_policyarea_direction_mean, 0.00000001, 1), "Right",
-                                                         ifelse(class_policyarea == "Economic"& between(class_policyarea_direction_mean, 1.00000001, 2), "Very right",
-                                                                ifelse(class_policyarea == "Social" & between(class_policyarea_direction_mean, -2, -1.00000000011), "Very liberal",
-                                                                       ifelse(class_policyarea == "Social" & between(class_policyarea_direction_mean, 1, 0.0000000001), "Liberal",
-                                                                              ifelse(class_policyarea == "Social" & class_policyarea_direction_mean == 0, "Neither liberal nor conservative",
-                                                                                     ifelse(class_policyarea == "Social" & between(class_policyarea_direction_mean, 0.00000001, 1), "Conservative",
-                                                                                            ifelse(class_policyarea == "Social" & between(class_policyarea_direction_mean, 1.0000001, 2), "Very conservative", 
-                                                                                                   NA)))))))))))
 
 # separate the variable manifestoid into Party and Year
 data_uk_econsocial <- data_uk_econsocial %>% 
@@ -119,12 +98,11 @@ data_uk_econsocial <- left_join(data_uk_econsocial, dat_sentences,
 data_uk_man_econsocial <- data_uk_econsocial %>% 
     ungroup() %>% 
     select(text = sentence_text, sentenceid, Party, Year, 
-           class_policyarea, class_policyarea_mean,
-           class_policyarea_direction, class_policyarea_direction_mean,
+           crowd_econsocial_label, crowd_econsocial_mean,
            crowd_econsocial_n) 
 
 # replace nan values in class_direction_mean with na
-data_uk_man_econsocial$class_policyarea_direction_mean[is.nan(data_uk_man_econsocial$class_policyarea_direction_mean)] <- NA
+data_uk_man_econsocial$crowd_econsocial_mean[is.nan(data_uk_man_econsocial$crowd_econsocial_mean)] <- NA
 
 
 ## 1.2 Load APSR data on immigration ----
@@ -148,27 +126,21 @@ data_readtext_uk_immigration <- data_readtext_uk_immigration %>%
 data_uk_immigration <- data_readtext_uk_immigration %>% 
     group_by(Party, Year, sentenceid, sentence_text) %>% 
     summarise(crowd_immigration_n = n(),
-              class_immigration_mean = mean(class_immigration_num, na.rm = TRUE),
-              class_immigration_direction_mean = mean(immigr_scale, na.rm = TRUE))
+              class_immigration_num = mean(class_immigration_num, na.rm = TRUE),
+              crowd_immigration_mean = mean(immigr_scale, na.rm = TRUE))
 
 # replace nan values in class_direction_mean with na
-data_uk_immigration$class_immigration_direction_mean[is.nan(data_uk_immigration$class_immigration_direction_mean)] <- NA
+data_uk_immigration$crowd_immigration_mean[is.nan(data_uk_immigration$crowd_immigration_mean)] <- NA
 
 # use the average evaluations to construct the majority-rule based classification
 data_uk_immigration <- data_uk_immigration %>% 
-    mutate(class_immigration = ifelse(class_immigration_mean >= 0.5, "Immigration", "Not immigration")) %>% 
-    mutate(class_immigration_direction = ifelse(class_immigration_direction_mean > 0, 
-                                         "Against",
-                                         ifelse(class_immigration_direction_mean < 0, "Supportive", 
-                                                ifelse(class_immigration_direction_mean == 0, "Neutral", NA))))
+    mutate(crowd_immigration_label = ifelse(class_immigration_num >= 0.5, "Immigration", "Not immigration")) 
 
 # select some of the variables and add three additional variables
 data_uk_immig_man_2010 <- data_uk_immigration %>% 
     ungroup() %>% 
-    select(text = sentence_text, sentenceid, Party, Year, class_immigration, 
-           class_immigration_mean,
-           class_immigration_direction,
-           class_immigration_direction_mean, 
+    select(text = sentence_text, sentenceid, Party, Year, crowd_immigration_label, 
+           crowd_immigration_mean,
            crowd_immigration_n) 
 
 
@@ -179,23 +151,14 @@ data_uk_immig_man_2010 <- data_uk_immigration %>%
 # (the 2010 manifestos have been coded both with regards to 
 # immigration AND econ/social/neither)
 
-# select certain variables needed for the manifesto coding
-data_uk_immig_man_2010_select <- data_uk_immig_man_2010 %>% 
-    select(sentenceid, text, starts_with("class_"), Party, Year,
-           crowd_immigration_n)
-
 # full join of both crowdcoded datasets
 dat_uk_crowdcoded <- full_join(data_uk_man_econsocial,
-                               data_uk_immig_man_2010_select, by = c("sentenceid"))
+                               data_uk_immig_man_2010, by = c("sentenceid"))
 
 names(dat_uk_crowdcoded)
 
 table(dat_uk_crowdcoded$Party.x)
 table(dat_uk_crowdcoded$Party.y)
-
-# this must be the same value, otherwise mergins is not correct 
-# (the last three number are sentences from Lab, Con, and LD which are in both manifestos)
-stopifnot(nrow(dat_uk_crowdcoded) == 7322 + 18544 - 855 - 1240 - 1349)
 
 # rename and remove unnessary variables
 dat_uk_man_crowdcoded_clean <- dat_uk_crowdcoded %>% 
@@ -204,6 +167,18 @@ dat_uk_man_crowdcoded_clean <- dat_uk_crowdcoded %>%
     mutate(text = ifelse(is.na(text.x), text.y, text.x)) %>% 
     select(-c(Party.x, Party.y, Year.x, Year.y, text.x, text.y))
 
+check_econsocial <- dat_uk_man_crowdcoded_clean %>% 
+  filter(!is.na(crowd_econsocial_label))
+
+length(unique(check_econsocial$sentenceid))
+
+
+check_immig <- dat_uk_man_crowdcoded_clean %>% 
+  filter(!is.na(crowd_immigration_label))
+
+length(unique(check_immig$sentenceid))
+
+table(check_immig$crowd_immigration_label)
 
 ########################
 ## 2. Add data_corpus_ukmanifestos from quanteda.corpora package ----
@@ -290,9 +265,7 @@ data_uk_manifestos_selectvars <- data_uk_manifestos %>%
     select(text,
            party = Party,
            year = Year,
-           starts_with("class_"),
-           crowd_immigration_n,
-           crowd_econsocial_n)
+           starts_with("crowd_"))
 
 # create binary indicator whether sentence was crowdcoded
 
@@ -319,24 +292,11 @@ dat_corpus <- dat_corpus %>%
     group_by(party, year) %>% 
     mutate(sentence_no = 1:n()) %>% 
     mutate(doc_id = paste(party, year, sentence_no, sep = "_")) %>% 
-    select(-c(sentence_no, ntoken_sent, class_policyarea_direction_mean)) %>% 
     ungroup()
 
 # rename some variables based on https://github.com/quanteda/quanteda.classifiers/pull/8
 
 dat_corpus_renamed <- dat_corpus %>% 
-  rename(crowd_econsocial_label = class_policyarea,
-         crowd_econsocial_mean = class_policyarea_mean,
-         crowd_econsocial_dir = class_policyarea_direction,
-         crowd_immigration_label = class_immigration,
-         crowd_immigration_mean = class_immigration_mean,
-         crowd_immigration_dir = class_immigration_direction,
-         crowd_immigration_dir_mean = class_immigration_direction_mean)
-
-
-table(dat_corpus$party)
-
-dat_corpus_renamed <- dat_corpus_renamed %>% 
   mutate(party = ifelse(party == "Comm", "CP", party)) %>% 
   mutate(party = ifelse(party == "Gr", "Greens", party)) %>% 
   mutate(party = ifelse(party == "OMRL", "MRLP", party)) %>% 
@@ -401,18 +361,12 @@ table(dat_corpus_renamed$partyname)
 length(unique(dat_corpus_renamed$partyname))
 
 dat_corpus_renamed <- dat_corpus_renamed %>% 
-  select(doc_id, text, party, partyname, year, 
-         crowd_econsocial_label, crowd_econsocial_dir,
-         crowd_econsocial_mean,
-         crowd_econsocial_n,
-         crowd_immigration_label, crowd_immigration_dir,
-         crowd_immigration_mean,
-         crowd_immigration_n)
+  select(doc_id, text, party, partyname, year, crowd_econsocial_label, crowd_econsocial_mean,
+         crowd_econsocial_n, crowd_immigration_label, crowd_immigration_mean, 
+         crowd_immigration_n) 
 
 dat_corpus_renamed$crowd_econsocial_label <- factor(dat_corpus_renamed$crowd_econsocial_label)
-dat_corpus_renamed$crowd_econsocial_dir <- factor(dat_corpus_renamed$crowd_econsocial_dir)
 dat_corpus_renamed$crowd_immigration_label <- factor(dat_corpus_renamed$crowd_immigration_label)
-dat_corpus_renamed$crowd_immigration_dir <- factor(dat_corpus_renamed$crowd_immigration_dir)
 dat_corpus_renamed$year <- as.integer(dat_corpus_renamed$year)
 dat_corpus_renamed$party <- as.factor(dat_corpus_renamed$party)
 dat_corpus_renamed$partyname <- as.factor(dat_corpus_renamed$partyname)
