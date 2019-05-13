@@ -16,35 +16,28 @@
 #' @format 
 #'   The corpus consists of 69,280 documents (i.e. sentences) and includes the following 
 #'   document-level variables: \describe{
-#'   \item{party}{factor; abbreviation of the party that wrote the manifesto.}
-#'   \item{partyname}{factor; party that wrote the manifesto.}
-#'   \item{year}{4-digit year of the election.}
-#'   \item{crowd_econsocial_label}{A factor variable indicating whether a majority of crowd workers 
-#'   labeled a sentence as Economic Policy, Social Policy, or Neither. The variable has missing values 
-#'   (NA) for all non-annotated manifestos.}
-#'   \item{crowd_econsocial_dir}{A factor indicating the direction of a sentence if it was coded as 
-#'   Economic Policy or Social Policy by a majority of crowd coders. 
-#'   The variable has missing values (NA) for all non-annotated manifestos or if a sentence was coded as
-#'   "Not Economic or Social".}
-#'   \item{crowd_econsocial_mean}{A numeric variable indicating the average evaluation used to construct "crowd_econsocial_label". 
-#'   The variable has missing values (NA) for all non-annotated manifestos. This variable indicates 
-#'   the (dis)agreement between crowd workers. The variable ranges from -1 (all coders labeled sentence 
-#'   as referring to Economic Policy) to +1 (all coders labeled sentence as Social Policy).}
+#'   \item{party}{Factor; abbreviation of the party that wrote the manifesto.}
+#'   \item{partyname}{Factor; party that wrote the manifesto.}
+#'   \item{year}{Integer; 4-digit year of the election.}
+#'   \item{crowd_econsocial_label}{A factor variable indicating the majority coding by crowd workers (Economic Policy, Social Policy, or Neither). 
+#'   The variable has missing values (NA) for all non-annotated manifestos.}
+#'   \item{crowd_econsocial_mean}{A numeric variable indicating the direction of statements coded as "Economic Policy" or 
+#'   "Social Policy" based on the aggregated crowd codings. The variable is the mean of the scores assigned by the workers workers who coded the 
+#'   sentence and who allocated the sentence to the "majority" category. The variable ranges from -2 to +2. 
+#'   For the statements aggregated as "Economic" Policy, -2 corresponds to "Very left"; +2 corresponds to "Very right". 
+#'   For the statements aggregated as "Social Policy"  -2 corresponds to "Very liberal"; +2 corresponds to "Very conservative". 
+#'   The variable has missing values (NA) for all sentences that were aggregated as "Neither" and for all non-annotated manifestos.)}
 #'   \item{crowd_econsocial_n}{Integer representing the number of coders who contributed to the 
-#'   mean score for the sentence.}
-#'   \item{crowd_immigration}{Factor indicating whether the majority of crowd workers
-#'   labeled a sentence as referring to immigration. The variable has missing values (NA) for all non-annotated manifestos.}
-#'   \item{crowd_immigration_dir}{Factor indicating the direction of a sentence 
-#'   (Against, Neutral, Supportive) if it was coded as referring to immigration. 
-#'   The variable has missing values (NA) for all non-annotated manifestos or if a sentence was coded not 
-#'   coded as referring to immigration policy.}
-#'   \item{crowd_immigration_mean}{A numeric variable ranging between 0 and 1. 
-#'   0 implies that none of the crowd coders labeled the sentence as referring to immigration;
-#'   1 implies that all crowd coders labeled the sentence as referring to immigration. 
-#'   The variable has missing values (NA) for all non-annotated manifestos or if a sentence was 
-#'   not coded as referring to immigration policy.}
+#'   class of the sentence.}
+#'   \item{crowd_immigration_label}{Factor indicating whether the majority of crowd workers
+#'   labeled a sentence as referring to immigration or not. The variable has missing values (NA) for all non-annotated manifestos.}
+#'   \item{crowd_immigration_mean}{A numeric variable indicating the direction of statements coded as "Immigration" 
+#'   based on the aggregated crowd codings. The variable is the mean of the scores assigned by workers who coded a sentence and who
+#'   allocated the sentence to the "Immigration" category. The variable ranges from -1 ("Negative and closed immigration policy") to 
+#'   +1 (Favorable and open immigration policy). The variable has missing values (NA) for all non-annotated manifestos or if a sentence was 
+#'   not coded as referring to immigration policy based on the aggregation of crowd codings.}
 #'   \item{crowd_immigration_n}{Integer representing the number of coders who contributed to the 
-#'   mean score for the sentence.}
+#'   class of the sentence.}
 #'   }
 #' @examples 
 #' \donttest{
@@ -54,11 +47,11 @@
 #' 
 #' # keep only crowd coded manifestos (with respect to economic and social policy)
 #' corp_crowdeconsocial <- data_corpus_manifestosentsUK %>% 
-#'     corpus_subset(!is.na(crowd_econsocial))
+#'     corpus_subset(!is.na(crowd_econsocial_label))
 #' 
 #' # keep only crowd coded manifestos (with respect to immigration policy)
 #' corp_crowdimmig <- data_corpus_manifestosentsUK %>% 
-#'     corpus_subset(!is.na(crowd_immigration))
+#'     corpus_subset(!is.na(crowd_immigration_label))
 #' }
 #' @references Benoit, K., Conway, D., Lauderdale, B.E., Laver, M., & Mikhaylov, S. (2016). 
 #'   \href{https://doi.org/10.1017/S0003055416000058}{Crowd-sourced Text Analysis: 
