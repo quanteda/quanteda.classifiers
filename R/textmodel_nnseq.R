@@ -22,7 +22,25 @@
 #' @importFrom keras layer_dense layer_activation layer_dropout compile fit
 #' @export
 #' @examples 
-#' # need examples here
+#' \dontrun{
+#' # create a dataset with evenly balanced coded and uncoded immigration sentences
+#' corpcoded <- corpus_subset(data_corpus_manifestosentsUK, !is.na(crowd_immigration_label))
+#' corpuncoded <- data_corpus_manifestosentsUK %>%
+#'     corpus_subset(is.na(crowd_immigration_label) & year > 1980) %>%
+#'     corpus_sample(size = ndoc(corpcoded))
+#' corp <- corpcoded + corpuncoded
+#' 
+#' # form a tf-idf-weighted dfm
+#' dfmat <- dfm(corp) %>%
+#'     dfm_tfidf()
+#' 
+#' set.seed(1000)
+#' tmod <- textmodel_nnseq(dfmat, y = docvars(dfmat, "crowd_immigration_label"),
+#'                         epochs = 5, verbose = 1)
+#' pred <- predict(tmod, newdata = dfm_subset(dfmat, is.na(crowd_immigration_label)))
+#' table(pred)
+#' tail(texts(corpuncoded)[pred == "Immigration"], 10)
+#' }
 textmodel_nnseq <- function(x, y, units = 512, dropout = .2, 
                             optimizer = "adam",
                             loss = "categorical_crossentropy", 
