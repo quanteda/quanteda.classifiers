@@ -26,7 +26,7 @@ test_that("the svm model works", {
     expect_equal(names(summary(tmod)), c("call", "estimated.feature.scores"))
     expect_identical(
         predict(tmod, type = "class"),
-        c(d1 = "Y", d2 = "Y", d3 = "Y", d4 = "N", d5 = "Y")
+        factor(c(d1 = "Y", d2 = "Y", d3 = "Y", d4 = "N", d5 = "Y"))
     )
     set.seed(10)
     expect_equal(
@@ -50,7 +50,7 @@ test_that("the svm model works with different weights", {
     tmod <- textmodel_svm(dfmat, y = docvars(dfmat, "train"), weight = "docfreq")
     expect_identical(
         predict(tmod, type = "class"),
-        c(d1 = "Y", d2 = "Y", d3 = "Y", d4 = "Y", d5 = "Y")
+        factor(c(d1 = "Y", d2 = "Y", d3 = "Y", d4 = "Y", d5 = "Y"), levels = sort(tmod$classnames))
     )
     set.seed(10)
     expect_equal(
@@ -62,7 +62,7 @@ test_that("the svm model works with different weights", {
     tmod <- textmodel_svm(dfmat, y = docvars(dfmat, "train"), weight = "termfreq")
     expect_identical(
         predict(tmod, type = "class"),
-        c(d1 = "Y", d2 = "Y", d3 = "Y", d4 = "Y", d5 = "Y")
+        factor(c(d1 = "Y", d2 = "Y", d3 = "Y", d4 = "Y", d5 = "Y"), levels = sort(tmod$classnames))
     )
     set.seed(10)
     expect_equal(
@@ -85,7 +85,7 @@ test_that("the svm model works with bias = 0", {
     tmod <- textmodel_svm(dfmat, y = docvars(dfmat, "train"), bias = 0)
     expect_identical(
         predict(tmod, type = "class"),
-        c(d1 = "Y", d2 = "Y", d3 = "Y", d4 = "N", d5 = "Y")
+        factor(c(d1 = "Y", d2 = "Y", d3 = "Y", d4 = "N", d5 = "Y"))
     )
     set.seed(10)
     expect_equal(
@@ -103,10 +103,9 @@ test_that("multiclass prediction works", {
                            y = c(rep(NA, 3), "SF", "FF", "FG", NA, "LAB", NA, NA, "Green", rep(NA, 3)),
                            weight = "docfreq")
     expect_equal(
-        head(predict(tmod2), 3),
-        c("Lenihan, Brian (FF)" = "FF", 
-          "Bruton, Richard (FG)" = "SF",
-          "Burton, Joan (LAB)" = "SF")
+        head(predict(tmod2, type = "class"), 3),
+        factor(c("Lenihan, Brian (FF)" = "FF", "Bruton, Richard (FG)" = "SF","Burton, Joan (LAB)" = "SF"),
+               levels = sort(tmod2$classnames))
     )
 })
 
