@@ -2,12 +2,11 @@
 % Please edit documentation in R/textmodel_nnseq.R
 \name{textmodel_nnseq}
 \alias{textmodel_nnseq}
-\title{sequential neural network model for text}
+\title{sequential neural network model for text classification}
 \usage{
-textmodel_nnseq(x, y, seed = 17, epochs = 3, units = 512,
-  batch = 32, dropout = 0.2, valsplit = 0.1,
-  metrics = "categorical_accuracy", loss = "categorical_crossentropy",
-  optimizer = "adam", verbose = TRUE, ...)
+textmodel_nnseq(x, y, units = 512, dropout = 0.2, optimizer = "adam",
+  loss = "categorical_crossentropy", metrics = "categorical_accuracy",
+  ...)
 }
 \arguments{
 \item{x}{the \link{dfm} on which the model will be fit.  Does not need to
@@ -17,39 +16,29 @@ contain only the training documents.}
 in \code{train}.  (These will be converted to factors if not already 
 factors.)}
 
-\item{seed}{seed used for this particular model iteration}
-
-\item{epochs}{number of iterations the model is run to fit weights to training data}
-
 \item{units}{The number of network nodes used in the first layer of the
 sequential model}
-
-\item{batch}{default value set to 32}
 
 \item{dropout}{A floating variable bound between 0 and 1. It determines the
 rate at which units are dropped for the linear transformation of the
 inputs.}
 
-\item{valsplit}{for each epoch, the training data is split into training and 
-validation data at a ratio determined by this parameter}
-
-\item{metrics}{metric used to train algorithm, see
+\item{optimizer}{optimizer used to fit model to training data, see
 \code{\link[keras]{compile.keras.engine.training.Model}}}
 
 \item{loss}{objective loss function, see
 \code{\link[keras]{compile.keras.engine.training.Model}}}
 
-\item{optimizer}{optimizer used to fit model to training data, see
+\item{metrics}{metric used to train algorithm, see
 \code{\link[keras]{compile.keras.engine.training.Model}}}
-
-\item{verbose}{if set to true, output for each epoch will be provided}
 
 \item{...}{additional options passed to
 \code{\link[keras]{fit.keras.engine.training.Model}}}
 }
 \description{
-This function is a wrapper for a sequential neural network model with a single hidden layer
-network with two layers, implemented in the \pkg{keras} package.
+This function is a wrapper for a sequential neural network model with a
+single hidden layer network with two layers, implemented in the \pkg{keras}
+package.
 }
 \examples{
 # need examples here

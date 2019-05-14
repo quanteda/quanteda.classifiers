@@ -1,29 +1,20 @@
-#' sequential neural network model for text
+#' sequential neural network model for text classification
 #'
-#' This function is a wrapper for a sequential neural network model with a single hidden layer
-#' network with two layers, implemented in the \pkg{keras} package.
-#' @param x the \link{dfm} on which the model will be fit.  Does not need to
-#'   contain only the training documents.
-#' @param y vector of training labels associated with each document identified 
-#'   in \code{train}.  (These will be converted to factors if not already 
-#'   factors.)
-#' @param seed seed used for this particular model iteration 
-#' @param epochs number of iterations the model is run to fit weights to training data
+#' This function is a wrapper for a sequential neural network model with a
+#' single hidden layer network with two layers, implemented in the \pkg{keras}
+#' package.
+#' @inheritParams textmodel_svm
 #' @param units The number of network nodes used in the first layer of the
 #'   sequential model
-#' @param batch default value set to 32
 #' @param dropout A floating variable bound between 0 and 1. It determines the
 #'   rate at which units are dropped for the linear transformation of the
 #'   inputs.
-#' @param valsplit for each epoch, the training data is split into training and 
-#'   validation data at a ratio determined by this parameter
-#' @param metrics metric used to train algorithm, see
+#' @param optimizer optimizer used to fit model to training data, see
 #'   \code{\link[keras]{compile.keras.engine.training.Model}}
 #' @param loss objective loss function, see
 #'   \code{\link[keras]{compile.keras.engine.training.Model}}
-#' @param optimizer optimizer used to fit model to training data, see
+#' @param metrics metric used to train algorithm, see
 #'   \code{\link[keras]{compile.keras.engine.training.Model}}
-#' @param verbose if set to true, output for each epoch will be provided
 #' @param ... additional options passed to
 #'   \code{\link[keras]{fit.keras.engine.training.Model}}
 #' @keywords textmodel
@@ -32,64 +23,52 @@
 #' @export
 #' @examples 
 #' # need examples here
-textmodel_nnseq <- function(x, y, seed = 17, 
-                          epochs = 3, units = 512, batch = 32, dropout = .2, valsplit = .1,
-                          metrics = "categorical_accuracy", loss = "categorical_crossentropy", optimizer = "adam", 
-                          verbose = TRUE, 
-                          ...) {
-    set.seed(seed)
+textmodel_nnseq <- function(x, y, units = 512, dropout = .2, 
+                            optimizer = "adam",
+                            loss = "categorical_crossentropy", 
+                            metrics = "categorical_accuracy",
+                            ...) {
+    UseMethod("textmodel_nnseq")
+}
+
+#' @export
+textmodel_nnseq.dfm <- function(x, y, units = 512, dropout = .2, 
+                                optimizer = "adam",
+                                loss = "categorical_crossentropy", 
+                                metrics = "categorical_accuracy", ...) {
+    stopifnot(ndoc(x) == length(y))
+    
     x <- as.dfm(x)
-    if (!sum(x)) stop(quanteda:::message_error("dfm_empty"))
-    call <- match.call()
+    y <- as.factor(y)
+    result <- list(x = x, y = y, call = match.call(), classnames = levels(y))
     
-    # exclude NA in training labels
-    x_train <- suppressWarnings(
-        dfm_trim(x[!is.na(y), ], min_termfreq = .0000000001)
-    )
-    y_train <- y[!is.na(y)]
+    # trim missings for fitting model
+    na_ind <- which(is.na(y))
+    if (length(na_ind) > 0) {
+        # message(length(na_ind), "observations with the value 'NA' were removed.")
+        y <- y[-na_ind]
+        x <- x[-na_ind]
+    }
     
-    # remove zero-variance features
-    constant_features <- which(apply(x_train, 2, stats::var) == 0)
-    if (length(constant_features)) x_train <- x_train[, -constant_features]
+    # "one-hot" encode y
+    y2 <- to_categorical(as.integer(y) - 1, num_classes = nlevels(y))
     
-    # creating dummy matrix for multinomial classification 
-    y_train <- as.numeric(as.factor(y_train)) - 1
-    
-    classes <- length(unique(y_train))
-    
-    y_train <- to_categorical(y_train, num_classes = classes)
-    
-    # define seqential neural network model
+    # use keras to fit the model
     model <- keras_model_sequential()
     model %>%
-        layer_dense(units = units, input_shape = dim(x_train)[2]) %>%
+        layer_dense(units = units, input_shape = nfeat(x)) %>%
         layer_activation(activation = "relu") %>%
         layer_dropout(rate = dropout) %>%
-        layer_dense(units = classes) %>%
+        layer_dense(units = nlevels(y)) %>%
         layer_activation(activation = "softmax")
-    
-    # compile model with optimization and lost metrics
     compile(model, loss = loss, optimizer = optimizer, metrics = metrics)
+    history <- fit(model, x, y2, ...)
     
-    # fit model to training data
-    history <- fit(model, 
-                   x_train, y_train,
-                   batch_size = batch,
-                   epochs = epochs,
-                   verbose = as.numeric(verbose),
-                   validation_split = valsplit
-    )
-    
-    result <- list(
-        x = x, y = y,
-        seqfitted = model,
-        call = call,
-        weights = featnames(x_train)
-    )
+    # compile, class, and return the result
+    result <- c(result, list(seqfitted = model))
     class(result) <- c("textmodel_nnseq", "textmodel", "list")
     return(result)
 }
-
 
 #' Prediction from a fitted textmodel_nnseq object
 #'
@@ -122,27 +101,19 @@ predict.textmodel_nnseq <- function(object, newdata = NULL,
         data <- as.dfm(object$x)
     }
     
-    # the seq_along is because this will have an added term "bias" at end if bias > 0
-    model_featnames <- object$weights
-    #if (object$bias > 0) model_featnames <- model_featnames[-length(model_featnames)]
-    
     data <- if (is.null(newdata)) {
-        suppressWarnings(quanteda:::force_conformance(data, model_featnames, force))
+        suppressWarnings(quanteda:::force_conformance(data, featnames(data), force))
     } else {
-        quanteda:::force_conformance(data, model_featnames, force)
+        quanteda:::force_conformance(data, featnames(data), force)
     }
     
     if (type == "class") {
-        pred_y <- predict_classes(object$seqfitted, # Was unable to convert as.matrix.csr to python object for predict_classes function
-                                  x = data)
-        pred_y <- as.character(factor(pred_y + 1, 
-                                      levels = 1:length(names(table(object$y))), 
-                                      labels = names(table(object$y))))
+        pred_y <- predict_classes(object$seqfitted, x = data)
+        pred_y <- factor(pred_y, labels = object$classnames, levels = (seq_along(object$classnames) - 1))
         names(pred_y) <- docnames(data)
     } else if (type == "probability") {
-        pred_y <- predict_proba(object$seqfitted, # Was unable to convert as.matrix.csr to python object for predict_classes function
-                                  x = data)
-        colnames(pred_y) <- names(table(object$y))
+        pred_y <- predict_proba(object$seqfitted, x = data)
+        colnames(pred_y) <- object$classnames
         rownames(pred_y) <- docnames(data)
     }
     
@@ -167,7 +138,7 @@ print.textmodel_nnseq <- function(x, ...) {
 #' @param object output from \code{\link{textmodel_svm}}
 #' @param ... additional arguments not used
 #' @keywords textmodel internal
-#' @method summary textmodel_svm
+#' @method summary textmodel_nnseq
 #' @export
 summary.textmodel_nnseq <- function(object, ...) {
     layer_names <- gsub(pattern = "_\\d*", "", lapply(object$seqfitted$layers, function(x) x$name))

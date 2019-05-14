@@ -4,7 +4,7 @@
 \alias{summary.textmodel_nnseq}
 \title{summary method for textmodel_svm objects}
 \usage{
-\method{summary}{textmodel_svm}(object, ...)
+\method{summary}{textmodel_nnseq}(object, ...)
 }
 \arguments{
 \item{object}{output from \code{\link{textmodel_svm}}}

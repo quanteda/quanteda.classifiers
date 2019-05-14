@@ -1,6 +1,10 @@
 context("test textmodel_nnseq")
 
 test_that("the nnseq model works", {
+    skip_on_travis()
+    skip_on_cran()
+    skip_on_appveyor()
+    
     ## Example from 13.1 of _An Introduction to Information Retrieval_
     text <- c("Chinese Beijing Chinese",
               "Chinese Chinese Shanghai",
@@ -13,12 +17,10 @@ test_that("the nnseq model works", {
     test <- c("Y", "Y", "Y", "N", "Y")
     test <- rep(test, times = 25)
     
-    corp <- corpus(text, 
-                   docvars = data.frame(train = factor(train)))
-    
+    corp <- corpus(text, docvars = data.frame(train = factor(train)))
     dfmat <- dfm(corp, tolower = FALSE)
     
-    tmod <- textmodel_nnseq(dfmat, y = docvars(dfmat, "train"), epochs = 3, verbose = F)
+    tmod <- textmodel_nnseq(dfmat, y = docvars(dfmat, "train"), epochs = 3, verbose = FALSE)
     
     expect_output(
         print(tmod),
@@ -40,22 +42,21 @@ test_that("the nnseq model works", {
     )
 })
 
-#test_that("multiclass prediction works", {
-#    dfmat <- dfm(data_corpus_dailnoconf1991)
-#    outcome <- rep(docvars(dfmat, "party"), 2)
-#    dfmat <- rbind(dfmat, dfmat)
-#    levels(outcome) <- c("OTH","FF","FG","OTH","OTH","OTH")
-#    outcome[1:3] <- NA
-#    tmod2 <- textmodel_nnseq(dfmat, seed = 10,
-#                           y = outcome, epochs = 5,
-#                           verbose = FALSE, units = 150)
-#    expect_equal(
-#        predict(tmod2, dfmat[1:3,]),
-#        c("Haughey_FF_Taois.txt" = "FF", 
-#          "Spring_Lab_Leader.txt" = "OTH",
-#          "deRossa_DL_Leader.txt" = "OTH")
-#    )
-#})
+test_that("multiclass prediction works", {
+    set.seed(10)
+    dfmat <- dfm(data_corpus_irishbudget2010) %>%
+        dfm_tfidf()
+    tmod2 <- textmodel_nnseq(dfmat, 
+                           y = c(rep(NA, 3), "SF", "FF", "FG", NA, "LAB", NA, NA, "Green", rep(NA, 3)))
+    expect_equal(
+        head(predict(tmod2, type = "class"), 3),
+        factor(c("Lenihan, Brian (FF)" = "FF", "Bruton, Richard (FG)" = "SF","Burton, Joan (LAB)" = "SF"),
+               levels = tmod2$classnames)
+    )
 
-
-
+    probmat <- predict(tmod2, type = "probability")
+    expect_equal(dim(probmat), c(14, 5))
+    expect_equal(rownames(probmat), docnames(dfmat))
+    expect_equal(colnames(probmat), tmod2$classnames)
+    expect_equal(unname(rowSums(probmat)), rep(1, nrow(probmat)), tol = .000001)
+})
