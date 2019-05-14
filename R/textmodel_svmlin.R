@@ -4,6 +4,11 @@
 #' svmlin code by Vikas Sindhwani and S. Sathiya Keerthi for fast linear
 #' transductive SVMs. This is passed through to \code{\link[RSSL]{svmlin}} as
 #' implemented by the \pkg{RSSL} package.
+#' 
+#' @description This function has been retained for testing purposes only; 
+#'   we recommend that you use \code{\link{textmodel_svm}} instead.  That 
+#'   function is more efficient, and implements prediction for more than 
+#'   two classes.
 #' @param x the \link{dfm} on which the model will be fit.  Does not need to
 #'   contain only the training documents.
 #' @param y vector of training labels associated with each document identified 
@@ -21,7 +26,7 @@
 #' V. Sindhwani and S. Sathiya Keerthi (2006).  Newton Methods for Fast Solution of Semi-supervised
 #' Linear SVMs. Book Chapter in \emph{Large Scale Kernel Machines}, MIT Press, 2006.
 #' 
-#' @seealso \code{\link[RSSL]{svmlin}}
+#' @seealso \code{\link[RSSL]{svmlin}}, \code{text{textmodel_svm}}
 #' @examples
 #' # use Lenihan for govt class and Bruton for opposition
 #' docvars(data_corpus_irishbudget2010, "govtopp") <- c("Govt", "Opp", rep(NA, 12))
@@ -34,6 +39,7 @@
 #'                       pos_frac = 5/14))
 #' @import quanteda
 #' @importFrom stats na.omit predict
+#' @keywords textmodel internal
 #' @export
 textmodel_svmlin <- function(x, y, intercept = TRUE, ...) {
     UseMethod("textmodel_svmlin")
