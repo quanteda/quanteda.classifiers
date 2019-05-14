@@ -3,41 +3,39 @@
 \docType{data}
 \name{data_corpus_EPcoaldebate}
 \alias{data_corpus_EPcoaldebate}
-\title{A multilingual text corpus of speeches from a European Parliament debate on coal subsidies in 2010, 
-with individual crowd codings as the unit of observation}
+\title{Crowd-labelled sentence corpus from a 2010 EP debate on coal subsidies}
 \format{The corpus consists of 16,806 documents (i.e. codings of a sentence) and includes the following 
   document-level variables: \describe{
-  \item{sentence_id}{Factor variable with a unique identifier for each sentence.}
-  \item{crowd_subsidy_label}{Factor variable indicating whether a coder labeled the sentence 
-  as "Pro-Subsidy", "Anti-Subsidy" or "Neutral or inapplicable".}
-  \item{language}{Factor indicating the language (translation) of the speech.}
-  \item{name_last}{Last name of the speaker.}
-  \item{name_first}{First name of the speaker.}
-  \item{ep_group}{EP party group of the speaker.}
-  \item{country}{Factor variable indicating the speaker's country of origin.}
-  \item{vote}{Factor indicating the speaker's vote on the proposal (For/Against/Abstain/NA).}
-  \item{coder_id}{Factor variable with a unique identifier for each crowd coder.}
-  \item{coder_trust}{Numeric variable indicating the "trust score" (i.e. the proportion of correctly answered 
-  gold questions and screeners), which can theoretically range between 0 and 1. Only coders with trust scores above 
-  0.8 are included in the corpus.}
+  \item{sentence_id}{character; a unique identifier for each sentence}
+  \item{crowd_subsidy_label}{factor; whether a coder labeled the sentence 
+  as "Pro-Subsidy", "Anti-Subsidy" or "Neutral or inapplicable"}
+  \item{language}{factor; the language (translation) of the speech}
+  \item{name_last}{character; speaker's last name}
+  \item{name_first}{character; speaker's first name}
+  \item{ep_group}{factor; abbreviation of the EP party group of the speaker}
+  \item{country}{factor; the speaker's country of origin}
+  \item{vote}{factor; the speaker's vote on the proposal (For/Against/Abstain/NA)}
+  \item{coder_id}{character; a unique identifier for each crowd coder}
+  \item{coder_trust}{numeric; the "trust score" from the Crowdflower platform used to code the 
+   sentences, which can theoretically range between 0 and 1. Only coders with trust scores above 
+   0.8 are included in the corpus.}
   }}
 \usage{
 data_corpus_EPcoaldebate
 }
 \description{
-A text corpus of officially translated speeches from a European Parliament debate concerning a Commission 
-report proposing an extension to a regulation permitting state aid to uncompetitive coal mines. Each
-speech is available in six languages: English, German, Greek, Italian, Polish and Spanish. 
-The unit of observation is the individual crowd coding of each natural sentence.
-For more information on the coding approach see 
-\href{https://doi.org/10.1017/S0003055416000058}{Benoit et al. (2016)}.
-}
-\examples{
-\donttest{
-# select only sentences from speeches in a specific language (e.g. English)
-corp_en <- data_corpus_manifestosentsUK \%>\% 
-    quanteda::corpus_subset(language == "English")
-}
+A multilingual text corpus of speeches from a European
+  Parliament debate on coal subsidies in 2010, with individual crowd codings
+  as the unit of observation.  The sentences are drawn from officially
+  translated speeches from a debate over a European Parliament debate
+  concerning a Commission report proposing an extension to a regulation
+  permitting state aid to uncompetitive coal mines.
+
+Each speech is available in six languages: English, German,
+  Greek, Italian, Polish and Spanish. The unit of observation is the
+  individual crowd coding of each natural sentence. For more information on
+  the coding approach see
+  \href{https://doi.org/10.1017/S0003055416000058}{Benoit et al. (2016)}.
 }
 \references{
 Benoit, K., Conway, D., Lauderdale, B.E., Laver, M., & Mikhaylov, S. (2016). 
