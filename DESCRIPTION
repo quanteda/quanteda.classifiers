@@ -15,9 +15,7 @@ Imports:
     keras (>= 2.1.0),
     LiblineaR,
     RSSL,
-    SparseM,
-    caret,
-    magrittr
+    SparseM
 Suggests:
     spelling,
     testthat,
