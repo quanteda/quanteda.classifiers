@@ -152,8 +152,8 @@ print.textmodel_nnseq <- function(x, ...) {
         sep = "")
 }
 
-#' summary method for textmodel_svm objects
-#' @param object output from \code{\link{textmodel_svm}}
+#' summary method for textmodel_nnseq objects
+#' @param object output from \code{\link{textmodel_nnseq}}
 #' @param ... additional arguments not used
 #' @keywords textmodel internal
 #' @method summary textmodel_nnseq
