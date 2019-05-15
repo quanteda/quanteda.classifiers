@@ -134,7 +134,7 @@ predict.textmodel_svm <- function(object, newdata = NULL,
                       proba = (type == "probability"))
     
     if (type == "class") {
-        pred_y <- as.character(pred_y$predictions)
+        pred_y <- pred_y$predictions
         names(pred_y) <- docnames(data)
     } else if (type == "probability") {
         pred_y <- pred_y$probabilities

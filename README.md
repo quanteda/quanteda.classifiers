@@ -5,8 +5,8 @@
 Version](https://www.r-pkg.org/badges/version/quanteda.classifiers)](https://CRAN.R-project.org/package=quanteda.classifiers)
 [![Travis build
 status](https://travis-ci.org/quanteda/quanteda.classifiers.svg?branch=master)](https://travis-ci.org/quanteda/quanteda.classifiers)
-[![AppVeyor build
-status](https://ci.appveyor.com/api/projects/status/github/quanteda/quanteda.classifiers?branch=master&svg=true)](https://ci.appveyor.com/project/quanteda/quanteda.classifiers)
+[![Build
+status](https://ci.appveyor.com/api/projects/status/l80oet8swj2q6h4y/branch/master?svg=true)](https://ci.appveyor.com/project/kbenoit/quanteda-svm/branch/master)
 [![Coverage
 status](https://codecov.io/gh/quanteda/quanteda.classifiers/branch/master/graph/badge.svg)](https://codecov.io/github/quanteda/quanteda.classifiers?branch=master)
 
@@ -24,7 +24,12 @@ Examples:
 ``` r
 library("quanteda.classifiers")
 ## Loading required package: quanteda
-## Package version: 1.4.3
+## Registered S3 methods overwritten by 'ggplot2':
+##   method         from 
+##   [.quosures     rlang
+##   c.quosures     rlang
+##   print.quosures rlang
+## Package version: 1.4.4
 ## Parallel computing: 2 of 12 threads used.
 ## See https://quanteda.io for tutorials and examples.
 ## 

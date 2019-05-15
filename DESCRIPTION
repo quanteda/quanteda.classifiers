@@ -1,9 +1,10 @@
 Package: quanteda.classifiers
 Type: Package
-Title: Models for text classification
+Title: Models for supervised text classification
 Version: 0.1
 Authors@R: c(person("Kenneth", "Benoit", email = "kbenoit@lse.ac.uk", role = c("aut", "cre")),
-             person("Patrick", "Chester", email = "pjc468@nyu.edu", role = c("aut")))
+             person("Patrick", "Chester", email = "pjc468@nyu.edu", role = c("aut")),
+             person("Müller", "Stefan", email = "mueller@ipz.uzh.ch", role = c("aut")))
 Description: A test package for developing additional text classifier models (textmodels) including linear SVMs and neural network-based methods.
 Encoding: UTF-8
 License: GPL-3

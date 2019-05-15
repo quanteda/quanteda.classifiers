@@ -23,6 +23,12 @@ factors.)}
 object from \code{\link[RSSL]{svmlin}}.
 }
 \description{
+This function has been retained for testing purposes only; 
+  we recommend that you use \code{\link{textmodel_svm}} instead.  That 
+  function is more efficient, and implements prediction for more than 
+  two classes.
+}
+\details{
 Fit a fast linear SVM classifier for texts, using the R interface to the
 svmlin code by Vikas Sindhwani and S. Sathiya Keerthi for fast linear
 transductive SVMs. This is passed through to \code{\link[RSSL]{svmlin}} as
@@ -47,5 +53,7 @@ V. Sindhwani and S. Sathiya Keerthi (2006).  Newton Methods for Fast Solution of
 Linear SVMs. Book Chapter in \emph{Large Scale Kernel Machines}, MIT Press, 2006.
 }
 \seealso{
-\code{\link[RSSL]{svmlin}}
+\code{\link[RSSL]{svmlin}}, \code{text{textmodel_svm}}
 }
+\keyword{internal}
+\keyword{textmodel}

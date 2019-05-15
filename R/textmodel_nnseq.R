@@ -1,7 +1,8 @@
-#' sequential neural network model for text
+#' sequential neural network model for text classification
 #'
-#' This function is a wrapper for a sequential neural network model with a single hidden layer
-#' network with two layers, implemented in the \pkg{keras} package.
+#' This function is a wrapper for a sequential neural network model with a
+#' single hidden layer network with two layers, implemented in the \pkg{keras}
+#' package.
 #' @inheritParams textmodel_svm
 #' @param units The number of network nodes used in the first layer of the
 #'   sequential model
@@ -21,63 +22,71 @@
 #' @importFrom keras layer_dense layer_activation layer_dropout compile fit
 #' @export
 #' @examples 
-#' # need examples here
-textmodel_nnseq <- function(x, y, Seed = 17, 
-                          Epochs = 3, Units = 512, Batch = 32, Dropout = .2, Valsplit = .1,
-                          Metric = "categorical_accuracy",Loss = "categorical_crossentropy", Optimizer = "adam", 
-                          Verbose = TRUE, 
-                          ...) {
-    x <- as.dfm(x)
-    if (!sum(x)) stop(quanteda:::message_error("dfm_empty"))
-    call <- match.call()
-    
-    # exclude NA in training labels
-    x_train <- suppressWarnings(
-        dfm_trim(x[!is.na(y), ], min_termfreq = .0000000001, termfreq_type = "prop")
-    )
-    y_train <- y[!is.na(y)]
-    
-    # remove zero-variance features
-    constant_features <- which(apply(x_train, 2, stats::var) == 0)
-    if (length(constant_features)) x_train <- x_train[, -constant_features]
-    
-    # creating dummy matrix for multinomial classification 
-    y_train <- as.numeric(as.factor(y_train))
-    
-    classes <- length(unique(y_train)) + 1
-    
-    y_train <- to_categorical(y_train - 1, num_classes = classes)
-    
-    # define seqential neural network model
-    model <- keras_model_sequential()
-    model %>%
-        layer_dense(units = units, input_shape = dim(x)[2]) %>%
-        layer_activation(activation = "relu") %>%
-        layer_dropout(rate = dropout) %>%
-        layer_dense(units = classes) %>%
-        layer_activation(activation = "softmax")
-    
-    # compile model with optimization and lost metrics
-    compile(model, loss = loss, optimizer = optimizer, metrics = metrics)
-    
-    # fit model to training data
-    history <- fit(model, 
-                   x_train, y_train,
-                   batch_size = Batch,
-                   epochs = Epochs,
-                   verbose = v=as.numeric(Verbose),
-                   validation_split = Valsplit
-    )
-    
-    result <- list(
-        x = x, y = y,
-        seqfitted = model,
-        call = call
-    )
-    class(result) <- c("textmodel_seq", "textmodel", "list")
-    return(model)
+#' \dontrun{
+#' # create a dataset with evenly balanced coded and uncoded immigration sentences
+#' corpcoded <- corpus_subset(data_corpus_manifestosentsUK, !is.na(crowd_immigration_label))
+#' corpuncoded <- data_corpus_manifestosentsUK %>%
+#'     corpus_subset(is.na(crowd_immigration_label) & year > 1980) %>%
+#'     corpus_sample(size = ndoc(corpcoded))
+#' corp <- corpcoded + corpuncoded
+#' 
+#' # form a tf-idf-weighted dfm
+#' dfmat <- dfm(corp) %>%
+#'     dfm_tfidf()
+#' 
+#' set.seed(1000)
+#' tmod <- textmodel_nnseq(dfmat, y = docvars(dfmat, "crowd_immigration_label"),
+#'                         epochs = 5, verbose = 1)
+#' pred <- predict(tmod, newdata = dfm_subset(dfmat, is.na(crowd_immigration_label)))
+#' table(pred)
+#' tail(texts(corpuncoded)[pred == "Immigration"], 10)
+#' }
+textmodel_nnseq <- function(x, y, units = 512, dropout = .2, 
+                            optimizer = "adam",
+                            loss = "categorical_crossentropy", 
+                            metrics = "categorical_accuracy",
+                            ...) {
+    UseMethod("textmodel_nnseq")
 }
 
+#' @export
+textmodel_nnseq.dfm <- function(x, y, units = 512, dropout = .2, 
+                                optimizer = "adam",
+                                loss = "categorical_crossentropy", 
+                                metrics = "categorical_accuracy", ...) {
+    stopifnot(ndoc(x) == length(y))
+    
+    x <- as.dfm(x)
+    y <- as.factor(y)
+    result <- list(x = x, y = y, call = match.call(), classnames = levels(y))
+    
+    # trim missings for fitting model
+    na_ind <- which(is.na(y))
+    if (length(na_ind) > 0) {
+        # message(length(na_ind), "observations with the value 'NA' were removed.")
+        y <- y[-na_ind]
+        x <- x[-na_ind]
+    }
+    
+    # "one-hot" encode y
+    y2 <- to_categorical(as.integer(y) - 1, num_classes = nlevels(y))
+    
+    # use keras to fit the model
+    model <- keras_model_sequential()
+    model %>%
+        layer_dense(units = units, input_shape = nfeat(x)) %>%
+        layer_activation(activation = "relu") %>%
+        layer_dropout(rate = dropout) %>%
+        layer_dense(units = nlevels(y)) %>%
+        layer_activation(activation = "softmax")
+    compile(model, loss = loss, optimizer = optimizer, metrics = metrics)
+    history <- fit(model, x, y2, ...)
+    
+    # compile, class, and return the result
+    result <- c(result, list(seqfitted = model))
+    class(result) <- c("textmodel_nnseq", "textmodel", "list")
+    return(result)
+}
 
 #' Prediction from a fitted textmodel_nnseq object
 #'
@@ -94,7 +103,7 @@ textmodel_nnseq <- function(x, y, Seed = 17,
 #'   "probability"}).
 #' @seealso \code{\link{textmodel_nnseq}}
 #' @keywords textmodel internal
-#' @importFrom keras predict_classes predict_proba 
+#' @importFrom keras predict_classes predict_proba
 #' @export
 predict.textmodel_nnseq <- function(object, newdata = NULL,
                                   type = c("class", "probability"),
@@ -107,18 +116,60 @@ predict.textmodel_nnseq <- function(object, newdata = NULL,
     if (!is.null(newdata)) {
         data <- as.dfm(newdata)
     } else {
-        stop("New data required to make prediction.")
+        data <- as.dfm(object$x)
+    }
+    
+    data <- if (is.null(newdata)) {
+        suppressWarnings(quanteda:::force_conformance(data, featnames(data), force))
+    } else {
+        quanteda:::force_conformance(data, featnames(data), force)
     }
     
     if (type == "class") {
-        pred_y <- predict_classes(object = object, x = data)
-        pred_y <- as.character(pred_y)
+        pred_y <- predict_classes(object$seqfitted, x = data)
+        pred_y <- factor(pred_y, labels = object$classnames, levels = (seq_along(object$classnames) - 1))
         names(pred_y) <- docnames(data)
     } else if (type == "probability") {
-        pred_y <- predict_proba(object = object, x = data)
-        #pred_y <- pred_y$probabilities
+        pred_y <- predict_proba(object$seqfitted, x = data)
+        colnames(pred_y) <- object$classnames
         rownames(pred_y) <- docnames(data)
     }
     
     pred_y
+}
+
+#' @export
+#' @method print textmodel_nnseq
+print.textmodel_nnseq <- function(x, ...) {
+    layer_names <- gsub(pattern = "_\\d*", "", lapply(x$seqfitted$layers, function(z) z$name))
+    cat("\nCall:\n")
+    print(x$call)
+    cat("\n",
+        format(length(na.omit(x$y)), big.mark = ","), " training documents; ",
+        format(length(x$weights), big.mark = ","), " fitted features",
+        ".\n",
+        "Structure: ", paste(layer_names, collapse = " -> "), "\n",
+        sep = "")
+}
+
+#' summary method for textmodel_svm objects
+#' @param object output from \code{\link{textmodel_svm}}
+#' @param ... additional arguments not used
+#' @keywords textmodel internal
+#' @method summary textmodel_nnseq
+#' @export
+summary.textmodel_nnseq <- function(object, ...) {
+    layer_names <- gsub(pattern = "_\\d*", "", lapply(object$seqfitted$layers, function(x) x$name))
+    
+    result <- list(
+        "call" = object$call,
+        "model structure" = paste(layer_names, collapse = " -> ")
+    )
+    as.summary.textmodel(result)
+}
+
+#' @export
+#' @method print predict.textmodel_nnseq
+print.predict.textmodel_nnseq <- function(x, ...) {
+    print(unclass(x))
 }
