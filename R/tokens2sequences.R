@@ -12,10 +12,11 @@ tokens2sequences <- function(x) {
     UseMethod("tokens2sequences")
 }
 
-tokens2sequences.tokens <- function(x) {
+tokens2sequences.tokens <- function(x, maxsenlen = 40) {
     x <- unclass(x)
     attributes(x) <- NULL
     x_freqs <- table(unlist(unclass(x)))
-    x_freqs_ordered <- temp[order(temp, decreasing = TRUE)]
-    lapply(x, function(y) as.integer(names(x_freqs_ordered))[y])
+    x_freqs_ordered <- x_freqs[order(x_freqs, decreasing = TRUE)]
+    x <- lapply(x, function(y) as.integer(names(x_freqs_ordered))[y])
+    do.call("rbind", lapply(x, function(y) if(length(y) >= maxsenlen) {y[1:maxsenlen]} else {c(rep(0,times = maxsenlen - length(y)), y)}))
 }
