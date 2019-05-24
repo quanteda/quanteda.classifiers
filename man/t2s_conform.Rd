@@ -15,7 +15,7 @@
 Converts the feature names of one text2sequences object to that of another
 }
 \examples{
-\dontrun {
+\dontrun{
 corpcoded <- corpus_subset(data_corpus_manifestosentsUK, !is.na(crowd_immigration_label))
 corpuncoded <- data_corpus_manifestosentsUK \%>\%
     corpus_subset(is.na(crowd_immigration_label) & year > 1980) \%>\%
@@ -31,6 +31,7 @@ seqxy <- t2s_conform(seqx, seqy)
 
 print(seqxy)
 }
+
 }
 \seealso{
 \code{\link{tokens2sequences}}

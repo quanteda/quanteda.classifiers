@@ -23,21 +23,21 @@ sequential model}
 
 \item{dropout1}{A floating variable bound between 0 and 1. It determines the
 rate at which units are dropped for the linear transformation of the
-inputs.}
+inputs for the embedding layer.}
 
 \item{dropout2}{A floating variable bound between 0 and 1. It determines the
 rate at which units are dropped for the linear transformation of the
-inputs.}
+inputs for the LSTM layer.}
 
 \item{dropout3}{A floating variable bound between 0 and 1. It determines the
 rate at which units are dropped for the linear transformation of the
-inputs.}
+inputs for the recurrent layer.}
 
 \item{wordembeddim}{The number of word embedding dimensions to be fit}
 
-\item{filter}{}
+\item{filter}{The number of output filters in the convolution}
 
-\item{kernel_size}{}
+\item{kernel_size}{An integer or list of a single integer, specifying the length of the 1D convolution window}
 
 \item{pool_size}{Size of the max pooling windows.
 \code{\link[keras]{layer_max_pooling_1d}}}

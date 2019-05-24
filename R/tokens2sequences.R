@@ -96,7 +96,7 @@ print.tokens2sequences <- function(x, ...) {
 #' @export
 #' @method t2s_conform tokens2sequences
 #' @examples 
-#' \dontrun {
+#' \dontrun{
 #' corpcoded <- corpus_subset(data_corpus_manifestosentsUK, !is.na(crowd_immigration_label))
 #' corpuncoded <- data_corpus_manifestosentsUK %>%
 #'     corpus_subset(is.na(crowd_immigration_label) & year > 1980) %>%
@@ -112,6 +112,7 @@ print.tokens2sequences <- function(x, ...) {
 #' 
 #' print(seqxy)
 #' }
+#' 
 
 t2s_conform <- function(x, y) {
     UseMethod("t2s_conform")

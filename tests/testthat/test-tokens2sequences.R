@@ -13,5 +13,5 @@ test_that("tokens2sequences works", {
     seq <- tokens2sequences(text_tokens, maxsenlen = 10, keepn = 5)
     
     expect_equal(dim(seq$matrix), c(5, 10))
-    expect_equal(seq$nterms, 3)
+    expect_equal(seq$nfeatures, 5)
 })
