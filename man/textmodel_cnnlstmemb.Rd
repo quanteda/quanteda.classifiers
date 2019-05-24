@@ -4,9 +4,12 @@
 \alias{textmodel_cnnlstmemb}
 \title{sequential neural network model for text classification}
 \usage{
-textmodel_cnnlstmemb(x, y, units = 512, dropout = 0.2,
-  optimizer = "adam", loss = "categorical_crossentropy",
-  metrics = "categorical_accuracy", ...)
+textmodel_cnnlstmemb(x, y, units = 512, dropout1 = 0.2,
+  dropout2 = 0.2, dropout3 = 0.2, wordembeddim = 30, filter = 48,
+  kernel_size = 5, pool_size = 4, units_lstm = 128, words = NULL,
+  maxsenlen = 50, optimizer = "adam",
+  loss = "categorical_crossentropy", metrics = "categorical_accuracy",
+  ...)
 }
 \arguments{
 \item{x}{tokens object}
@@ -18,9 +21,32 @@ factors.)}
 \item{units}{The number of network nodes used in the first layer of the
 sequential model}
 
-\item{dropout}{A floating variable bound between 0 and 1. It determines the
+\item{dropout1}{A floating variable bound between 0 and 1. It determines the
 rate at which units are dropped for the linear transformation of the
 inputs.}
+
+\item{dropout2}{A floating variable bound between 0 and 1. It determines the
+rate at which units are dropped for the linear transformation of the
+inputs.}
+
+\item{dropout3}{A floating variable bound between 0 and 1. It determines the
+rate at which units are dropped for the linear transformation of the
+inputs.}
+
+\item{wordembeddim}{The number of word embedding dimensions to be fit}
+
+\item{filter}{}
+
+\item{kernel_size}{}
+
+\item{pool_size}{Size of the max pooling windows.
+\code{\link[keras]{layer_max_pooling_1d}}}
+
+\item{units_lstm}{The number of nodes of the lstm layer}
+
+\item{words}{The maximum number of words used to train model. Defaults to the number of features in \code{x}}
+
+\item{maxsenlen}{The maximum sentence length of training data}
 
 \item{optimizer}{optimizer used to fit model to training data, see
 \code{\link[keras]{compile.keras.engine.training.Model}}}
@@ -46,12 +72,11 @@ corpuncoded <- data_corpus_manifestosentsUK \%>\%
     corpus_sample(size = ndoc(corpcoded))
 corp <- corpcoded + corpuncoded
 
-# form a tf-idf-weighted dfm
-dfmat <- dfm(corp) \%>\%
-    dfm_tfidf()
+# form a tokens object
+corptok <- tokens(texts(corp))
 
 set.seed(1000)
-tmod <- textmodel_cnnlstmemb(dfmat, y = docvars(dfmat, "crowd_immigration_label"),
+tmod <- textmodel_cnnlstmemb(corptok, y = docvars(dfmat, "crowd_immigration_label"),
                         epochs = 5, verbose = 1)
 pred <- predict(tmod, newdata = dfm_subset(dfmat, is.na(crowd_immigration_label)))
 table(pred)
