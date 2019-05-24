@@ -102,7 +102,7 @@ textmodel_cnnlstmemb.tokens <- function(x, y, units = 512, dropout1 = .2, dropou
     history <- fit(model, x$matrix, y2, ...)
     
     # compile, class, and return the result
-    result <- c(result, nfeatures = x$nfeatures, list(seqfitted = model))
+    result <- c(result, nfeatures = x$nfeatures, maxsenlen = maxsenlen, list(seqfitted = model))
     class(result) <- c("textmodel_cnnlstmemb", "textmodel", "list")
     return(result)
 }
@@ -133,21 +133,21 @@ predict.textmodel_cnnlstmemb <- function(object, newdata = NULL,
     type <- match.arg(type)
     
     if (!is.null(newdata)) {
-        data <- tokens2sequences(newdata, maxsenlen = ncol(object$matrix), keepn = object$nfeatures)
-        t2s_object <- tokens2sequences(object$x, maxsenlen = ncol(object$matrix), keepn = object$nfeatures)
+        data <- tokens2sequences(newdata, maxsenlen = object$maxsenlen, keepn = object$nfeatures)
+        t2s_object <- tokens2sequences(object$x, maxsenlen = object$maxsenlen, keepn = object$nfeatures)
         data <- t2s_conform(data, t2s_object)
     } else {
-        data <- tokens2sequences(object$x, maxsenlen = ncol(object$matrix), keepn = object$nfeatures)
+        data <- tokens2sequences(object$x, maxsenlen = object$maxsenlen, keepn = object$nfeatures)
     }
     
     if (type == "class") {
-        pred_y <- predict_classes(object$seqfitted, x = data)
+        pred_y <- predict_classes(object$seqfitted, x = data$matrix)
         pred_y <- factor(pred_y, labels = object$classnames, levels = (seq_along(object$classnames) - 1))
-        names(pred_y) <- docnames(data)
+        names(pred_y) <- rownames(data$matrix)
     } else if (type == "probability") {
-        pred_y <- predict_proba(object$seqfitted, x = data)
+        pred_y <- predict_proba(object$seqfitted, x = data$matrix)
         colnames(pred_y) <- object$classnames
-        rownames(pred_y) <- docnames(data)
+        rownames(pred_y) <- rownames(data$matrix)
     }
     
     pred_y
