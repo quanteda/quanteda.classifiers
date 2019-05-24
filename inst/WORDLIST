@@ -1,3 +1,4 @@
+cnnlstmemb
 Crowdflower
 csr
 dfm
@@ -8,7 +9,7 @@ Hsieh
 Keerthi
 labeled
 LIBLINEAR
-LSTM
+lstm
 Mikhaylov
 newdata's
 nnseq
