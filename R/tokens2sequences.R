@@ -31,7 +31,7 @@
 tokens2sequences <- function(x, maxsenlen = 40, keepn = NULL) {
     UseMethod("tokens2sequences")
 }
-
+#' @export
 tokens2sequences.tokens <- function(x, maxsenlen = 40, keepn = NULL) {
     tfeq <- sort(table(unlist(x)), decreasing = T)
     doc_nam <- docnames(x)
