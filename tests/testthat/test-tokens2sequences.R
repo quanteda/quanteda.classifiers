@@ -15,3 +15,20 @@ test_that("tokens2sequences works", {
     expect_equal(dim(seq$matrix), c(5, 10))
     expect_equal(seq$nfeatures, 5)
 })
+
+test_that("t2s_conform works", {
+    corpcoded <- corpus_subset(data_corpus_manifestosentsUK, !is.na(crowd_immigration_label))
+    corpuncoded <- data_corpus_manifestosentsUK %>%
+        corpus_subset(is.na(crowd_immigration_label) & year > 1980) %>%
+        corpus_sample(size = ndoc(corpcoded))
+    
+    tokx <- tokens(corpuncoded)
+    toky <- tokens(corpcoded)
+    
+    seqx <- tokens2sequences(tokx, maxsenlen = 50, keepn = 5000)
+    seqy <- tokens2sequences(toky, maxsenlen = 50, keepn = 5000)
+    
+    seqxy <- t2s_conform(seqx, seqy)
+    
+    print(seqxy)
+})

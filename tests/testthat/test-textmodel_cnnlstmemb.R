@@ -9,7 +9,6 @@ test_that("the cnnlstmemb model works", {
     
     dfmat <- tokens(texts(corp))
     label <- ifelse(docvars(corp, "crowd_subsidy_label") == "Pro-Subsidy", 1, 0)
-    
     tmod <- textmodel_cnnlstmemb(dfmat, y = label, epochs = 8)
     
     expect_output(
