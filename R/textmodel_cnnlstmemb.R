@@ -136,7 +136,7 @@ predict.textmodel_cnnlstmemb <- function(object, newdata = NULL,
     if (!is.null(newdata)) {
         data <- tokens2sequences(newdata, maxsenlen = object$maxsenlen, keepn = object$nfeatures)
         t2s_object <- tokens2sequences(object$x, maxsenlen = object$maxsenlen, keepn = object$nfeatures)
-        data <- t2s_conform(data, t2s_object)
+        data <- tokens2sequences_conform(data, t2s_object)
     } else {
         data <- tokens2sequences(object$x, maxsenlen = object$maxsenlen, keepn = object$nfeatures)
     }

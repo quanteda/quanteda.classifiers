@@ -1,19 +1,18 @@
-#' convert tokens to sequences for quanteda.classifiers lstm model input
+#' convert \link[quanteda]{tokens} to sequences for \pkg{quanteda.classifiers} lstm model input
 #'
 #' This function converts a \pkg{quanteda} \link[quanteda]{tokens} object into a \link{tokens2sequence} object. 
 #' 
 #' 
-#' @param x tokens object
+#' @param x \link[quanteda]{tokens} object
 #' @param maxsenlen the maximum sentence length kept in output matrix
 #' @param keepn the maximum number of features to keep
 #'
-#' @return \code{tokens2sequences} The output matrix has a 
+#' @return \code{\link{tokens2sequences}} The output matrix has a 
 #' number of rows which represent each tokenized sentence input into the function
 #' and a number of columns determined by \code{maxsenlen}. The matrix contains a numeric 
 #' code for every unique token kept (determined by \code{keepn})
-#' and they are arranged in the same sequence indicated by the original tokens object. 
+#' and they are arranged in the same sequence indicated by the original \link[quanteda]{tokens} object. 
 #' @export
-#'
 #' @examples
 #' \dontrun{
 #' corpcoded <- corpus_subset(data_corpus_manifestosentsUK, !is.na(crowd_immigration_label))
@@ -31,8 +30,10 @@
 tokens2sequences <- function(x, maxsenlen = 40, keepn = NULL) {
     UseMethod("tokens2sequences")
 }
+
 #' @export
 tokens2sequences.tokens <- function(x, maxsenlen = 40, keepn = NULL) {
+    stopifnot(is.tokens(x))
     tfeq <- sort(table(unlist(x)), decreasing = T)
     doc_nam <- docnames(x)
     x <- unclass(x)
@@ -80,14 +81,13 @@ print.tokens2sequences <- function(x, ...) {
     head(x$matrix[, 1:max_n], 4)
 }
 
-#' Converts the feature names of one text2sequences object to that of another
+#' Converts the feature names of one \code{\link{tokens2sequence}} object to those of another
 #'
 #' 
-#' @param x tokens2sequence object that will be forced to conform
-#' @param y tokens2sequence object whose feature names will be used to change token labels for \code{x}
+#' @param x \code{\link{tokens2sequence}} object that will be forced to conform
+#' @param y \code{\link{tokens2sequence}} object whose feature names will be used to change token labels for \code{x}
 #' @seealso \code{\link{tokens2sequences}}
 #' @export
-#' @method t2s_conform tokens2sequences
 #' @examples 
 #' \dontrun{
 #' corpcoded <- corpus_subset(data_corpus_manifestosentsUK, !is.na(crowd_immigration_label))
@@ -101,18 +101,20 @@ print.tokens2sequences <- function(x, ...) {
 #' seqx <- tokens2sequences(tokx, maxsenlen = 50, keepn = 5000)
 #' seqy <- tokens2sequences(toky, maxsenlen = 50, keepn = 5000)
 #' 
-#' seqxy <- t2s_conform(seqx, seqy)
+#' seqxy <- tokens2sequences_conform(seqx, seqy)
 #' 
 #' print(seqxy)
 #' }
 #' 
 
-t2s_conform <- function(x, y) {
-    UseMethod("t2s_conform")
+tokens2sequences_conform <- function(x, y) {
+    UseMethod("tokens2sequences_conform")
 }
 
-t2s_conform.tokens2sequences <- function(x, y) {
-    
+#' @export
+#' @method tokens2sequences_conform tokens2sequences
+tokens2sequences_conform.tokens2sequences <- function(x, y) {
+    stopifnot(is.tokens2sequences(x) & is.tokens2sequences(y))
     joint_feat <- merge(x$features, y$features[, -3], by = "features", all.x = T)
     joint_feat <- joint_feat[order(joint_feat$label.x, decreasing = F), ]
     mat <- apply(x$matrix, 1, function(x) as.integer(na.omit(joint_feat$label.y[x])))
@@ -125,7 +127,19 @@ t2s_conform.tokens2sequences <- function(x, y) {
     joint_feat <- joint_feat[!is.na(joint_feat$label), ]
     rownames(joint_feat) <- NULL
     
-    output <- list(matrix = mat, nterms = nrow(joint_feat), features = joint_feat)
+    output <- list(matrix = mat, nfeatures = nrow(joint_feat), features = joint_feat)
     class(output) <- c("tokens2sequences", "list")
     return(output)
+}
+
+
+#' Checks to see if function is a \code{\link{tokens2sequences}} type
+#'
+#' 
+#' @param x Object that will be checked to see if it is of the type \code{\link{tokens2sequences}}
+#' @seealso \code{\link{tokens2sequences}}
+#' @export
+
+is.tokens2sequences <- function(x) {
+    "tokens2sequences" %in% class(x)
 }
