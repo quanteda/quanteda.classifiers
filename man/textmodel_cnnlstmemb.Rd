@@ -66,21 +66,22 @@ Explain
 \examples{
 \dontrun{
 # create a dataset with evenly balanced coded and uncoded immigration sentences
-corpcoded <- corpus_subset(data_corpus_manifestosentsUK, !is.na(crowd_immigration_label))
-corpuncoded <- data_corpus_manifestosentsUK \%>\%
-    corpus_subset(is.na(crowd_immigration_label) & year > 1980) \%>\%
-    corpus_sample(size = ndoc(corpcoded))
-corp <- corpcoded + corpuncoded
+corp <- corpus_subset(data_corpus_manifestosentsUK, !is.na(crowd_immigration_label))
 
-# form a tokens object
-corptok <- tokens(texts(corp))
+test <- sample(1:ndoc(corpcoded), size = ndoc(corpcoded) * .2)
 
-set.seed(1000)
-tmod <- textmodel_cnnlstmemb(corptok, y = docvars(dfmat, "crowd_immigration_label"),
-                        epochs = 5, verbose = 1)
-pred <- predict(tmod, newdata = dfm_subset(dfmat, is.na(crowd_immigration_label)))
-table(pred)
-tail(texts(corpuncoded)[pred == "Immigration"], 10)
+corptrain <- tokens(texts(corpcoded)[-test])
+ytrain <- docvars(corpcoded, "crowd_immigration_label")[-test]
+
+corptest <- tokens(texts(corpcoded)[test])
+ytest <- docvars(corpcoded, "crowd_immigration_label")[test]
+
+tmod <- textmodel_cnnlstmemb(corptrain, y = ytrain,
+                             epochs = 5, verbose = 1)
+
+pred <- predict(tmod, newdata = corptest)
+table(ytest, pred)
+
 }
 }
 \keyword{textmodel}
