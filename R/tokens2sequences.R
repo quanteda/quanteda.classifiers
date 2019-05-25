@@ -42,6 +42,7 @@ tokens2sequences.tokens <- function(x, maxsenlen = 40, keepn = NULL) {
     data <- data[order(data$freq, decreasing = T), ]
     if (!is.null(keepn)) {
         data$label <- NA
+        if (keepn > nrow(data)) keepn <- nrow(data)
         data$label[1:keepn] <- 1:keepn
 
     } else {
