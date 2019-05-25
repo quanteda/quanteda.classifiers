@@ -39,19 +39,11 @@ tokens2sequences.tokens <- function(x, maxsenlen = 40, keepn = NULL) {
     features <- attr(x, "types")
     data <- data.frame(features = features, label1 = 1:length(features), freq = as.integer(tfeq[features]), stringsAsFactors = F)
     attributes(x) <- NULL
-    #x_freqs <- table(unlist(unclass(x)))
-    #x_freqs_ordered <- x_freqs[order(x_freqs, decreasing = TRUE)]
     data <- data[order(data$freq, decreasing = T), ]
     if (!is.null(keepn)) {
         data$label <- NA
         data$label[1:keepn] <- 1:keepn
-        #num_freq <- sort(table(data$freq), decreasing = F)
-        #num_freq_sum <- cumsum(num_freq)
-        #freq_keep <- as.numeric(names(which(num_freq_sum <= keepn)))
-        #data$label <- 1:nrow(data)
-        #data$label[data$freq %in% freq_keep] <- NA
-        #label <- 1:nrow(data)
-        #names(label) <- data$label1
+
     } else {
         data$label <- 1:nrow(data)
     }
