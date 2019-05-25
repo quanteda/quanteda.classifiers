@@ -97,12 +97,12 @@ textmodel_cnnlstmemb.tokens <- function(x, y, units = 512, dropout1 = .2, dropou
         layer_conv_1d(filters = filter, kernel_size = kernel_size, activation='relu') %>% 
         layer_max_pooling_1d(pool_size = pool_size) %>% 
         layer_lstm(units = units_lstm, dropout = dropout2, recurrent_dropout = dropout3) %>% 
-        layer_dense(units = nlevels(y), activation = 'sigmoid')
+        layer_dense(units = nlevels(y), activation = 'softmax')
     compile(model, loss = loss, optimizer = optimizer, metrics = metrics)
     history <- fit(model, x$matrix, y2, ...)
     
     # compile, class, and return the result
-    result <- c(result, nfeatures = x$nfeatures, maxsenlen = maxsenlen, list(seqfitted = model))
+    result <- c(result, nfeatures = x$nfeatures, maxsenlen = maxsenlen, list(clefitted = model))
     class(result) <- c("textmodel_cnnlstmemb", "textmodel", "list")
     return(result)
 }
@@ -141,11 +141,11 @@ predict.textmodel_cnnlstmemb <- function(object, newdata = NULL,
     }
     
     if (type == "class") {
-        pred_y <- predict_classes(object$seqfitted, x = data$matrix)
+        pred_y <- predict_classes(object$clefitted, x = data$matrix)
         pred_y <- factor(pred_y, labels = object$classnames, levels = (seq_along(object$classnames) - 1))
         names(pred_y) <- rownames(data$matrix)
     } else if (type == "probability") {
-        pred_y <- predict_proba(object$seqfitted, x = data$matrix)
+        pred_y <- predict_proba(object$clefitted, x = data$matrix)
         colnames(pred_y) <- object$classnames
         rownames(pred_y) <- rownames(data$matrix)
     }
@@ -156,7 +156,7 @@ predict.textmodel_cnnlstmemb <- function(object, newdata = NULL,
 #' @export
 #' @method print textmodel_cnnlstmemb
 print.textmodel_cnnlstmemb <- function(x, ...) {
-    layer_names <- gsub(pattern = "_\\d*", "", lapply(x$seqfitted$layers, function(z) z$name))
+    layer_names <- gsub(pattern = "_\\d*", "", lapply(x$clefitted$layers, function(z) z$name))
     cat("\nCall:\n")
     print(x$call)
     cat("\n",
@@ -174,7 +174,7 @@ print.textmodel_cnnlstmemb <- function(x, ...) {
 #' @method summary textmodel_cnnlstmemb
 #' @export
 summary.textmodel_cnnlstmemb <- function(object, ...) {
-    layer_names <- gsub(pattern = "_\\d*", "", lapply(object$seqfitted$layers, function(x) x$name))
+    layer_names <- gsub(pattern = "_\\d*", "", lapply(object$clefitted$layers, function(x) x$name))
     
     result <- list(
         "call" = object$call,
