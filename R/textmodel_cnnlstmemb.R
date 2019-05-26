@@ -38,21 +38,20 @@
 #' @examples 
 #' \dontrun{
 #' # create a dataset with evenly balanced coded and uncoded immigration sentences
-#' corp <- corpus_subset(data_corpus_manifestosentsUK, !is.na(crowd_immigration_label))
+#' corpcoded <- corpus_subset(data_corpus_manifestosentsUK, !is.na(crowd_immigration_label))
+#' corpuncoded <- data_corpus_manifestosentsUK %>%
+#'     corpus_subset(is.na(crowd_immigration_label) & year > 1980) %>%
+#'     corpus_sample(size = ndoc(corpcoded))
+#' corp <- corpcoded + corpuncoded
 #' 
-#' test <- sample(1:ndoc(corpcoded), size = ndoc(corpcoded) * .2)
+#' tok <- tokens(corp)
 #' 
-#' corptrain <- tokens(texts(corpcoded)[-test])
-#' ytrain <- docvars(corpcoded, "crowd_immigration_label")[-test]
-#' 
-#' corptest <- tokens(texts(corpcoded)[test])
-#' ytest <- docvars(corpcoded, "crowd_immigration_label")[test]
-#' 
-#' tmod <- textmodel_cnnlstmemb(corptrain, y = ytrain,
+#' tmod <- textmodel_cnnlstmemb(tok, y = docvars(tok, "crowd_immigration_label"),
 #'                              epochs = 5, verbose = 1)
 #' 
-#' pred <- predict(tmod, newdata = corptest)
-#' table(ytest, pred)
+#' pred <- predict(tmod, newdata = tokens_subset(tok, subset = is.na(crowd_immigration_label)))
+#' table(pred)
+#' tail(texts(corpuncoded)[pred == "Immigration"], 10)
 #' 
 #' }
 textmodel_cnnlstmemb <- function(x, y, units = 512, dropout1 = .2, dropout2 = .2, dropout3 = .2, 
