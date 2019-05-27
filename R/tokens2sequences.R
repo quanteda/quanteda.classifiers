@@ -1,9 +1,9 @@
-#' convert \link[quanteda]{tokens} to sequences for \pkg{quanteda.classifiers} lstm model input
+#' convert \code{\link[quanteda]{tokens}} to sequences for \pkg{quanteda.classifiers} lstm model input
 #'
-#' This function converts a \pkg{quanteda} \link[quanteda]{tokens} object into a \link{tokens2sequence} object. 
+#' This function converts a \pkg{quanteda} \code{\link[quanteda]{tokens}} object into a \code{\link{tokens2sequence}} object. 
 #' 
 #' 
-#' @param x \link[quanteda]{tokens} object
+#' @param x \code{\link[quanteda]{tokens}} object
 #' @param maxsenlen the maximum sentence length kept in output matrix
 #' @param keepn the maximum number of features to keep
 #'
@@ -11,7 +11,7 @@
 #' number of rows which represent each tokenized sentence input into the function
 #' and a number of columns determined by \code{maxsenlen}. The matrix contains a numeric 
 #' code for every unique token kept (determined by \code{keepn})
-#' and they are arranged in the same sequence indicated by the original \link[quanteda]{tokens} object. 
+#' and they are arranged in the same sequence indicated by the original \code{\link[quanteda]{tokens}} object. 
 #' @export
 #' @examples
 #' \dontrun{

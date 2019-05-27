@@ -2,12 +2,12 @@
 % Please edit documentation in R/tokens2sequences.R
 \name{tokens2sequences}
 \alias{tokens2sequences}
-\title{convert \link[quanteda]{tokens} to sequences for \pkg{quanteda.classifiers} lstm model input}
+\title{convert \code{\link[quanteda]{tokens}} to sequences for \pkg{quanteda.classifiers} lstm model input}
 \usage{
 tokens2sequences(x, maxsenlen = 40, keepn = NULL)
 }
 \arguments{
-\item{x}{\link[quanteda]{tokens} object}
+\item{x}{\code{\link[quanteda]{tokens}} object}
 
 \item{maxsenlen}{the maximum sentence length kept in output matrix}
 
@@ -18,10 +18,10 @@ tokens2sequences(x, maxsenlen = 40, keepn = NULL)
 number of rows which represent each tokenized sentence input into the function
 and a number of columns determined by \code{maxsenlen}. The matrix contains a numeric 
 code for every unique token kept (determined by \code{keepn})
-and they are arranged in the same sequence indicated by the original \link[quanteda]{tokens} object.
+and they are arranged in the same sequence indicated by the original \code{\link[quanteda]{tokens}} object.
 }
 \description{
-This function converts a \pkg{quanteda} \link[quanteda]{tokens} object into a \link{tokens2sequence} object.
+This function converts a \pkg{quanteda} \code{\link[quanteda]{tokens}} object into a \code{\link{tokens2sequence}} object.
 }
 \examples{
 \dontrun{
