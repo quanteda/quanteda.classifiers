@@ -35,7 +35,7 @@ inputs for the recurrent layer.}
 
 \item{wordembeddim}{The number of word embedding dimensions to be fit}
 
-\item{cnnlayer}{A logical parmeter that allows user to include or exclude a convolutional layer in the neural network model}
+\item{cnnlayer}{A logical parameter that allows user to include or exclude a convolutional layer in the neural network model}
 
 \item{filter}{The number of output filters in the convolution}
 

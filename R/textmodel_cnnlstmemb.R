@@ -15,7 +15,7 @@
 #'   rate at which units are dropped for the linear transformation of the
 #'   inputs for the recurrent layer.
 #' @param wordembeddim The number of word embedding dimensions to be fit
-#' @param cnnlayer A logical parmeter that allows user to include or exclude a convolutional layer in the neural network model
+#' @param cnnlayer A logical parameter that allows user to include or exclude a convolutional layer in the neural network model
 #' @param filter The number of output filters in the convolution
 #' @param kernel_size An integer or list of a single integer, specifying the length of the 1D convolution window
 #' @param pool_size Size of the max pooling windows.
