@@ -15,6 +15,7 @@
 #'   rate at which units are dropped for the linear transformation of the
 #'   inputs for the recurrent layer.
 #' @param wordembeddim The number of word embedding dimensions to be fit
+#' @param cnnlayer A logical parmeter that allows user to include or exclude a convolutional layer in the neural network model
 #' @param filter The number of output filters in the convolution
 #' @param kernel_size An integer or list of a single integer, specifying the length of the 1D convolution window
 #' @param pool_size Size of the max pooling windows.
@@ -55,7 +56,7 @@
 #' 
 #' }
 textmodel_cnnlstmemb <- function(x, y, units = 512, dropout1 = .2, dropout2 = .2, dropout3 = .2, 
-                                 wordembeddim = 30, filter = 48, kernel_size = 5, pool_size = 4,
+                                 wordembeddim = 30, cnnlayer = TRUE, filter = 48, kernel_size = 5, pool_size = 4,
                                  units_lstm = 128, words = NULL, maxsenlen = 50,
                                  optimizer = "adam",
                                  loss = "categorical_crossentropy", 
@@ -65,7 +66,7 @@ textmodel_cnnlstmemb <- function(x, y, units = 512, dropout1 = .2, dropout2 = .2
 
 #' @export
 textmodel_cnnlstmemb.tokens <- function(x, y, units = 512, dropout1 = .2, dropout2 = .2, dropout3 = .2, 
-                                     wordembeddim = 30, filter = 48, kernel_size = 5, pool_size = 4,
+                                     wordembeddim = 30, cnnlayer = TRUE, filter = 48, kernel_size = 5, pool_size = 4,
                                      units_lstm = 128, words = NULL, maxsenlen = 50, 
                                 optimizer = "adam",
                                 loss = "categorical_crossentropy", 
@@ -91,13 +92,21 @@ textmodel_cnnlstmemb.tokens <- function(x, y, units = 512, dropout1 = .2, dropou
     
     # use keras to fit the model
     model <- keras_model_sequential()
+    
     model %>%
-        layer_embedding(input_dim = words + 1, output_dim = wordembeddim, input_length = dim(x)[2]) %>%
-        layer_dropout(rate = dropout1) %>% 
-        layer_conv_1d(filters = filter, kernel_size = kernel_size, activation='relu') %>% 
-        layer_max_pooling_1d(pool_size = pool_size) %>% 
+        layer_embedding(input_dim = words + 1, output_dim = wordembeddim, input_length = maxsenlen) %>%
+        layer_dropout(rate = dropout1)
+    
+    if (cnnlayer == TRUE) {
+        model %>% 
+            layer_conv_1d(filters = filter, kernel_size = kernel_size, activation='relu') %>%
+            layer_max_pooling_1d(pool_size = pool_size)
+    }
+    
+    model %>% 
         layer_lstm(units = units_lstm, dropout = dropout2, recurrent_dropout = dropout3) %>% 
         layer_dense(units = nlevels(y), activation = 'softmax')
+    
     compile(model, loss = loss, optimizer = optimizer, metrics = metrics)
     history <- fit(model, x$matrix, y2, ...)
     

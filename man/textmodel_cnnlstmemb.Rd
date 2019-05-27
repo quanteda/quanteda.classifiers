@@ -5,11 +5,11 @@
 \title{sequential neural network model for text classification}
 \usage{
 textmodel_cnnlstmemb(x, y, units = 512, dropout1 = 0.2,
-  dropout2 = 0.2, dropout3 = 0.2, wordembeddim = 30, filter = 48,
-  kernel_size = 5, pool_size = 4, units_lstm = 128, words = NULL,
-  maxsenlen = 50, optimizer = "adam",
-  loss = "categorical_crossentropy", metrics = "categorical_accuracy",
-  ...)
+  dropout2 = 0.2, dropout3 = 0.2, wordembeddim = 30,
+  cnnlayer = TRUE, filter = 48, kernel_size = 5, pool_size = 4,
+  units_lstm = 128, words = NULL, maxsenlen = 50,
+  optimizer = "adam", loss = "categorical_crossentropy",
+  metrics = "categorical_accuracy", ...)
 }
 \arguments{
 \item{x}{tokens object}
@@ -34,6 +34,8 @@ rate at which units are dropped for the linear transformation of the
 inputs for the recurrent layer.}
 
 \item{wordembeddim}{The number of word embedding dimensions to be fit}
+
+\item{cnnlayer}{A logical parmeter that allows user to include or exclude a convolutional layer in the neural network model}
 
 \item{filter}{The number of output filters in the convolution}
 
