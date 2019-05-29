@@ -2,7 +2,7 @@
 % Please edit documentation in R/tokens2sequences.R
 \name{is.tokens2sequences}
 \alias{is.tokens2sequences}
-\title{Checks to see if function is a \code{\link{tokens2sequences}} type}
+\title{Check to see if function is a tokens2sequences type}
 \usage{
 is.tokens2sequences(x)
 }
@@ -10,7 +10,7 @@ is.tokens2sequences(x)
 \item{x}{Object that will be checked to see if it is of the type \code{\link{tokens2sequences}}}
 }
 \description{
-Checks to see if function is a \code{\link{tokens2sequences}} type
+Check to see if function is a tokens2sequences type
 }
 \seealso{
 \code{\link{tokens2sequences}}

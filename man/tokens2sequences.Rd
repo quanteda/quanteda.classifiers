@@ -2,7 +2,7 @@
 % Please edit documentation in R/tokens2sequences.R
 \name{tokens2sequences}
 \alias{tokens2sequences}
-\title{convert \code{\link[quanteda]{tokens}} to sequences for \pkg{quanteda.classifiers} lstm model input}
+\title{Convert quanteda tokens to keras sequences}
 \usage{
 tokens2sequences(x, maxsenlen = 40, keepn = NULL)
 }
@@ -14,17 +14,19 @@ tokens2sequences(x, maxsenlen = 40, keepn = NULL)
 \item{keepn}{the maximum number of features to keep}
 }
 \value{
-\code{\link{tokens2sequences}} The output matrix has a 
-number of rows which represent each tokenized sentence input into the function
-and a number of columns determined by \code{maxsenlen}. The matrix contains a numeric 
-code for every unique token kept (determined by \code{keepn})
-and they are arranged in the same sequence indicated by the original \code{\link[quanteda]{tokens}} object.
+\code{\link{tokens2sequences}} The output matrix has a number of rows
+  which represent each tokenized sentence input into the function and a
+  number of columns determined by \code{maxsenlen}. The matrix contains a
+  numeric code for every unique token kept (determined by \code{keepn}) and
+  they are arranged in the same sequence indicated by the original
+  \code{\link[quanteda]{tokens}} object.
 }
 \description{
-This function converts a \pkg{quanteda} \code{\link[quanteda]{tokens}} object into a \code{\link{tokens2sequence}} object.
+This function converts a \pkg{quanteda} \code{\link[quanteda]{tokens}} object
+into a tokens sequence object as expected by some functions in the
+\pkg{keras} package.
 }
 \examples{
-\dontrun{
 corpcoded <- corpus_subset(data_corpus_manifestosentsUK, !is.na(crowd_immigration_label))
 corpuncoded <- data_corpus_manifestosentsUK \%>\%
     corpus_subset(is.na(crowd_immigration_label) & year > 1980) \%>\%
@@ -35,6 +37,4 @@ corptok <- tokens(texts(corp))
 print(corp)
 seqs <- tokens2sequences(corptok, maxsenlen = 200)
 print(seqs)
-}
-
 }

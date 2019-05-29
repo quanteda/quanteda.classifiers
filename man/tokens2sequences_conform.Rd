@@ -2,36 +2,32 @@
 % Please edit documentation in R/tokens2sequences.R
 \name{tokens2sequences_conform}
 \alias{tokens2sequences_conform}
-\title{Converts the feature names of one \code{\link{tokens2sequence}} object to those of another}
+\title{Match the feature names of one tokens2sequences object to another}
 \usage{
 tokens2sequences_conform(x, y)
 }
 \arguments{
-\item{x}{\code{\link{tokens2sequence}} object that will be forced to conform}
+\item{x}{\code{\link{tokens2sequences}} object that will be forced to conform}
 
-\item{y}{\code{\link{tokens2sequence}} object whose feature names will be used to change token labels for \code{x}}
+\item{y}{\code{\link{tokens2sequences}} object whose feature names will be
+used to change token labels for \code{x}}
 }
 \description{
-Converts the feature names of one \code{\link{tokens2sequence}} object to those of another
+Converts the feature names of one tokens2sequences object to those of
+another.  Useful in aligning training and test sets.
 }
 \examples{
-\dontrun{
 corpcoded <- corpus_subset(data_corpus_manifestosentsUK, !is.na(crowd_immigration_label))
 corpuncoded <- data_corpus_manifestosentsUK \%>\%
     corpus_subset(is.na(crowd_immigration_label) & year > 1980) \%>\%
     corpus_sample(size = ndoc(corpcoded))
 
-tokx <- tokens(texts(corpuncoded))
-toky <- tokens(texts(corpcoded))
+tokx <- tokens(corpuncoded)
+toky <- tokens(corpcoded)
 
 seqx <- tokens2sequences(tokx, maxsenlen = 50, keepn = 5000)
 seqy <- tokens2sequences(toky, maxsenlen = 50, keepn = 5000)
-
-seqxy <- tokens2sequences_conform(seqx, seqy)
-
-print(seqxy)
-}
-
+tokens2sequences_conform(seqx, seqy)
 }
 \seealso{
 \code{\link{tokens2sequences}}
