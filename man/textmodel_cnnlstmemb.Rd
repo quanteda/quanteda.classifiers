@@ -4,12 +4,12 @@
 \alias{textmodel_cnnlstmemb}
 \title{Convolutional NN + LSTM model fitted to word embeddings}
 \usage{
-textmodel_cnnlstmemb(x, y, units = 512, dropout1 = 0.2,
-  dropout2 = 0.2, dropout3 = 0.2, wordembeddim = 30,
-  cnnlayer = TRUE, filter = 48, kernel_size = 5, pool_size = 4,
-  units_lstm = 128, words = NULL, maxsenlen = 50,
-  optimizer = "adam", loss = "categorical_crossentropy",
-  metrics = "categorical_accuracy", ...)
+textmodel_cnnlstmemb(x, y, dropout1 = 0.2, dropout2 = 0.2,
+  dropout3 = 0.2, wordembeddim = 30, cnnlayer = TRUE, filter = 48,
+  kernel_size = 5, pool_size = 4, units_lstm = 128, words = NULL,
+  maxsenlen = 50, optimizer = "adam",
+  loss = "categorical_crossentropy", metrics = "categorical_accuracy",
+  ...)
 }
 \arguments{
 \item{x}{tokens object}
@@ -17,9 +17,6 @@ textmodel_cnnlstmemb(x, y, units = 512, dropout1 = 0.2,
 \item{y}{vector of training labels associated with each document identified 
 in \code{train}.  (These will be converted to factors if not already 
 factors.)}
-
-\item{units}{The number of network nodes used in the first layer of the
-sequential model}
 
 \item{dropout1}{A floating variable bound between 0 and 1. It determines the
 rate at which units are dropped for the linear transformation of the

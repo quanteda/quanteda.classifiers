@@ -3,8 +3,6 @@
 #' Add explanation.
 #' @param x tokens object
 #' @inheritParams textmodel_svm
-#' @param units The number of network nodes used in the first layer of the
-#'   sequential model
 #' @param dropout1 A floating variable bound between 0 and 1. It determines the
 #'   rate at which units are dropped for the linear transformation of the
 #'   inputs for the embedding layer.
@@ -55,7 +53,7 @@
 #' tail(texts(corpuncoded)[pred == "Immigration"], 10)
 #' 
 #' }
-textmodel_cnnlstmemb <- function(x, y, units = 512, dropout1 = .2, dropout2 = .2, dropout3 = .2,
+textmodel_cnnlstmemb <- function(x, y, dropout1 = .2, dropout2 = .2, dropout3 = .2,
                                  wordembeddim = 30, cnnlayer = TRUE, filter = 48, kernel_size = 5, pool_size = 4,
                                  units_lstm = 128, words = NULL, maxsenlen = 50,
                                  optimizer = "adam",
@@ -65,7 +63,7 @@ textmodel_cnnlstmemb <- function(x, y, units = 512, dropout1 = .2, dropout2 = .2
 }
 
 #' @export
-textmodel_cnnlstmemb.tokens <- function(x, y, units = 512, dropout1 = .2, dropout2 = .2, dropout3 = .2,
+textmodel_cnnlstmemb.tokens <- function(x, y, dropout1 = .2, dropout2 = .2, dropout3 = .2,
                                      wordembeddim = 30, cnnlayer = TRUE, filter = 48, kernel_size = 5, pool_size = 4,
                                      units_lstm = 128, words = NULL, maxsenlen = 50,
                                 optimizer = "adam",
