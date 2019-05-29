@@ -1,6 +1,6 @@
-#' sequential neural network model for text classification
+#' Convolutional NN + LSTM model fitted to word embeddings
 #'
-#' Explain
+#' Add explanation.
 #' @param x tokens object
 #' @inheritParams textmodel_svm
 #' @param units The number of network nodes used in the first layer of the
@@ -55,24 +55,24 @@
 #' tail(texts(corpuncoded)[pred == "Immigration"], 10)
 #' 
 #' }
-textmodel_cnnlstmemb <- function(x, y, units = 512, dropout1 = .2, dropout2 = .2, dropout3 = .2, 
+textmodel_cnnlstmemb <- function(x, y, units = 512, dropout1 = .2, dropout2 = .2, dropout3 = .2,
                                  wordembeddim = 30, cnnlayer = TRUE, filter = 48, kernel_size = 5, pool_size = 4,
                                  units_lstm = 128, words = NULL, maxsenlen = 50,
                                  optimizer = "adam",
-                                 loss = "categorical_crossentropy", 
+                                 loss = "categorical_crossentropy",
                                  metrics = "categorical_accuracy", ...) {
     UseMethod("textmodel_cnnlstmemb")
 }
 
 #' @export
-textmodel_cnnlstmemb.tokens <- function(x, y, units = 512, dropout1 = .2, dropout2 = .2, dropout3 = .2, 
+textmodel_cnnlstmemb.tokens <- function(x, y, units = 512, dropout1 = .2, dropout2 = .2, dropout3 = .2,
                                      wordembeddim = 30, cnnlayer = TRUE, filter = 48, kernel_size = 5, pool_size = 4,
-                                     units_lstm = 128, words = NULL, maxsenlen = 50, 
+                                     units_lstm = 128, words = NULL, maxsenlen = 50,
                                 optimizer = "adam",
-                                loss = "categorical_crossentropy", 
+                                loss = "categorical_crossentropy",
                                 metrics = "categorical_accuracy", ...) {
     stopifnot(ndoc(x) == length(y))
-    
+
     y <- as.factor(y)
     result <- list(x = x, y = y, call = match.call(), classnames = levels(y))
 
@@ -85,31 +85,32 @@ textmodel_cnnlstmemb.tokens <- function(x, y, units = 512, dropout1 = .2, dropou
     }
 
     x <- tokens2sequences(x, maxsenlen = maxsenlen, keepn = words)
-    
-    if (is.null(words)) {words = x$nfeatures}    
+
+    if (is.null(words))
+        words <- x$nfeatures
     # "one-hot" encode y
     y2 <- to_categorical(as.integer(y) - 1, num_classes = nlevels(y))
-    
+
     # use keras to fit the model
     model <- keras_model_sequential()
-    
+
     model %>%
         layer_embedding(input_dim = words + 1, output_dim = wordembeddim, input_length = maxsenlen) %>%
         layer_dropout(rate = dropout1)
-    
+
     if (cnnlayer == TRUE) {
-        model %>% 
-            layer_conv_1d(filters = filter, kernel_size = kernel_size, activation='relu') %>%
+        model %>%
+            layer_conv_1d(filters = filter, kernel_size = kernel_size, activation = "relu") %>%
             layer_max_pooling_1d(pool_size = pool_size)
     }
-    
-    model %>% 
-        layer_lstm(units = units_lstm, dropout = dropout2, recurrent_dropout = dropout3) %>% 
-        layer_dense(units = nlevels(y), activation = 'softmax')
-    
+
+    model %>%
+        layer_lstm(units = units_lstm, dropout = dropout2, recurrent_dropout = dropout3) %>%
+        layer_dense(units = nlevels(y), activation = "softmax")
+
     compile(model, loss = loss, optimizer = optimizer, metrics = metrics)
     history <- fit(model, x$matrix, y2, ...)
-    
+
     # compile, class, and return the result
     result <- c(result, nfeatures = x$nfeatures, maxsenlen = maxsenlen, list(clefitted = model))
     class(result) <- c("textmodel_cnnlstmemb", "textmodel", "list")
@@ -138,9 +139,9 @@ predict.textmodel_cnnlstmemb <- function(object, newdata = NULL,
                                   force = TRUE,
                                   ...) {
     quanteda:::unused_dots(...)
-    
+
     type <- match.arg(type)
-    
+
     if (!is.null(newdata)) {
         data <- tokens2sequences(newdata, maxsenlen = object$maxsenlen, keepn = object$nfeatures)
         t2s_object <- tokens2sequences(object$x, maxsenlen = object$maxsenlen, keepn = object$nfeatures)
@@ -148,7 +149,7 @@ predict.textmodel_cnnlstmemb <- function(object, newdata = NULL,
     } else {
         data <- tokens2sequences(object$x, maxsenlen = object$maxsenlen, keepn = object$nfeatures)
     }
-    
+
     if (type == "class") {
         pred_y <- predict_classes(object$clefitted, x = data$matrix)
         pred_y <- factor(pred_y, labels = object$classnames, levels = (seq_along(object$classnames) - 1))
@@ -158,7 +159,7 @@ predict.textmodel_cnnlstmemb <- function(object, newdata = NULL,
         colnames(pred_y) <- object$classnames
         rownames(pred_y) <- rownames(data$matrix)
     }
-    
+
     pred_y
 }
 
@@ -183,8 +184,9 @@ print.textmodel_cnnlstmemb <- function(x, ...) {
 #' @method summary textmodel_cnnlstmemb
 #' @export
 summary.textmodel_cnnlstmemb <- function(object, ...) {
-    layer_names <- gsub(pattern = "_\\d*", "", lapply(object$clefitted$layers, function(x) x$name))
-    
+    layer_names <- gsub(pattern = "_\\d*", "", 
+                        lapply(object$clefitted$layers, function(x) x$name))
+
     result <- list(
         "call" = object$call,
         "model structure" = paste(layer_names, collapse = " -> ")

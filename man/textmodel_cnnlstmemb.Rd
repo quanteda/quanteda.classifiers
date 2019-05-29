@@ -2,7 +2,7 @@
 % Please edit documentation in R/textmodel_cnnlstmemb.R
 \name{textmodel_cnnlstmemb}
 \alias{textmodel_cnnlstmemb}
-\title{sequential neural network model for text classification}
+\title{Convolutional NN + LSTM model fitted to word embeddings}
 \usage{
 textmodel_cnnlstmemb(x, y, units = 512, dropout1 = 0.2,
   dropout2 = 0.2, dropout3 = 0.2, wordembeddim = 30,
@@ -63,7 +63,7 @@ inputs for the recurrent layer.}
 \code{\link[keras]{fit.keras.engine.training.Model}}}
 }
 \description{
-Explain
+Add explanation.
 }
 \examples{
 \dontrun{
