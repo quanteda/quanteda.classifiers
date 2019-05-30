@@ -31,38 +31,38 @@ tokens2sequences <- function(x, maxsenlen = 40, keepn = NULL) {
 #' @export
 tokens2sequences.tokens <- function(x, maxsenlen = 40, keepn = NULL) {
     stopifnot(is.tokens(x))
-    tfeq <- sort(table(unlist(x)), decreasing = T)
-    doc_nam <- docnames(x)
-    x <- unclass(x)
-    features <- attr(x, "types")
-    data <- data.frame(features = features,
+    tfeq <- sort(table(unlist(x)), decreasing = T) # Creates a table of tokens and their frequencies sorted from most common to least
+    doc_nam <- docnames(x) # Store docnames from tokens object for future use
+    x <- unclass(x) # Convert tokens to integer IDs
+    features <- attr(x, "types") # Store feature names
+    data <- data.frame(features = features, # Create a dataframe that maps each token to its id and frequency
                        label1 = 1:length(features),
                        freq = as.integer(tfeq[features]),
                        stringsAsFactors = FALSE)
     attributes(x) <- NULL
-    data <- data[order(data$freq, decreasing = T), ]
+    data <- data[order(data$freq, decreasing = T), ] # Reorders feature dictionary by frequency
     if (!is.null(keepn)) {
         data$label <- NA
-        if (keepn > nrow(data)) keepn <- nrow(data)
-        data$label[1:keepn] <- 1:keepn
+        if (keepn > nrow(data)) keepn <- nrow(data) # Makes sure that we are not attempting to keep more features than exist
+        data$label[1:keepn] <- 1:keepn # Subsets tokens to include only the n most common
 
     } else {
-        data$label <- 1:nrow(data)
+        data$label <- 1:nrow(data) 
     }
-    data <- data[order(data$label1, decreasing = F), ]
-    x <- lapply(x, function(y) as.integer(na.omit(data$label[y])))
-    mat <- do.call("rbind", lapply(x, function(y)
+    data <- data[order(data$label1, decreasing = F), ] # Orders by original numeric labels. This is done to allow 1:1 mapping of dictionary index numbers to original IDs
+    x <- lapply(x, function(y) as.integer(na.omit(data$label[y]))) # Assign new, frequency-based IDs to word sequence list
+    mat <- do.call("rbind", lapply(x, function(y) # Loops over each word sequence, making them of uniform length and binding them into a matrix
         if (length(y) >= maxsenlen)
-            y[1:maxsenlen]
+            y[1:maxsenlen] # Subsets sentences that are longer than maxsenlen
         else
-            c(rep(0, times = maxsenlen - length(y)), y)
+            c(rep(0, times = maxsenlen - length(y)), y) # Adds zeros to ensure an even number of rows across word sequences and binds into a single data frame
         ))
-    rownames(mat) <- doc_nam
-    colnames(mat) <- as.character(1:maxsenlen)
-    data <- data[!is.na(data$label), ]
-    data <- data[order(data$label, decreasing = FALSE),
-                 c("features", "label", "freq")]
-    rownames(data) <- NULL
+    rownames(mat) <- doc_nam # Adds docname to each row of the matrix
+    colnames(mat) <- as.character(1:maxsenlen) # Adds a numeric label to each column
+    data <- data[!is.na(data$label), ] # Removes words that were not assigned numeric ids from the dictionary
+    data <- data[order(data$label, decreasing = FALSE), 
+                 c("features", "label", "freq")] # selects feature names, ids, and frequency for dictionary and orders by frequency-based ID
+    rownames(data) <- NULL # Resets rownames of dictionary
     output <- list(matrix = mat, nfeatures = nrow(data), features = data)
     class(output) <- c("tokens2sequences", "list")
     return(output)
