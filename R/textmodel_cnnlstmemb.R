@@ -197,3 +197,19 @@ summary.textmodel_cnnlstmemb <- function(object, ...) {
 print.predict.textmodel_cnnlstmemb <- function(x, ...) {
     print(unclass(x))
 }
+
+
+
+#' @export
+#' @method save textmodel_cnnlstmemb
+save.textmodel_cnnlstmemb <- function(x, ...) {
+    x$clefitted <- serialize_model(x$clefitted)
+    save(x, ...)
+}
+
+#' @export
+#' @method save textmodel_cnnlstmemb
+load.textmodel_cnnlstmemb <- function(x, ...) {
+    load(x, ...)
+    x$clefitted <- unserialize_model(x$clefitted)
+}

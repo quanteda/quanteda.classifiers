@@ -173,3 +173,17 @@ summary.textmodel_nnseq <- function(object, ...) {
 print.predict.textmodel_nnseq <- function(x, ...) {
     print(unclass(x))
 }
+
+#' @export
+#' @method save textmodel_cnnlstmemb
+save.textmodel_nnseq <- function(x, ...) {
+    x$seqfitted <- serialize_model(x$seqfitted)
+    save(x, ...)
+}
+
+#' @export
+#' @method save textmodel_cnnlstmemb
+load.textmodel_nnseq <- function(x, ...) {
+    load(x, ...)
+    x$seqfitted <- unserialize_model(x$seqfitted)
+}
