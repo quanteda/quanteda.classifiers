@@ -83,7 +83,7 @@ textmodel_nnseq.dfm <- function(x, y, units = 512, dropout = .2,
     history <- fit(model, x, y2, ...)
     
     # compile, class, and return the result
-    result <- c(result, list(seqfitted = model))
+    result <- c(result, nfeatures = nfeat(x), list(seqfitted = model))
     class(result) <- c("textmodel_nnseq", "textmodel", "list")
     return(result)
 }
@@ -146,7 +146,7 @@ print.textmodel_nnseq <- function(x, ...) {
     print(x$call)
     cat("\n",
         format(length(na.omit(x$y)), big.mark = ","), " training documents; ",
-        format(length(x$weights), big.mark = ","), " fitted features",
+        format(length(x$nfeatures), big.mark = ","), " fitted features",
         ".\n",
         "Structure: ", paste(layer_names, collapse = " -> "), "\n",
         sep = "")

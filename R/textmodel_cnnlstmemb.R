@@ -169,7 +169,7 @@ print.textmodel_cnnlstmemb <- function(x, ...) {
     print(x$call)
     cat("\n",
         format(length(na.omit(x$y)), big.mark = ","), " training documents; ",
-        format(length(x$weights), big.mark = ","), " fitted features",
+        format(length(x$nfeatures), big.mark = ","), " fitted features",
         ".\n",
         "Structure: ", paste(layer_names, collapse = " -> "), "\n",
         sep = "")
