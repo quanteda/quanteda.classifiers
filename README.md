@@ -1,5 +1,5 @@
 
-# quanteda.classifiers: text classification textmodel extensions for quanteda
+# quanteda.classifiers: Text classification textmodel extensions for quanteda
 
 [![CRAN
 Version](https://www.r-pkg.org/badges/version/quanteda.classifiers)](https://CRAN.R-project.org/package=quanteda.classifiers)
@@ -17,26 +17,23 @@ status](https://codecov.io/gh/quanteda/quanteda.classifiers/branch/master/graph/
 devtools::install_github("quanteda/quanteda.classifiers") 
 ```
 
-## How to use
+## Available classifiers
 
-Examples:
+| Classifier                                                          | Command                  |
+| ------------------------------------------------------------------- | ------------------------ |
+| Support Vector Machine (SVM)                                        | `textmodel_svm()`        |
+| Sequential neural network                                           | `textmodel_nnseq()`      |
+| Convolutional neural network + LSTM model fitted to word embeddings | `textmodel_cnnlstmemb()` |
+
+## Available human-annotated corpora
+
+| Corpus                                                                                    | Name                           |
+| ----------------------------------------------------------------------------------------- | ------------------------------ |
+| Sentence-level corpus of UK party manifestos 1945–2017, partially annotated               | `data_corpus_manifestosentsUK` |
+| Crowd-labelled sentence corpus from a 2010 EP debate on coal subsidies (in six languages) | `data_corpus_EPcoaldebate`     |
 
 ``` r
 library("quanteda.classifiers")
-## Loading required package: quanteda
-## Registered S3 methods overwritten by 'ggplot2':
-##   method         from 
-##   [.quosures     rlang
-##   c.quosures     rlang
-##   print.quosures rlang
-## Package version: 1.4.4
-## Parallel computing: 2 of 12 threads used.
-## See https://quanteda.io for tutorials and examples.
-## 
-## Attaching package: 'quanteda'
-## The following object is masked from 'package:utils':
-## 
-##     View
 
 performance <- function(mytable, verbose = TRUE) {
   truePositives <- mytable[1, 1]
@@ -89,14 +86,15 @@ dfm(data_corpus_dailnoconf1991) %>%
   predict() %>%
   table(truth) %>%
   performance()
-##      truth
-## .     Govt Opp
-##   Opp   25  33
+##       truth
+## .      Govt Opp
+##   Govt    0   0
+##   Opp    25  33
 ## 
-##     precision = 0.43 
-##        recall = 1 
-##      accuracy = 0.43 
-##     bal. acc. = 0.22
+##     precision = NaN 
+##        recall = 0 
+##      accuracy = 0.57 
+##     bal. acc. = 0.5
 
 # scaled - results in a fully dense dfm, and poor performance
 dfm(data_corpus_dailnoconf1991) %>%
@@ -150,6 +148,15 @@ dfm(data_corpus_dailnoconf1991) %>%
 ##      accuracy = 0.79 
 ##     bal. acc. = 0.91
 ```
+
+## How to cite
+
+Benoit, Kenneth, Patrick Chester, and Stefan Müller (2019).
+quanteda.classifiers: Models for supervised text classification. R
+package version 0.1. URL: <http://github.com/quanteda/quanteda.svm>.
+
+For a BibTeX entry, use the output from citation(package =
+“quanteda.classifiers”).
 
 ## Issues
 

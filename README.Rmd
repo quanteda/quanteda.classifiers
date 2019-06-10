@@ -10,7 +10,7 @@ knitr::opts_chunk$set(
 )
 ```
 
-# quanteda.classifiers: text classification textmodel extensions for quanteda
+# quanteda.classifiers: Text classification textmodel extensions for quanteda
 
 [![CRAN Version](https://www.r-pkg.org/badges/version/quanteda.classifiers)](https://CRAN.R-project.org/package=quanteda.classifiers)
 [![Travis build status](https://travis-ci.org/quanteda/quanteda.classifiers.svg?branch=master)](https://travis-ci.org/quanteda/quanteda.classifiers)
@@ -25,11 +25,22 @@ knitr::opts_chunk$set(
 devtools::install_github("quanteda/quanteda.classifiers") 
 ```
 
-## How to use
+## Available classifiers
 
-Examples:
+Classifier | Command
+--|--
+Support Vector Machine (SVM) | `textmodel_svm()`
+Sequential neural network | `textmodel_nnseq()`
+Convolutional neural network + LSTM model fitted to word embeddings | `textmodel_cnnlstmemb()`
 
-```{r}
+## Available human-annotated corpora
+
+Corpus | Name
+--|--
+Sentence-level corpus of UK party manifestos 1945–2017, partially annotated | `data_corpus_manifestosentsUK`
+Crowd-labelled sentence corpus from a 2010 EP debate on coal subsidies (in six languages) | `data_corpus_EPcoaldebate`
+
+```{r, warnings=FALSE,message=FALSE}
 library("quanteda.classifiers")
 
 performance <- function(mytable, verbose = TRUE) {
@@ -100,6 +111,12 @@ dfm(data_corpus_dailnoconf1991) %>%
   table(truth) %>%
   performance()
 ```
+
+## How to cite
+
+Benoit, Kenneth, Patrick Chester, and Stefan Müller (2019). quanteda.classifiers: Models for supervised text classification. R package version 0.1. URL: http://github.com/quanteda/quanteda.svm.
+
+For a BibTeX entry, use the output from citation(package = "quanteda.classifiers").
 
 ## Issues
 
