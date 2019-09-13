@@ -12,8 +12,8 @@ for document-feature matrices.
 \seealso{
 Useful links:
 \itemize{
-  \item \url{http://github.com/quanteda/quanteda.svm}
-  \item Report bugs at \url{https://github.com/quanteda/quanteda.svm/issues}
+  \item \url{https://github.com/quanteda/quanteda.classifiers}
+  \item Report bugs at \url{https://github.com/quanteda/quanteda.classifiers/issues}
 }
 
 }
