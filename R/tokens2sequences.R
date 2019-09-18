@@ -55,7 +55,7 @@ tokens2sequences.tokens <- function(x, maxsenlen = 40, keepn = NULL) {
         if (length(y) >= maxsenlen)
             y[1:maxsenlen] # Subsets sentences that are longer than maxsenlen
         else
-            c(rep(0, times = maxsenlen - length(y)), y) # Adds zeros to ensure an even number of rows across word sequences and binds into a single data frame
+            c(rep(0L, times = maxsenlen - length(y)), y) # Adds zeros to ensure an even number of rows across word sequences and binds into a single data frame
         ))
     rownames(mat) <- doc_nam # Adds docname to each row of the matrix
     colnames(mat) <- as.character(1:maxsenlen) # Adds a numeric label to each column
