@@ -23,6 +23,8 @@ knitr::opts_chunk$set(
 ```{r eval = FALSE}
 # devtools package required to install quanteda from Github 
 devtools::install_github("quanteda/quanteda.classifiers") 
+
+keras::install_keras(method = "conda")
 ```
 
 ## Available classifiers
