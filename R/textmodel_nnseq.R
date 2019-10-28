@@ -118,11 +118,11 @@ predict.textmodel_nnseq <- function(object, newdata = NULL,
     } else {
         data <- as.dfm(object$x)
     }
-    
+    model_featnames <- colnames(object$x)
     data <- if (is.null(newdata)) {
-        suppressWarnings(quanteda:::force_conformance(data, featnames(data), force))
+        suppressWarnings(quanteda:::force_conformance(data, model_featnames, force))
     } else {
-        quanteda:::force_conformance(data, featnames(data), force)
+        quanteda:::force_conformance(data, model_featnames, force)
     }
     
     if (type == "class") {
