@@ -5,11 +5,11 @@
 \title{Convolutional NN + LSTM model fitted to word embeddings}
 \usage{
 textmodel_cnnlstmemb(x, y, dropout1 = 0.2, dropout2 = 0.2,
-  dropout3 = 0.2, wordembeddim = 30, cnnlayer = TRUE, filter = 48,
-  kernel_size = 5, pool_size = 4, units_lstm = 128, words = NULL,
-  maxsenlen = 50, optimizer = "adam",
-  loss = "categorical_crossentropy", metrics = "categorical_accuracy",
-  ...)
+  dropout3 = 0.2, dropout4 = 0.2, wordembeddim = 30,
+  cnnlayer = TRUE, filter = 48, kernel_size = 5, pool_size = 4,
+  units_lstm = 128, words = NULL, maxsenlen = 50,
+  optimizer = "adam", loss = "categorical_crossentropy",
+  metrics = "categorical_accuracy", ...)
 }
 \arguments{
 \item{x}{tokens object}
@@ -24,9 +24,13 @@ inputs for the embedding layer.}
 
 \item{dropout2}{A floating variable bound between 0 and 1. It determines the
 rate at which units are dropped for the linear transformation of the
-inputs for the LSTM layer.}
+inputs for the CNN layer.}
 
 \item{dropout3}{A floating variable bound between 0 and 1. It determines the
+rate at which units are dropped for the linear transformation of the
+inputs for the recurrent layer.}
+
+\item{dropout4}{A floating variable bound between 0 and 1. It determines the
 rate at which units are dropped for the linear transformation of the
 inputs for the recurrent layer.}
 

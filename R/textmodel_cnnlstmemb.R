@@ -8,8 +8,11 @@
 #'   inputs for the embedding layer.
 #' @param dropout2 A floating variable bound between 0 and 1. It determines the
 #'   rate at which units are dropped for the linear transformation of the
-#'   inputs for the LSTM layer.
+#'   inputs for the CNN layer.
 #' @param dropout3 A floating variable bound between 0 and 1. It determines the
+#'   rate at which units are dropped for the linear transformation of the
+#'   inputs for the recurrent layer.
+#' @param dropout4 A floating variable bound between 0 and 1. It determines the
 #'   rate at which units are dropped for the linear transformation of the
 #'   inputs for the recurrent layer.
 #' @param wordembeddim The number of word embedding dimensions to be fit
@@ -32,7 +35,7 @@
 #' @keywords textmodel
 #' @importFrom keras keras_model_sequential to_categorical
 #' @importFrom keras layer_dense layer_activation layer_dropout compile fit
-#' @importFrom keras layer_embedding layer_conv_1d layer_max_pooling_1d layer_lstm
+#' @importFrom keras layer_embedding layer_conv_1d layer_max_pooling_1d layer_lstm bidirectional
 #' @export
 #' @examples 
 #' \dontrun{
@@ -53,7 +56,7 @@
 #' tail(texts(corpuncoded)[pred == "Immigration"], 10)
 #' 
 #' }
-textmodel_cnnlstmemb <- function(x, y, dropout1 = .2, dropout2 = .2, dropout3 = .2,
+textmodel_cnnlstmemb <- function(x, y, dropout1 = 0.2, dropout2 = 0.2, dropout3 = 0.2, dropout4 = 0.2,
                                  wordembeddim = 30, cnnlayer = TRUE, filter = 48, kernel_size = 5, pool_size = 4,
                                  units_lstm = 128, words = NULL, maxsenlen = 50,
                                  optimizer = "adam",
@@ -63,7 +66,7 @@ textmodel_cnnlstmemb <- function(x, y, dropout1 = .2, dropout2 = .2, dropout3 = 
 }
 
 #' @export
-textmodel_cnnlstmemb.tokens <- function(x, y, dropout1 = .2, dropout2 = .2, dropout3 = .2,
+textmodel_cnnlstmemb.tokens <- function(x, y, dropout1 = 0.2, dropout2 = 0.2, dropout3 = 0.2, dropout4 = 0.2,
                                      wordembeddim = 30, cnnlayer = TRUE, filter = 48, kernel_size = 5, pool_size = 4,
                                      units_lstm = 128, words = NULL, maxsenlen = 50,
                                 optimizer = "adam",
@@ -99,11 +102,12 @@ textmodel_cnnlstmemb.tokens <- function(x, y, dropout1 = .2, dropout2 = .2, drop
     if (cnnlayer == TRUE) {
         model %>%
             layer_conv_1d(filters = filter, kernel_size = kernel_size, activation = "relu") %>%
-            layer_max_pooling_1d(pool_size = pool_size)
+            layer_max_pooling_1d(pool_size = pool_size) %>%
+            layer_dropout(rate = dropout2)
     }
 
     model %>%
-        layer_lstm(units = units_lstm, dropout = dropout2, recurrent_dropout = dropout3) %>%
+        bidirectional(layer_lstm(units = units_lstm, dropout = dropout3, recurrent_dropout = dropout4)) %>%
         layer_dense(units = nlevels(y), activation = "softmax")
 
     compile(model, loss = loss, optimizer = optimizer, metrics = metrics)
