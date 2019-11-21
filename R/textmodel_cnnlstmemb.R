@@ -1,6 +1,9 @@
 #' Convolutional NN + LSTM model fitted to word embeddings
 #'
-#' Add explanation.
+#' A function that combines a convolutional neural network layer with a long-term short-term layer. 
+#' It is designed to incorporate word sequences, represented as sequentially ordered word embeddings, 
+#' into text classification. The model takes as an input a \pkg{quanteda} tokens object.
+#' 
 #' @param x tokens object
 #' @inheritParams textmodel_svm
 #' @param dropout1 A floating variable bound between 0 and 1. It determines the

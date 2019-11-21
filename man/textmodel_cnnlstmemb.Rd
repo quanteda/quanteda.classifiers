@@ -64,7 +64,9 @@ inputs for the recurrent layer.}
 \code{\link[keras]{fit.keras.engine.training.Model}}}
 }
 \description{
-Add explanation.
+A function that combines a convolutional neural network layer with a long-term short-term layer. 
+It is designed to incorporate word sequences, represented as sequentially ordered word embeddings, 
+into text classification. The model takes as an input a \pkg{quanteda} tokens object.
 }
 \examples{
 \dontrun{
