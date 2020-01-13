@@ -7,9 +7,9 @@ test_that("the cnnlstmemb model works", {
     corp <- corpus_subset(data_corpus_EPcoaldebate, subset = language == "English") %>% 
         corpus_sample(500)
     
-    dfmat <- tokens(texts(corp))
+    toks <- tokens(texts(corp))
     label <- ifelse(docvars(corp, "crowd_subsidy_label") == "Pro-Subsidy", 1, 0)
-    tmod <- textmodel_cnnlstmemb(dfmat, y = label, epochs = 8)
+    tmod <- textmodel_cnnlstmemb(toks, y = label, epochs = 8)
     
     expect_output(
         print(tmod),
@@ -38,10 +38,10 @@ test_that("the cnnlstmemb model works", {
 test_that("multiclass prediction works", {
     skip_on_cran()
     
-    dfmat <- tokens(data_corpus_irishbudget2010)
+    toks <- tokens(data_corpus_irishbudget2010)
     y <- docvars(data_corpus_irishbudget2010, "party")
     y[5] <- NA
-    tmod2 <- textmodel_cnnlstmemb(dfmat, y = y)
+    tmod2 <- textmodel_cnnlstmemb(toks, y = y)
     expect_equal(
         names(predict(tmod2, type = "class"))[5],
         "Cowen, Brian (FF)"

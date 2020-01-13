@@ -65,7 +65,7 @@ textmodel_nnseq.dfm <- function(x, y, units = 512, dropout = .2,
     if (length(na_ind) > 0) {
         # message(length(na_ind), "observations with the value 'NA' were removed.")
         y <- y[-na_ind]
-        x <- x[-na_ind]
+        x <- x[-na_ind, ]
     }
     
     # "one-hot" encode y
