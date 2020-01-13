@@ -4,12 +4,26 @@
 \alias{textmodel_cnnlstmemb}
 \title{Convolutional NN + LSTM model fitted to word embeddings}
 \usage{
-textmodel_cnnlstmemb(x, y, dropout1 = 0.2, dropout2 = 0.2,
-  dropout3 = 0.2, dropout4 = 0.2, wordembeddim = 30,
-  cnnlayer = TRUE, filter = 48, kernel_size = 5, pool_size = 4,
-  units_lstm = 128, words = NULL, maxsenlen = 50,
-  optimizer = "adam", loss = "categorical_crossentropy",
-  metrics = "categorical_accuracy", ...)
+textmodel_cnnlstmemb(
+  x,
+  y,
+  dropout1 = 0.2,
+  dropout2 = 0.2,
+  dropout3 = 0.2,
+  dropout4 = 0.2,
+  wordembeddim = 30,
+  cnnlayer = TRUE,
+  filter = 48,
+  kernel_size = 5,
+  pool_size = 4,
+  units_lstm = 128,
+  words = NULL,
+  maxsenlen = 50,
+  optimizer = "adam",
+  loss = "categorical_crossentropy",
+  metrics = "categorical_accuracy",
+  ...
+)
 }
 \arguments{
 \item{x}{tokens object}
@@ -36,18 +50,21 @@ inputs for the recurrent layer.}
 
 \item{wordembeddim}{The number of word embedding dimensions to be fit}
 
-\item{cnnlayer}{A logical parameter that allows user to include or exclude a convolutional layer in the neural network model}
+\item{cnnlayer}{A logical parameter that allows user to include or exclude a
+convolutional layer in the neural network model}
 
 \item{filter}{The number of output filters in the convolution}
 
-\item{kernel_size}{An integer or list of a single integer, specifying the length of the 1D convolution window}
+\item{kernel_size}{An integer or list of a single integer, specifying the
+length of the 1D convolution window}
 
 \item{pool_size}{Size of the max pooling windows.
 \code{\link[keras]{layer_max_pooling_1d}}}
 
 \item{units_lstm}{The number of nodes of the lstm layer}
 
-\item{words}{The maximum number of words used to train model. Defaults to the number of features in \code{x}}
+\item{words}{The maximum number of words used to train model. Defaults to the
+number of features in \code{x}}
 
 \item{maxsenlen}{The maximum sentence length of training data}
 
@@ -64,14 +81,16 @@ inputs for the recurrent layer.}
 \code{\link[keras]{fit.keras.engine.training.Model}}}
 }
 \description{
-A function that combines a convolutional neural network layer with a long-term short-term layer. 
-It is designed to incorporate word sequences, represented as sequentially ordered word embeddings, 
-into text classification. The model takes as an input a \pkg{quanteda} tokens object.
+A function that combines a convolutional neural network layer with a
+long-term short-term layer. It is designed to incorporate word sequences,
+represented as sequentially ordered word embeddings, into text
+classification. The model takes as an input a \pkg{quanteda} tokens object.
 }
 \examples{
 \dontrun{
-# create a dataset with evenly balanced coded and uncoded immigration sentences
-corpcoded <- corpus_subset(data_corpus_manifestosentsUK, !is.na(crowd_immigration_label))
+# create dataset with evenly balanced coded & uncoded immigration sentences
+corpcoded <- corpus_subset(data_corpus_manifestosentsUK,
+                           !is.na(crowd_immigration_label))
 corpuncoded <- data_corpus_manifestosentsUK \%>\%
     corpus_subset(is.na(crowd_immigration_label) & year > 1980) \%>\%
     corpus_sample(size = ndoc(corpcoded))
@@ -79,10 +98,12 @@ corp <- corpcoded + corpuncoded
 
 tok <- tokens(corp)
 
-tmod <- textmodel_cnnlstmemb(tok, y = docvars(tok, "crowd_immigration_label"),
+tmod <- textmodel_cnnlstmemb(tok,
+                             y = docvars(tok, "crowd_immigration_label"),
                              epochs = 5, verbose = 1)
 
-pred <- predict(tmod, newdata = tokens_subset(tok, subset = is.na(crowd_immigration_label)))
+newdata = tokens_subset(tok, subset = is.na(crowd_immigration_label))
+pred <- predict(tmod, newdata = newdata)
 table(pred)
 tail(texts(corpuncoded)[pred == "Immigration"], 10)
 

@@ -26,5 +26,5 @@ Remotes:
 URL: https://github.com/quanteda/quanteda.classifiers
 BugReports: https://github.com/quanteda/quanteda.classifiers/issues
 LazyData: TRUE
-RoxygenNote: 6.1.1
+RoxygenNote: 7.0.2
 Language: en-GB

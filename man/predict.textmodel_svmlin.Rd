@@ -4,8 +4,13 @@
 \alias{predict.textmodel_svmlin}
 \title{Prediction from a fitted textmodel_svmlin object}
 \usage{
-\method{predict}{textmodel_svmlin}(object, newdata = NULL,
-  type = c("class", "probability"), force = FALSE, ...)
+\method{predict}{textmodel_svmlin}(
+  object,
+  newdata = NULL,
+  type = c("class", "probability"),
+  force = FALSE,
+  ...
+)
 }
 \arguments{
 \item{object}{a fitted linear SVM textmodel}

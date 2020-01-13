@@ -4,8 +4,13 @@
 \alias{predict.textmodel_cnnlstmemb}
 \title{Prediction from a fitted textmodel_cnnlstmemb object}
 \usage{
-\method{predict}{textmodel_cnnlstmemb}(object, newdata = NULL,
-  type = c("class", "probability"), force = TRUE, ...)
+\method{predict}{textmodel_cnnlstmemb}(
+  object,
+  newdata = NULL,
+  type = c("class", "probability"),
+  force = TRUE,
+  ...
+)
 }
 \arguments{
 \item{object}{a fitted \link{textmodel_cnnlstmemb} model}
@@ -25,8 +30,8 @@
   "probability"}).
 }
 \description{
-\code{predict.textmodel_cnnlstmemb()} implements class predictions from a fitted
-sequential neural network model.
+\code{predict.textmodel_cnnlstmemb()} implements class predictions from a
+fitted sequential neural network model.
 }
 \seealso{
 \code{\link{textmodel_cnnlstmemb}}
