@@ -104,3 +104,4 @@ dfm(data_corpus_dailnoconf1991) %>%
 ## Issues
 
 *  Please file an issue (with a bug, wish list, etc.) [via GitHub](https://github.com/quanteda/quanteda.classifiers/issues).
+
