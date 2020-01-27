@@ -3,7 +3,6 @@ context("test textmodel_cnnlstmemb")
 test_that("the cnnlstmemb model works", {
     skip_on_cran()
 
-    ## Example from 13.1 of _An Introduction to Information Retrieval_
     corp <- corpus_subset(data_corpus_EPcoaldebate, subset = language == "English") %>% 
         corpus_sample(500)
     
