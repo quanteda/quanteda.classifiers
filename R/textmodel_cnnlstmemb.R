@@ -98,7 +98,7 @@ textmodel_cnnlstmemb.tokens <-
         # workaround just because negative indexing is broken in v2 for now
         na_ind_logical <- rep(TRUE, length(y))
         na_ind_logical[na_ind] <- FALSE
-        x <- x[na_ind]
+        x <- x[na_ind_logical]
     }
 
     x <- tokens2sequences(x, maxsenlen = maxsenlen, keepn = words)

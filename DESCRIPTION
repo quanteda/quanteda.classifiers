@@ -16,7 +16,8 @@ Imports:
     keras (>= 2.1.0),
     LiblineaR,
     RSSL,
-    SparseM
+    SparseM,
+    tensorflow
 Suggests:
     spelling,
     testthat,

@@ -49,7 +49,7 @@ test_that("multiclass prediction works", {
 
     probmat <- predict(tmod2, type = "probability")
     expect_equal(dim(probmat), c(14, 5))
-    expect_equal(rownames(probmat), docnames(dfmat))
+    expect_equal(rownames(probmat), docnames(toks))
     expect_equal(colnames(probmat), tmod2$classnames)
     expect_equal(unname(rowSums(probmat)), rep(1, nrow(probmat)), tol = .000001)
 })
