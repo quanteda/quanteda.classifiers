@@ -123,3 +123,4 @@ For a BibTeX entry, use the output from citation(package = "quanteda.classifiers
 ## Issues
 
 *  Please file an issue (with a bug, wish list, etc.) [via GitHub](https://github.com/quanteda/quanteda.classifiers/issues).
+
