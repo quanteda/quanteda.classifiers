@@ -3,7 +3,6 @@
 #' Extensions to \pkg{quanteda} that provide supervised machine learning models
 #' for document-feature matrices.
 #' @keywords internal
-#' @importFrom tensorflow tf
 "_PACKAGE"
 
 # The following block is used by usethis to automatically manage
