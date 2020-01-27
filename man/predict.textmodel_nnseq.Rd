@@ -4,8 +4,13 @@
 \alias{predict.textmodel_nnseq}
 \title{Prediction from a fitted textmodel_nnseq object}
 \usage{
-\method{predict}{textmodel_nnseq}(object, newdata = NULL,
-  type = c("class", "probability"), force = TRUE, ...)
+\method{predict}{textmodel_nnseq}(
+  object,
+  newdata = NULL,
+  type = c("class", "probability"),
+  force = TRUE,
+  ...
+)
 }
 \arguments{
 \item{object}{a fitted \link{textmodel_nnseq} model}

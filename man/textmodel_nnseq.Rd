@@ -4,9 +4,16 @@
 \alias{textmodel_nnseq}
 \title{sequential neural network model for text classification}
 \usage{
-textmodel_nnseq(x, y, units = 512, dropout = 0.2, optimizer = "adam",
-  loss = "categorical_crossentropy", metrics = "categorical_accuracy",
-  ...)
+textmodel_nnseq(
+  x,
+  y,
+  units = 512,
+  dropout = 0.2,
+  optimizer = "adam",
+  loss = "categorical_crossentropy",
+  metrics = "categorical_accuracy",
+  ...
+)
 }
 \arguments{
 \item{x}{the \link{dfm} on which the model will be fit.  Does not need to
