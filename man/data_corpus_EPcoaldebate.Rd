@@ -4,10 +4,10 @@
 \name{data_corpus_EPcoaldebate}
 \alias{data_corpus_EPcoaldebate}
 \title{Crowd-labelled sentence corpus from a 2010 EP debate on coal subsidies}
-\format{The corpus consists of 16,806 documents (i.e. codings of a sentence) and includes the following 
+\format{The corpus consists of 16,806 documents (i.e. codings of a sentence) and includes the following
   document-level variables: \describe{
   \item{sentence_id}{character; a unique identifier for each sentence}
-  \item{crowd_subsidy_label}{factor; whether a coder labeled the sentence 
+  \item{crowd_subsidy_label}{factor; whether a coder labeled the sentence
   as "Pro-Subsidy", "Anti-Subsidy" or "Neutral or inapplicable"}
   \item{language}{factor; the language (translation) of the speech}
   \item{name_last}{character; speaker's last name}
@@ -16,8 +16,8 @@
   \item{country}{factor; the speaker's country of origin}
   \item{vote}{factor; the speaker's vote on the proposal (For/Against/Abstain/NA)}
   \item{coder_id}{character; a unique identifier for each crowd coder}
-  \item{coder_trust}{numeric; the "trust score" from the Crowdflower platform used to code the 
-   sentences, which can theoretically range between 0 and 1. Only coders with trust scores above 
+  \item{coder_trust}{numeric; the "trust score" from the Crowdflower platform used to code the
+   sentences, which can theoretically range between 0 and 1. Only coders with trust scores above
    0.8 are included in the corpus.}
   }}
 \usage{
@@ -38,9 +38,9 @@ Each speech is available in six languages: English, German,
   \href{https://doi.org/10.1017/S0003055416000058}{Benoit et al. (2016)}.
 }
 \references{
-Benoit, K., Conway, D., Lauderdale, B.E., Laver, M., & Mikhaylov, S. (2016). 
-  \href{https://doi.org/10.1017/S0003055416000058}{Crowd-sourced Text Analysis: 
-  Reproducible and Agile Production of Political Data}. 
+Benoit, K., Conway, D., Lauderdale, B.E., Laver, M., & Mikhaylov, S. (2016).
+  \href{https://doi.org/10.1017/S0003055416000058}{Crowd-sourced Text Analysis:
+  Reproducible and Agile Production of Political Data}.
   \emph{American Political Science Review}, 100,(2), 278--295.
 }
 \keyword{data}

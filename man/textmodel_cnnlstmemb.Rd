@@ -28,8 +28,8 @@ textmodel_cnnlstmemb(
 \arguments{
 \item{x}{tokens object}
 
-\item{y}{vector of training labels associated with each document identified 
-in \code{train}.  (These will be converted to factors if not already 
+\item{y}{vector of training labels associated with each document identified
+in \code{train}.  (These will be converted to factors if not already
 factors.)}
 
 \item{dropout1}{A floating variable bound between 0 and 1. It determines the

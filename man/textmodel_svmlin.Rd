@@ -10,8 +10,8 @@ textmodel_svmlin(x, y, intercept = TRUE, ...)
 \item{x}{the \link{dfm} on which the model will be fit.  Does not need to
 contain only the training documents.}
 
-\item{y}{vector of training labels associated with each document identified 
-in \code{train}.  (These will be converted to factors if not already 
+\item{y}{vector of training labels associated with each document identified
+in \code{train}.  (These will be converted to factors if not already
 factors.)}
 
 \item{intercept}{logical; if \code{TRUE}, add an intercept to the data}
@@ -23,9 +23,9 @@ factors.)}
 object from \code{\link[RSSL]{svmlin}}.
 }
 \description{
-This function has been retained for testing purposes only; 
-  we recommend that you use \code{\link{textmodel_svm}} instead.  That 
-  function is more efficient, and implements prediction for more than 
+This function has been retained for testing purposes only;
+  we recommend that you use \code{\link{textmodel_svm}} instead.  That
+  function is more efficient, and implements prediction for more than
   two classes.
 }
 \details{

@@ -10,8 +10,8 @@ textmodel_svm(x, y, weight = c("uniform", "docfreq", "termfreq"), ...)
 \item{x}{the \link{dfm} on which the model will be fit.  Does not need to
 contain only the training documents.}
 
-\item{y}{vector of training labels associated with each document identified 
-in \code{train}.  (These will be converted to factors if not already 
+\item{y}{vector of training labels associated with each document identified
+in \code{train}.  (These will be converted to factors if not already
 factors.)}
 
 \item{weight}{weights for different classes for imbalanced training sets,
@@ -28,7 +28,7 @@ Fit a fast linear SVM classifier for texts, using the
 }
 \examples{
 # use party leaders for govt and opposition classes
-docvars(data_corpus_irishbudget2010, "govtopp") <- 
+docvars(data_corpus_irishbudget2010, "govtopp") <-
     c(rep(NA, 4), "Govt", "Opp", NA, "Opp", NA, NA, NA, NA, NA, NA)
 dfmat <- dfm(data_corpus_irishbudget2010)
 tmod <- textmodel_svm(dfmat, y = docvars(dfmat, "govtopp"))
@@ -36,7 +36,7 @@ predict(tmod)
 predict(tmod, type = "probability")
 
 # multiclass problem - all party leaders
-tmod2 <- textmodel_svm(dfmat, 
+tmod2 <- textmodel_svm(dfmat,
     y = c(rep(NA, 3), "SF", "FF", "FG", NA, "LAB", NA, NA, "Green", rep(NA, 3)))
 predict(tmod2)
 predict(tmod2, type = "probability")

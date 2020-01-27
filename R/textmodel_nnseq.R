@@ -21,7 +21,7 @@
 #' @importFrom keras keras_model_sequential to_categorical
 #' @importFrom keras layer_dense layer_activation layer_dropout compile fit
 #' @export
-#' @examples 
+#' @examples
 #' \dontrun{
 #' # create a dataset with evenly balanced coded and uncoded immigration sentences
 #' corpcoded <- corpus_subset(data_corpus_manifestosentsUK, !is.na(crowd_immigration_label))
@@ -29,11 +29,11 @@
 #'     corpus_subset(is.na(crowd_immigration_label) & year > 1980) %>%
 #'     corpus_sample(size = ndoc(corpcoded))
 #' corp <- corpcoded + corpuncoded
-#' 
+#'
 #' # form a tf-idf-weighted dfm
 #' dfmat <- dfm(corp) %>%
 #'     dfm_tfidf()
-#' 
+#'
 #' set.seed(1000)
 #' tmod <- textmodel_nnseq(dfmat, y = docvars(dfmat, "crowd_immigration_label"),
 #'                         epochs = 5, verbose = 1)
@@ -41,25 +41,25 @@
 #' table(pred)
 #' tail(texts(corpuncoded)[pred == "Immigration"], 10)
 #' }
-textmodel_nnseq <- function(x, y, units = 512, dropout = .2, 
+textmodel_nnseq <- function(x, y, units = 512, dropout = .2,
                             optimizer = "adam",
-                            loss = "categorical_crossentropy", 
+                            loss = "categorical_crossentropy",
                             metrics = "categorical_accuracy",
                             ...) {
     UseMethod("textmodel_nnseq")
 }
 
 #' @export
-textmodel_nnseq.dfm <- function(x, y, units = 512, dropout = .2, 
+textmodel_nnseq.dfm <- function(x, y, units = 512, dropout = .2,
                                 optimizer = "adam",
-                                loss = "categorical_crossentropy", 
+                                loss = "categorical_crossentropy",
                                 metrics = "categorical_accuracy", ...) {
     stopifnot(ndoc(x) == length(y))
-    
+
     x <- as.dfm(x)
     y <- as.factor(y)
     result <- list(x = x, y = y, call = match.call(), classnames = levels(y))
-    
+
     # trim missings for fitting model
     na_ind <- which(is.na(y))
     if (length(na_ind) > 0) {
@@ -67,21 +67,18 @@ textmodel_nnseq.dfm <- function(x, y, units = 512, dropout = .2,
         y <- y[-na_ind]
         x <- x[-na_ind, ]
     }
-    
+
     # "one-hot" encode y
     y2 <- to_categorical(as.integer(y) - 1, num_classes = nlevels(y))
-    
+
     # use keras to fit the model
-    model <- keras_model_sequential()
-    model %>%
-        layer_dense(units = units, input_shape = nfeat(x)) %>%
-        layer_activation(activation = "relu") %>%
+    model <- keras_model_sequential() %>%
+        layer_dense(units = units, input_shape = nfeat(x), activation = "relu") %>%
         layer_dropout(rate = dropout) %>%
-        layer_dense(units = nlevels(y)) %>%
-        layer_activation(activation = "softmax")
+        layer_dense(units = nlevels(y), activation = "softmax")
     compile(model, loss = loss, optimizer = optimizer, metrics = metrics)
     history <- fit(model, x, y2, ...)
-    
+
     # compile, class, and return the result
     result <- c(result, nfeatures = nfeat(x), list(seqfitted = model))
     class(result) <- c("textmodel_nnseq", "textmodel", "list")
@@ -110,9 +107,9 @@ predict.textmodel_nnseq <- function(object, newdata = NULL,
                                   force = TRUE,
                                   ...) {
     quanteda:::unused_dots(...)
-    
+
     type <- match.arg(type)
-    
+
     if (!is.null(newdata)) {
         data <- as.dfm(newdata)
     } else {
@@ -124,7 +121,7 @@ predict.textmodel_nnseq <- function(object, newdata = NULL,
     } else {
         quanteda:::force_conformance(data, model_featnames, force)
     }
-    
+
     if (type == "class") {
         pred_y <- predict_classes(object$seqfitted, x = data)
         pred_y <- factor(pred_y, labels = object$classnames, levels = (seq_along(object$classnames) - 1))
@@ -134,7 +131,7 @@ predict.textmodel_nnseq <- function(object, newdata = NULL,
         colnames(pred_y) <- object$classnames
         rownames(pred_y) <- docnames(data)
     }
-    
+
     pred_y
 }
 
@@ -160,7 +157,7 @@ print.textmodel_nnseq <- function(x, ...) {
 #' @export
 summary.textmodel_nnseq <- function(object, ...) {
     layer_names <- gsub(pattern = "_\\d*", "", lapply(object$seqfitted$layers, function(x) x$name))
-    
+
     result <- list(
         "call" = object$call,
         "model structure" = paste(layer_names, collapse = " -> ")

@@ -3,13 +3,14 @@ context("test textmodel_cnnlstmemb")
 test_that("the cnnlstmemb model works", {
     skip_on_cran()
 
-    corp <- corpus_subset(data_corpus_EPcoaldebate, subset = language == "English") %>% 
+    corp <- corpus_subset(data_corpus_EPcoaldebate,
+                          subset = language == "English") %>%
         corpus_sample(500)
-    
+
     toks <- tokens(texts(corp))
     label <- ifelse(docvars(corp, "crowd_subsidy_label") == "Pro-Subsidy", 1, 0)
     tmod <- textmodel_cnnlstmemb(toks, y = label, epochs = 8)
-    
+
     expect_output(
         print(tmod),
         "Call:"
@@ -19,7 +20,7 @@ test_that("the cnnlstmemb model works", {
     accuracy <- sum(diag(con_mat)) / sum(con_mat)
     expect_equal(
         accuracy,
-        0.87, 
+        0.87,
         tolerance = 0.1
     )
     set.seed(10)
@@ -29,14 +30,14 @@ test_that("the cnnlstmemb model works", {
     accuracy <- sum(diag(con_mat)) / sum(con_mat)
     expect_equal(
         accuracy,
-        0.87, 
+        0.87,
         tolerance = 0.1
     )
 })
 
 test_that("multiclass prediction works", {
     skip_on_cran()
-    
+
     toks <- tokens(data_corpus_irishbudget2010)
     y <- docvars(data_corpus_irishbudget2010, "party")
     y[5] <- NA

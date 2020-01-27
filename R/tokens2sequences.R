@@ -19,7 +19,7 @@
 #'     corpus_subset(is.na(crowd_immigration_label) & year > 1980) %>%
 #'     corpus_sample(size = ndoc(corpcoded))
 #' corp <- corpcoded + corpuncoded
-#' 
+#'
 #' corptok <- tokens(texts(corp))
 #' print(corp)
 #' seqs <- tokens2sequences(corptok, maxsenlen = 200)
@@ -47,7 +47,7 @@ tokens2sequences.tokens <- function(x, maxsenlen = 40, keepn = NULL) {
         data$label[1:keepn] <- 1:keepn # Subsets tokens to include only the n most common
 
     } else {
-        data$label <- 1:nrow(data) 
+        data$label <- 1:nrow(data)
     }
     data <- data[order(data$label1, decreasing = F), ] # Orders by original numeric labels. This is done to allow 1:1 mapping of dictionary index numbers to original IDs
     x <- lapply(x, function(y) as.integer(na.omit(data$label[y]))) # Assign new, frequency-based IDs to word sequence list
@@ -60,7 +60,7 @@ tokens2sequences.tokens <- function(x, maxsenlen = 40, keepn = NULL) {
     rownames(mat) <- doc_nam # Adds docname to each row of the matrix
     colnames(mat) <- as.character(1:maxsenlen) # Adds a numeric label to each column
     data <- data[!is.na(data$label), ] # Removes words that were not assigned numeric ids from the dictionary
-    data <- data[order(data$label, decreasing = FALSE), 
+    data <- data[order(data$label, decreasing = FALSE),
                  c("features", "label", "freq")] # selects feature names, ids, and frequency for dictionary and orders by frequency-based ID
     rownames(data) <- NULL # Resets rownames of dictionary
     output <- list(matrix = mat, nfeatures = nrow(data), features = data)
@@ -99,15 +99,15 @@ print.tokens2sequences <- function(x, ...) {
 #'   used to change token labels for \code{x}
 #' @seealso \code{\link{tokens2sequences}}
 #' @export
-#' @examples 
+#' @examples
 #' corpcoded <- corpus_subset(data_corpus_manifestosentsUK, !is.na(crowd_immigration_label))
 #' corpuncoded <- data_corpus_manifestosentsUK %>%
 #'     corpus_subset(is.na(crowd_immigration_label) & year > 1980) %>%
 #'     corpus_sample(size = ndoc(corpcoded))
-#' 
+#'
 #' tokx <- tokens(corpuncoded)
 #' toky <- tokens(corpcoded)
-#' 
+#'
 #' seqx <- tokens2sequences(tokx, maxsenlen = 50, keepn = 5000)
 #' seqy <- tokens2sequences(toky, maxsenlen = 50, keepn = 5000)
 #' tokens2sequences_conform(seqx, seqy)
@@ -145,7 +145,7 @@ tokens2sequences_conform.tokens2sequences <- function(x, y) {
 
 #' Check to see if function is a tokens2sequences type
 #'
-#' 
+#'
 #' @param x Object that will be checked to see if it is of the type \code{\link{tokens2sequences}}
 #' @seealso \code{\link{tokens2sequences}}
 #' @export

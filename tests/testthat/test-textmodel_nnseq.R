@@ -6,13 +6,13 @@ test_that("the nnseq model works", {
     dfmat <- dfm(data_corpus_irishbudget2010)
     y <- test <- docvars(data_corpus_irishbudget2010, "party")
     y[5] <- NA
-    tmod <- textmodel_nnseq(dfmat, y = y)
-    
+    tmod <- textmodel_nnseq(dfmat, y = y, epoch = 50)
+
     # label
     expect_equal(names(predict(tmod, type = "class"))[5], "Cowen, Brian (FF)")
     # prediction
     expect_equal(as.character(predict(tmod, type = "class")[5]), "FF")
-        
+    
     probmat <- predict(tmod, type = "probability")
     expect_equal(dim(probmat), c(14, 5))
     expect_equal(rownames(probmat), docnames(dfmat))
@@ -23,9 +23,9 @@ test_that("the nnseq model works", {
         print(tmod),
         "Call:"
     )
-    
+
     expect_equal(names(summary(tmod)), c("call", "model structure"))
-    expect_identical(
+    expect_equivalent(
         as.character(predict(tmod, type = "class")),
         test
     )
