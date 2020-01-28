@@ -1,5 +1,5 @@
 #' quanteda.classifiers
-#' 
+#'
 #' Extensions to \pkg{quanteda} that provide supervised machine learning models
 #' for document-feature matrices.
 #' @keywords internal

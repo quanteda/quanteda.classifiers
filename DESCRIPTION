@@ -23,8 +23,8 @@ Suggests:
     covr
 Remotes:
     quanteda/quanteda.corpora
-URL: http://github.com/quanteda/quanteda.svm
-BugReports: https://github.com/quanteda/quanteda.svm/issues
+URL: https://github.com/quanteda/quanteda.classifiers
+BugReports: https://github.com/quanteda/quanteda.classifiers/issues
 LazyData: TRUE
 RoxygenNote: 7.0.2
 Language: en-GB

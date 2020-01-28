@@ -3,30 +3,29 @@ context("test textmodel_nnseq")
 test_that("the nnseq model works", {
     skip_on_cran()
 
-    ## Example from 13.1 of _An Introduction to Information Retrieval_
-    text <- c("Chinese Beijing Chinese",
-              "Chinese Chinese Shanghai",
-              "Chinese Macao",
-              "Tokyo Japan",
-              "Chinese Chinese Chinese Tokyo Japan")
-    text <- rep(text, times = 25)
-    train <- c("Y", "Y", "Y", "N", NA)
-    train <- rep(train, times = 25)
-    test <- c("Y", "Y", "Y", "N", "Y")
-    test <- rep(test, times = 25)
+    dfmat <- dfm(data_corpus_irishbudget2010)
+    y <- test <- docvars(data_corpus_irishbudget2010, "party")
+    y[5] <- NA
+    tmod <- textmodel_nnseq(dfmat, y = y, epoch = 50)
+
+    # label
+    expect_equal(names(predict(tmod, type = "class"))[5], "Cowen, Brian (FF)")
+    # prediction
+    expect_equal(as.character(predict(tmod, type = "class")[5]), "FF")
     
-    corp <- corpus(text, docvars = data.frame(train = factor(train)))
-    dfmat <- dfm(corp, tolower = FALSE)
-    
-    tmod <- textmodel_nnseq(dfmat, y = docvars(dfmat, "train"), epochs = 3, verbose = FALSE)
-    
+    probmat <- predict(tmod, type = "probability")
+    expect_equal(dim(probmat), c(14, 5))
+    expect_equal(rownames(probmat), docnames(dfmat))
+    expect_equal(colnames(probmat), tmod$classnames)
+    expect_equal(unname(rowSums(probmat)), rep(1, nrow(probmat)), tol = .000001)
+
     expect_output(
         print(tmod),
         "Call:"
     )
-    
+
     expect_equal(names(summary(tmod)), c("call", "model structure"))
-    expect_identical(
+    expect_equivalent(
         as.character(predict(tmod, type = "class")),
         test
     )
@@ -34,28 +33,8 @@ test_that("the nnseq model works", {
     pred_out <- predict(tmod, type = "probability")
     pred_max <- apply(pred_out, 1, function(x) colnames(pred_out)[which.max(x)])
     names(test) <- paste0("text", 1:length(test))
-    expect_equal(
+    expect_equivalent(
         pred_max,
-        test
+        as.character(predict(tmod, type = "class"))
     )
-})
-
-test_that("multiclass prediction works", {
-    skip_on_cran()
-    
-    dfmat <- dfm(data_corpus_irishbudget2010) %>%
-        dfm_tfidf()
-    y <- docvars(data_corpus_irishbudget2010, "party")
-    y[5] <- NA
-    tmod2 <- textmodel_nnseq(dfmat, y = y)
-    expect_equal(
-        names(predict(tmod2, newdata = dfmat[5, ], type = "class")),
-        "Cowen, Brian (FF)"
-    )
-
-    probmat <- predict(tmod2, type = "probability")
-    expect_equal(dim(probmat), c(14, 5))
-    expect_equal(rownames(probmat), docnames(dfmat))
-    expect_equal(colnames(probmat), tmod2$classnames)
-    expect_equal(unname(rowSums(probmat)), rep(1, nrow(probmat)), tol = .000001)
 })
