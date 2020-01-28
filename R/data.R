@@ -121,3 +121,26 @@
 #'  A \link[quanteda]{corpus} object.
 #' @keywords data
 "data_corpus_EPcoaldebate"
+
+#' Large Movie Review Dataset from Maas et. al. (2011)
+#' 
+#' A corpus object containing a dataset for sentiment classification containing
+#' 25,000 highly polar movie reviews for training, and 25,000 for testing, from
+#' Maas et. al. (2011).
+#' @format The corpus docvars consist of:
+#'   \describe{
+#'   \item{docnumber}{serial (within set and polarity) document number}
+#'   \item{rating}{user-assigned movie rating on a 1-10 point integer scale}
+#'   \item{set}{used for test v. training set}
+#'   \item{polarity}{either \code{neg} or \code{pos} to indicate whether the 
+#'     movie review was negative or positive.  See Maas et al (2011) for the 
+#'     cutoff values that governed this assignment.}
+#'   }
+#' @references Andrew L. Maas, Raymond E. Daly, Peter T. Pham, Dan Huang, Andrew
+#'   Y. Ng, and Christopher Potts. (2011).
+#'   "\href{http://ai.stanford.edu/~amaas/papers/wvSent_acl2011.pdf}{Learning
+#'   Word Vectors for Sentiment Analysis}". The 49th Annual Meeting of the
+#'   Association for Computational Linguistics (ACL 2011).
+#' @source \url{http://ai.stanford.edu/~amaas/data/sentiment/}
+#' @keywords data
+"data_corpus_LMRD"

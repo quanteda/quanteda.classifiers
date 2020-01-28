@@ -1,0 +1,144 @@
+---
+title: "Testing text classification using movie reviews"
+author: "Kenneth Benoit"
+output:
+  html_notebook:
+    toc: yes
+    toc_float: true
+---
+
+
+Tests using the Large Movie Review Dataset, a dataset for sentiment classification containing 25,000 highly polar movie reviews for training, and 25,000 for testing, from Maas et. al. (2011).
+
+Source: Andrew L. Maas, Raymond E. Daly, Peter T. Pham, Dan Huang, Andrew Y. Ng, and Christopher Potts. (2011). "Learning Word Vectors for Sentiment Analysis". The 49th Annual Meeting of the Association for Computational Linguistics (ACL 2011).
+
+# Setting up {.tabset .tabset-fade}
+
+## Test and training data 
+
+```{r}
+dfmat <- dfm(data_corpus_LMRD)
+dfmat_train <- dfm_trim(dfmat, min_termfreq = 20) %>%
+    dfm_subset(set == "train")
+dfmat_test <- dfm_trim(dfmat, min_termfreq = 20) %>%
+    dfm_subset(set == "test")
+```
+
+## Some functions for evaluation
+
+```{r}
+performance <- function(mytable, verbose = TRUE) {
+  truePositives <- mytable[1, 1]
+  trueNegatives <- sum(diag(mytable)[-1])
+  falsePositives <- sum(mytable[1, ]) - truePositives
+  falseNegatives <- sum(mytable[, 1]) - truePositives
+  precision <- truePositives / (truePositives + falsePositives)
+  recall <- truePositives / (truePositives + falseNegatives)
+  accuracy <- sum(diag(mytable)) / sum(mytable)
+  tnr <- trueNegatives / (trueNegatives + falsePositives)
+  balanced_accuracy <- sum(c(precision, tnr), na.rm = TRUE) / 2
+  if (verbose) {
+    print(mytable)
+    cat(
+      "\n    precision =", round(precision, 2),
+      "\n       recall =", round(recall, 2),
+      "\n     accuracy =", round(accuracy, 2),
+      "\n    bal. acc. =", round(balanced_accuracy, 2),
+      "\n"
+    )
+  }
+  invisible(c(precision, recall))
+}
+```
+
+
+
+# Naive Bayes {.tabset .tabset-fade}
+
+## No weights
+
+```{r}
+system.time({
+tmod_nb <- textmodel_nb(dfmat_train, y = docvars(dfmat_train, "polarity"))
+pred_nb <- predict(tmod_nb, newdata = dfmat_test, type = "class")
+table(pred_nb, dfmat_test$polarity)[2:1, 2:1] %>% performance()
+})
+```
+
+## tf-idf weighting
+
+```{r}
+system.time({
+tmod_nb <- textmodel_nb(dfm_tfidf(dfmat_train), 
+                        y = docvars(dfmat_train, "polarity"))
+pred_nb <- predict(tmod_nb, newdata = dfm_tfidf(dfmat_test), type = "class")
+table(pred_nb, dfmat_test$polarity)[2:1, 2:1] %>% performance()
+})
+```
+
+# SVM {.tabset .tabset-fade}
+
+## SVM
+
+```{r}
+system.time({
+tmod_svm <- textmodel_svm(dfmat_train, y = docvars(dfmat_train, "polarity"))
+pred_svm <- predict(tmod_svm, newdata = dfmat_test, type = "class")
+table(pred_svm, dfmat_test$polarity)[2:1, 2:1] %>% performance()
+})
+```
+
+## SVM w/tf-idf weights
+
+```{r}
+tmod_svm2 <- textmodel_svm(dfm_tfidf(dfmat_train),
+                           y = docvars(dfmat_train, "polarity"))
+pred_svm2 <- predict(tmod_svm2, newdata = dfm_tfidf(dfmat_test), type = "class")
+table(pred_svm2, dfmat_test$polarity)[2:1, 2:1] %>% performance()
+```
+
+## SVMlin
+
+```{r}
+system.time({
+tmod_svmlin <- textmodel_svmlin(dfmat_train,
+                             y = docvars(dfmat_train, "polarity"))
+pred_svmlin <- predict(tmod_svmlin, newdata = dfmat_test, type = "class")
+table(pred_svm, dfmat_test$polarity)[2:1, 2:1] %>% performance()
+})
+```
+
+
+# Sequential network model
+
+```{r}
+system.time({
+tmod_nnseq <- textmodel_nnseq(dfmat_train,
+                              y = docvars(dfmat_train, "polarity"), epochs = 10)
+pred_nnseq <- predict(tmod_nnseq, newdata = dfmat_test, type = "class")
+table(pred_nnseq, dfmat_test$polarity)[2:1, 2:1] %>% performance()
+})
+```
+
+
+# CNN-embedding-LSTM model
+
+```{r}
+system.time({
+toks_train <- data_corpus_LMRD %>%
+    corpus_subset(set == "test") %>%
+    tokens() %>%
+    tokens_remove("\\p{P}", valuetype = "regex", padding = TRUE)
+tmod_cnn <- textmodel_cnnlstmemb(toks_train, 
+                                 y = docvars(dfmat_train, "polarity"), 
+                                 epochs = 1)
+
+toks_test <- data_corpus_LMRD %>%
+    corpus_subset(set == "train") %>%
+    tokens() %>%
+    tokens_remove("\\p{P}", valuetype = "regex", padding = TRUE)
+pred_cnn <- predict(tmod_cnn, newdata = toks_test, type = "class")
+table(pred_cnn, dfmat_test$polarity) %>% performance()
+})
+```
+

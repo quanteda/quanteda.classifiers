@@ -63,7 +63,7 @@ textmodel_svmlin.dfm <- function(x, y, intercept = TRUE, ...) {
 
     temp <- x[!is.na(y), ]
     class <- y[!is.na(y)]
-    temp <- dfm_group(temp, class)
+    temp <- dfm_group(temp, class, force = TRUE)
 
     svmlinfitted <- RSSL::svmlin(X = as(temp, "dgCMatrix"), X_u = NULL,
                                  y = factor(docnames(temp), levels = docnames(temp)),
