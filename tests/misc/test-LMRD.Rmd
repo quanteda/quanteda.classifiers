@@ -131,7 +131,7 @@ toks_train <- data_corpus_LMRD %>%
     tokens_remove("\\p{P}", valuetype = "regex", padding = TRUE)
 tmod_cnn <- textmodel_cnnlstmemb(toks_train, 
                                  y = docvars(dfmat_train, "polarity"), 
-                                 epochs = 1)
+                                 epochs = 10)
 
 toks_test <- data_corpus_LMRD %>%
     corpus_subset(set == "train") %>%
