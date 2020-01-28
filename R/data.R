@@ -1,7 +1,7 @@
 #' Sentence-level corpus of UK party manifestos 1945--2017, partially annotated
 #'
 #' @description A text corpus of sentences from publicly available party manifestos from the
-#' United Kingdom, published between 1945 and 2017.  Some manifestos sentences
+#' United Kingdom, published between 1945 and 2019  Some manifestos sentences
 #' have been rated in terms of the direction of policy using crowd-sourced coders.
 #'
 #' @description The manifestos from the
@@ -17,10 +17,11 @@
 #' @description The
 #' corpus contains the aggregated crowd coding values on the level of sentences.
 #' Note that the segmentation into sentences does not always work correctly due
-#' to missing punctuation. See Examples for how to remove very short and very
-#' long sentences using \link[quanteda]{corpus_trim}.
+#' to missing punctuation. Very short or long sentences can be removed 
+#' using \link[quanteda]{corpus_subset()} based on document (sentence) length 
+#' in characters or tokens.)
 #' @format
-#'   The corpus consists of 69,280 documents (i.e. sentences) and includes the following
+#'   The corpus consists of 88,954 documents (i.e. sentences) and includes the following
 #'   document-level variables: \describe{
 #'   \item{party}{factor; abbreviation of the party that wrote the manifesto.}
 #'   \item{partyname}{factor; party that wrote the manifesto.}
@@ -59,10 +60,6 @@
 #' @examples
 #' \donttest{
 #' library("quanteda")
-#'
-#' # remove very short and very long sentences
-#' corp_trimmed <-
-#'     corpus_trim(data_corpus_manifestosentsUK, min_ntoken = 1, max_ntoken = 80)
 #'
 #' # keep only crowd coded manifestos (with respect to economic and social policy)
 #' corp_crowdeconsocial <-
