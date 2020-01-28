@@ -15,6 +15,8 @@ status](https://codecov.io/gh/quanteda/quanteda.classifiers/branch/master/graph/
 ``` r
 # devtools package required to install quanteda from Github 
 devtools::install_github("quanteda/quanteda.classifiers") 
+
+keras::install_keras(method = "conda")
 ```
 
 ## Available classifiers
@@ -22,132 +24,22 @@ devtools::install_github("quanteda/quanteda.classifiers")
 | Classifier                                                          | Command                  |
 | ------------------------------------------------------------------- | ------------------------ |
 | Support Vector Machine (SVM)                                        | `textmodel_svm()`        |
+| Alternative (faster) SVM                                            | `textmodel_svmlin()`     |
 | Sequential neural network                                           | `textmodel_nnseq()`      |
 | Convolutional neural network + LSTM model fitted to word embeddings | `textmodel_cnnlstmemb()` |
 
 ## Available human-annotated corpora
 
-| Corpus                                                                                    | Name                           |
-| ----------------------------------------------------------------------------------------- | ------------------------------ |
-| Sentence-level corpus of UK party manifestos 1945–2017, partially annotated               | `data_corpus_manifestosentsUK` |
-| Crowd-labelled sentence corpus from a 2010 EP debate on coal subsidies (in six languages) | `data_corpus_EPcoaldebate`     |
+| Corpus                                                                                                                       | Name                           |
+| ---------------------------------------------------------------------------------------------------------------------------- | ------------------------------ |
+| Sentence-level corpus of UK party manifestos 1945–2017, partially annotated                                                  | `data_corpus_manifestosentsUK` |
+| Crowd-labelled sentence corpus from a 2010 EP debate on coal subsidies (in six languages)                                    | `data_corpus_EPcoaldebate`     |
+| Large Movie Review Dataset of 50,000 annotated highly polar movie reviews for training and testing, from Maas et. al. (2011) | `data_corpus_LMRD`             |
 
-``` r
-library("quanteda.classifiers")
+## Demonstration
 
-performance <- function(mytable, verbose = TRUE) {
-  truePositives <- mytable[1, 1]
-  trueNegatives <- sum(diag(mytable)[-1])
-  falsePositives <- sum(mytable[1, ]) - truePositives
-  falseNegatives <- sum(mytable[, 1]) - truePositives
-  precision <- truePositives / (truePositives + falsePositives)
-  recall <- truePositives / (truePositives + falseNegatives)
-  accuracy <- sum(diag(mytable)) / sum(mytable)
-  tnr <- trueNegatives / (trueNegatives + falsePositives)
-  balanced_accuracy <- sum(c(precision, tnr), na.rm = TRUE) / 2
-  if (verbose) {
-    print(mytable)
-    cat(
-      "\n    precision =", round(precision, 2),
-      "\n       recall =", round(recall, 2),
-      "\n     accuracy =", round(accuracy, 2),
-      "\n    bal. acc. =", round(balanced_accuracy, 2),
-      "\n"
-    )
-  }
-  invisible(c(precision, recall))
-}
-
-# define training texts and the "true" govt/opp status
-y <- ifelse(docvars(data_corpus_dailnoconf1991, "name") == "Haughey", "Govt", NA)
-y <- ifelse(docvars(data_corpus_dailnoconf1991, "name") %in% c("Spring", "deRossa"), "Opp", y)
-truth <- ifelse(docvars(data_corpus_dailnoconf1991, "party") %in% c("FF", "PD"), "Govt", "Opp")
-
-# no weighting: poor
-dfm(data_corpus_dailnoconf1991) %>%
-  textmodel_svm(y) %>%
-  predict() %>%
-  table(truth) %>%
-  performance()
-##       truth
-## .      Govt Opp
-##   Govt    6   0
-##   Opp    19  33
-## 
-##     precision = 1 
-##        recall = 0.24 
-##      accuracy = 0.67 
-##     bal. acc. = 1
-
-# proportions: poor, predicts everyone to be opposition
-dfm(data_corpus_dailnoconf1991) %>%
-  dfm_weight(scheme = "prop") %>%
-  textmodel_svm(y) %>%
-  predict() %>%
-  table(truth) %>%
-  performance()
-##       truth
-## .      Govt Opp
-##   Govt    0   0
-##   Opp    25  33
-## 
-##     precision = NaN 
-##        recall = 0 
-##      accuracy = 0.57 
-##     bal. acc. = 0.5
-
-# scaled - results in a fully dense dfm, and poor performance
-dfm(data_corpus_dailnoconf1991) %>%
-  scale() %>%
-  as.dfm() %>%
-  textmodel_svm(y) %>%
-  predict() %>%
-  table(truth) %>%
-  performance()
-##       truth
-## .      Govt Opp
-##   Govt   24  25
-##   Opp     1   8
-## 
-##     precision = 0.49 
-##        recall = 0.96 
-##      accuracy = 0.55 
-##     bal. acc. = 0.37
-
-# tf-idf: better
-dfm(data_corpus_dailnoconf1991) %>%
-  dfm_tfidf() %>%
-  textmodel_svm(y) %>%
-  predict() %>%
-  table(truth) %>%
-  performance()
-##       truth
-## .      Govt Opp
-##   Govt   16   3
-##   Opp     9  30
-## 
-##     precision = 0.84 
-##        recall = 0.64 
-##      accuracy = 0.79 
-##     bal. acc. = 0.88
-
-# tf-idf: best with document frequency weights
-dfm(data_corpus_dailnoconf1991) %>%
-  dfm_tfidf() %>%
-  textmodel_svm(y, weight = "docfreq") %>%
-  predict() %>%
-  table(truth) %>%
-  performance()
-##       truth
-## .      Govt Opp
-##   Govt   15   2
-##   Opp    10  31
-## 
-##     precision = 0.88 
-##        recall = 0.6 
-##      accuracy = 0.79 
-##     bal. acc. = 0.91
-```
+See this (very preliminary\!) [performance
+comparison](https://htmlpreview.github.io/?https://github.com/quanteda/quanteda.classifiers/blob/master/tests/misc/test-LMRD.nb.html).
 
 ## How to cite
 
