@@ -11,7 +11,7 @@
   \item{set}{used for test v. training set}
   \item{polarity}{either \code{neg} or \code{pos} to indicate whether the 
     movie review was negative or positive.  See Maas et al (2011) for the 
-    cutoff values that governed this assignment.}
+    cut-off values that governed this assignment.}
   }}
 \source{
 \url{http://ai.stanford.edu/~amaas/data/sentiment/}
