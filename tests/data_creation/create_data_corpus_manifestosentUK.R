@@ -1,3 +1,7 @@
+########################
+### Create UK election manifesto dataset on the level of sentences
+########################
+
 # load packages
 library(dplyr)
 library(tidyr)
@@ -6,7 +10,6 @@ library(readtext)
 library(quanteda)
 library(quanteda.corpora)
 library(spacyr)
-
 
 ########################
 ### 1. Load and aggregate crowdcoded data ----
@@ -17,23 +20,18 @@ library(spacyr)
 data_readtext_uk_econsocial <- readtext("tests/data_creation/data_uk_policyarea.zip",
                                          ignore_missing_files = TRUE, encoding = "utf-8")
 
-# exclude screeners from data frame
+# exclude screeners from data frame using a regular expression
 data_readtext_uk_econsocial <- data_readtext_uk_econsocial %>% 
   dplyr::filter(!grepl('Code this sentence as', sentence_text))
 
-# number of codings
-nrow(data_readtext_uk_econsocial)
-
-length(unique(data_readtext_uk_econsocial$sentenceid))
-
-## for some sentences, special characters are displayed differently depending on the
+## For some sentences, special characters are displayed differently depending on the
 ## crowd coding job. Therefore, I remove sentence_text here and merge it later 
 ## using "master.sentences.Rdata" which does not contain these encoding errors
 
 data_readtext_uk_econsocial <- data_readtext_uk_econsocial %>% 
   select(-sentence_text)
 
-# load "master sentences" from the APSR replicat data with metadata on manifestos and years
+# load "master sentences" from the APSR replication data with metadata on manifestos and years
 load("tests/data_creation/master.sentences.Rdata")
 
 sentences_metadata <- sentences %>% 
@@ -42,17 +40,13 @@ sentences_metadata <- sentences %>%
 # merge metadata on manifestos with crowd coded texts
 data_readtext_uk_econsocial <- left_join(data_readtext_uk_econsocial, sentences_metadata, by = "sentenceid")
 
-length(unique(data_readtext_uk_econsocial$sentenceid))
-
-nrow(data_readtext_uk_econsocial)
-
-# create numeric indicator for aggregation
+# create numeric indicator for aggregation of policy area
 data_readtext_uk_econsocial <- data_readtext_uk_econsocial %>% 
     mutate(class_policyarea_num = ifelse(policy_area == 1, 0,
                                         ifelse(policy_area == 2, -1,
                                                ifelse(policy_area == 3, 1, NA))))
 
-# # create numeric indicator for aggregation of direction
+# create numeric indicator for aggregation of direction
 data_readtext_uk_econsocial <- data_readtext_uk_econsocial %>%
     mutate(class_policyarea_direction_num = ifelse(!is.na(soc_scale), soc_scale,
                                                   ifelse(!is.na(econ_scale), econ_scale, NA)))
@@ -68,6 +62,7 @@ data_readtext_uk_econsocial <- data_readtext_uk_econsocial %>%
     mutate(crowd_econsocial_label = ifelse(class_policyarea_mean < 0, "Economic",
                                        ifelse(class_policyarea_mean == 0, "Not Economic or Social",
                                               ifelse(class_policyarea_mean > 0, "Social", NA))))
+
 
 # here I make sure that the policy direction mean only takes 
 # into account the majority category and not also the minority category position values
@@ -148,14 +143,12 @@ data_uk_immig_man_2010 <- data_uk_immigration %>%
 ## 1.3 Merge both crowdcoded datasets ----
 ########################
 
-# (the 2010 manifestos have been coded both with regards to 
-# immigration AND econ/social/neither)
+# Note that the 2010 manifestos have been coded both with regards to 
+# immigration AND econ/social/neither
 
 # full join of both crowdcoded datasets
 dat_uk_crowdcoded <- full_join(data_uk_man_econsocial,
                                data_uk_immig_man_2010, by = c("sentenceid"))
-
-names(dat_uk_crowdcoded)
 
 table(dat_uk_crowdcoded$Party.x)
 table(dat_uk_crowdcoded$Party.y)
@@ -166,18 +159,6 @@ dat_uk_man_crowdcoded_clean <- dat_uk_crowdcoded %>%
     mutate(Year = ifelse(is.na(Year.x), Year.y, Year.x)) %>% 
     mutate(text = ifelse(is.na(text.x), text.y, text.x)) %>% 
     select(-c(Party.x, Party.y, Year.x, Year.y, text.x, text.y))
-
-check_econsocial <- dat_uk_man_crowdcoded_clean %>% 
-  filter(!is.na(crowd_econsocial_label))
-
-length(unique(check_econsocial$sentenceid))
-
-check_immig <- dat_uk_man_crowdcoded_clean %>% 
-  filter(!is.na(crowd_immigration_label))
-
-length(unique(check_immig$sentenceid))
-
-table(check_immig$crowd_immigration_label)
 
 ########################
 ## 2. Add data_corpus_ukmanifestos from quanteda.corpora package ----
@@ -210,7 +191,7 @@ ndoc(data_corpus_ukmanifestos_subset)
 # check whether Lab, Con, Lib manifestos are excluded for time between 1987 and 2010 (yes!)
 table(docvars(data_corpus_ukmanifestos_subset, "party_year"))
 
-# only keep manifestos from national general elections
+# only keep manifestos from national general elections (Type == "natl")
 data_corpus_ukmanifestos_sentences <- data_corpus_ukmanifestos_subset %>% 
     corpus_subset(Type == "natl") 
     
@@ -223,7 +204,6 @@ data_uk_man <- data.frame(
 )
 
 # use spacyr to tokenize manifestos to sentence-level
-
 spacy_initialize(model = "en")
 
 data_uk_man_sentences <- spacy_tokenize(data_uk_man,
@@ -277,6 +257,7 @@ data_uk_manifestos <- bind_rows(data_uk_man_sentences,
                                 dat_uk_man_crowdcoded_clean, 
                                 data_uk_man_1519_sentences)
 
+
 # create unique id for each sentence and select only necessary variables
 data_uk_manifestos_selectvars <- data_uk_manifestos %>% 
     select(-c(party_year, sentenceid)) %>% 
@@ -289,7 +270,7 @@ data_uk_manifestos_selectvars <- data_uk_manifestos %>%
 # create a quanteda corpus
 corp <- corpus(data_uk_manifestos_selectvars)
 
-# count the number of tokens per sentence
+# count the number of tokens per sentence (after removing punctuation characters)
 docvars(corp, "ntoken_sent") <- ntoken(corp, remove_punct = TRUE)
 
 # remove observation with 0 tokens (i.e. only punctuation character)
@@ -367,13 +348,8 @@ recode_party <- c("'Coalition'='Coalition Agreement';
                   'Ver'='Veritas Party'")
 
 
-
 dat_corpus_renamed <- dat_corpus_renamed %>% 
   mutate(partyname = car::recode(party, recode_party))
-
-table(dat_corpus_renamed$partyname)
-
-length(unique(dat_corpus_renamed$partyname))
 
 dat_corpus_renamed <- dat_corpus_renamed %>% 
   select(doc_id, text, party, partyname, year, 
@@ -390,6 +366,7 @@ dat_corpus_renamed$partyname <- as.factor(dat_corpus_renamed$partyname)
 dat_corpus_renamed$crowd_immigration_n <- as.integer(dat_corpus_renamed$crowd_immigration_n)
 dat_corpus_renamed$crowd_econsocial_n <- as.integer(dat_corpus_renamed$crowd_econsocial_n)
 
+# create final corpus
 data_corpus_manifestosentsUK <- corpus(dat_corpus_renamed,
                                        docid_field = "doc_id")
 
