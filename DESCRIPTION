@@ -10,8 +10,9 @@ Encoding: UTF-8
 License: GPL-3
 Depends:
     R (>= 3.4.0),
-    quanteda (>= 1.4.1),
-    methods
+    methods,
+    quanteda (>= 1.9),
+    quanteda.textmodels,
 Imports:
     keras (>= 2.1.0),
     LiblineaR,
@@ -22,7 +23,9 @@ Suggests:
     testthat,
     covr
 Remotes:
-    quanteda/quanteda.corpora
+    quanteda/quanteda.corpora,
+    quanteda/quanteda@no-textmodel,
+    quanteda/quanteda.textmodels
 URL: https://github.com/quanteda/quanteda.classifiers
 BugReports: https://github.com/quanteda/quanteda.classifiers/issues
 LazyData: TRUE

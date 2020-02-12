@@ -68,4 +68,7 @@ table(pred)
 tail(texts(corpuncoded)[pred == "Immigration"], 10)
 }
 }
+\seealso{
+[save.textmodel_nnseq()], [load.textmodel_nnseq()]
+}
 \keyword{textmodel}

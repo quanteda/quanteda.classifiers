@@ -7,7 +7,7 @@
 \format{The corpus consists of 16,806 documents (i.e. codings of a sentence) and includes the following
   document-level variables: \describe{
   \item{sentence_id}{character; a unique identifier for each sentence}
-  \item{crowd_subsidy_label}{factor; whether a coder labeled the sentence
+  \item{crowd_subsidy_label}{factor; whether a coder labelled the sentence
   as "Pro-Subsidy", "Anti-Subsidy" or "Neutral or inapplicable"}
   \item{language}{factor; the language (translation) of the speech}
   \item{name_last}{character; speaker's last name}
@@ -38,9 +38,9 @@ Each speech is available in six languages: English, German,
   \href{https://doi.org/10.1017/S0003055416000058}{Benoit et al. (2016)}.
 }
 \references{
-Benoit, K., Conway, D., Lauderdale, B.E., Laver, M., & Mikhaylov, S. (2016).
-  \href{https://doi.org/10.1017/S0003055416000058}{Crowd-sourced Text Analysis:
-  Reproducible and Agile Production of Political Data}.
+Benoit, K., Conway, D., Lauderdale, B.E., Laver, M., & Mikhaylov,
+  S. (2016). \href{https://doi.org/10.1017/S0003055416000058}{Crowd-sourced
+  Text Analysis: Reproducible and Agile Production of Political Data}.
   \emph{American Political Science Review}, 100,(2), 278--295.
 }
 \keyword{data}

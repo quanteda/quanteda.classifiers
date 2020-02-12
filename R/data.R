@@ -42,7 +42,7 @@
 #'   \item{crowd_econsocial_n}{integer; the number of coders who contributed to the
 #'   mean score \code{crowd_econsocial_mean}.}
 #'   \item{crowd_immigration_label}{Factor indicating whether the majority of
-#'   crowd workers labeled a sentence as referring to immigration or not. The
+#'   crowd workers labelled a sentence as referring to immigration or not. The
 #'   variable has missing values (\code{NA}) for all non-annotated manifestos.}
 #'   \item{crowd_immigration_mean}{numeric; the direction
 #'   of statements coded as "Immigration" based on the aggregated crowd codings.
@@ -100,7 +100,7 @@
 #'   The corpus consists of 16,806 documents (i.e. codings of a sentence) and includes the following
 #'   document-level variables: \describe{
 #'   \item{sentence_id}{character; a unique identifier for each sentence}
-#'   \item{crowd_subsidy_label}{factor; whether a coder labeled the sentence
+#'   \item{crowd_subsidy_label}{factor; whether a coder labelled the sentence
 #'   as "Pro-Subsidy", "Anti-Subsidy" or "Neutral or inapplicable"}
 #'   \item{language}{factor; the language (translation) of the speech}
 #'   \item{name_last}{character; speaker's last name}
@@ -113,9 +113,9 @@
 #'    sentences, which can theoretically range between 0 and 1. Only coders with trust scores above
 #'    0.8 are included in the corpus.}
 #'   }
-#' @references Benoit, K., Conway, D., Lauderdale, B.E., Laver, M., & Mikhaylov, S. (2016).
-#'   \href{https://doi.org/10.1017/S0003055416000058}{Crowd-sourced Text Analysis:
-#'   Reproducible and Agile Production of Political Data}.
+#' @references Benoit, K., Conway, D., Lauderdale, B.E., Laver, M., & Mikhaylov,
+#'   S. (2016). \href{https://doi.org/10.1017/S0003055416000058}{Crowd-sourced
+#'   Text Analysis: Reproducible and Agile Production of Political Data}.
 #'   \emph{American Political Science Review}, 100,(2), 278--295.
 #' @format
 #'  A \link[quanteda]{corpus} object.

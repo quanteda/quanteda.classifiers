@@ -26,7 +26,7 @@
   \item{crowd_econsocial_n}{integer; the number of coders who contributed to the
   mean score \code{crowd_econsocial_mean}.}
   \item{crowd_immigration_label}{Factor indicating whether the majority of
-  crowd workers labeled a sentence as referring to immigration or not. The
+  crowd workers labelled a sentence as referring to immigration or not. The
   variable has missing values (\code{NA}) for all non-annotated manifestos.}
   \item{crowd_immigration_mean}{numeric; the direction
   of statements coded as "Immigration" based on the aggregated crowd codings.
