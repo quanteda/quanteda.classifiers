@@ -1,17 +1,17 @@
-#' [Experimental] Convert quanteda tokens to keras sequences
+#' \[Experimental\] Convert quanteda tokens to keras sequences
 #'
-#' This function converts a \pkg{quanteda} \code{\link[quanteda]{tokens}} object
+#' This function converts a \pkg{quanteda} [quanteda::tokens()] object
 #' into a tokens sequence object as expected by some functions in the
 #' \pkg{keras} package.
-#' @param x \code{\link[quanteda]{tokens}} object
+#' @param x [quanteda::tokens()] object
 #' @param maxsenlen the maximum sentence length kept in output matrix
 #' @param keepn the maximum number of features to keep
-#' @return \code{\link{tokens2sequences}} The output matrix has a number of rows
+#' @return [tokens2sequences()] The output matrix has a number of rows
 #'   which represent each tokenized sentence input into the function and a
-#'   number of columns determined by \code{maxsenlen}. The matrix contains a
-#'   numeric code for every unique token kept (determined by \code{keepn}) and
+#'   number of columns determined by `maxsenlen`. The matrix contains a
+#'   numeric code for every unique token kept (determined by `keepn`) and
 #'   they are arranged in the same sequence indicated by the original
-#'   \code{\link[quanteda]{tokens}} object.
+#'   [quanteda::tokens()] object.
 #' @seealso [is.tokens2sequences()], [tokens2sequences_conform()]
 #' @export
 #' @examples
@@ -65,8 +65,9 @@ tokens2sequences.tokens <- function(x, maxsenlen = 40, keepn = NULL) {
 }
 
 
-#' @seealso \code{\link{tokens2sequences}}
+#' @seealso [tokens2sequences()]
 #' @export
+#' @importFrom utils head
 #' @method print tokens2sequences
 print.tokens2sequences <- function(x, ...) {
     # calculate % sparse
@@ -90,10 +91,10 @@ print.tokens2sequences <- function(x, ...) {
 #'
 #' Converts the feature names of one tokens2sequences object to those of
 #' another.  Useful in aligning training and test sets.
-#' @param x \code{\link{tokens2sequences}} object that will be forced to conform
-#' @param y \code{\link{tokens2sequences}} object whose feature names will be
-#'   used to change token labels for \code{x}
-#' @seealso \code{\link{tokens2sequences}}
+#' @param x [tokens2sequences()] object that will be forced to conform
+#' @param y [tokens2sequences()] object whose feature names will be
+#'   used to change token labels for `x`
+#' @seealso [tokens2sequences()]
 #' @keywords internal
 #' @export
 #' @examples
@@ -115,6 +116,7 @@ tokens2sequences_conform <- function(x, y) {
 }
 
 #' @export
+#' @importFrom stats na.omit
 tokens2sequences_conform.tokens2sequences <- function(x, y) {
     stopifnot(is.tokens2sequences(x) & is.tokens2sequences(y))
     joint_feat <- merge(x$features, y$features[, -3], by = "features",
@@ -145,8 +147,8 @@ tokens2sequences_conform.tokens2sequences <- function(x, y) {
 #' Check to see if function is a tokens2sequences type
 #'
 #'
-#' @param x Object that will be checked to see if it is of the type \code{\link{tokens2sequences}}
-#' @seealso \code{\link{tokens2sequences}}
+#' @param x Object that will be checked to see if it is of the type [tokens2sequences()]
+#' @seealso [tokens2sequences()]
 #' @keywords internal
 #' @export
 is.tokens2sequences <- function(x) {

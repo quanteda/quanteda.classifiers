@@ -25,16 +25,15 @@
 }
 \value{
 \code{predict.textmodel_cnnlstmemb} returns either a vector of class
-  predictions for each row of \code{newdata} (when \code{type = "class"}), or
-  a document-by-class matrix of class probabilities (when \code{type =
-  "probability"}).
+predictions for each row of \code{newdata} (when \code{type = "class"}), or
+a document-by-class matrix of class probabilities (when \code{type = "probability"}).
 }
 \description{
 \code{predict.textmodel_cnnlstmemb()} implements class predictions from a
 fitted sequential neural network model.
 }
 \seealso{
-\code{\link{textmodel_cnnlstmemb}}
+\code{\link[=textmodel_cnnlstmemb]{textmodel_cnnlstmemb()}}
 }
 \keyword{internal}
 \keyword{textmodel}

@@ -7,7 +7,7 @@
 \method{summary}{textmodel_cnnlstmemb}(object, ...)
 }
 \arguments{
-\item{object}{output from \code{\link{textmodel_cnnlstmemb}}}
+\item{object}{output from \code{\link[=textmodel_cnnlstmemb]{textmodel_cnnlstmemb()}}}
 
 \item{...}{additional arguments not used}
 }

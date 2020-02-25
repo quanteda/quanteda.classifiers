@@ -31,16 +31,16 @@ rate at which units are dropped for the linear transformation of the
 inputs.}
 
 \item{optimizer}{optimizer used to fit model to training data, see
-\code{\link[keras]{compile.keras.engine.training.Model}}}
+\code{\link[keras:compile.keras.engine.training.Model]{keras::compile.keras.engine.training.Model()}}}
 
 \item{loss}{objective loss function, see
-\code{\link[keras]{compile.keras.engine.training.Model}}}
+\code{\link[keras:compile.keras.engine.training.Model]{keras::compile.keras.engine.training.Model()}}}
 
 \item{metrics}{metric used to train algorithm, see
-\code{\link[keras]{compile.keras.engine.training.Model}}}
+\code{\link[keras:compile.keras.engine.training.Model]{keras::compile.keras.engine.training.Model()}}}
 
 \item{...}{additional options passed to
-\code{\link[keras]{fit.keras.engine.training.Model}}}
+\code{\link[keras:fit.keras.engine.training.Model]{keras::fit.keras.engine.training.Model()}}}
 }
 \description{
 This function is a wrapper for a sequential neural network model with a
@@ -69,6 +69,6 @@ tail(texts(corpuncoded)[pred == "Immigration"], 10)
 }
 }
 \seealso{
-[save.textmodel_nnseq()], [load.textmodel_nnseq()]
+\code{\link[=save.textmodel_nnseq]{save.textmodel_nnseq()}}, \code{\link[=load.textmodel_nnseq]{load.textmodel_nnseq()}}
 }
 \keyword{textmodel}

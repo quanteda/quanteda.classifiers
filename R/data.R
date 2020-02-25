@@ -12,13 +12,13 @@
 #' manifestos from the 2010 General Election have been crowd-coded in terms of
 #' immigration policy, and the direction of immigration policy. For more
 #' information on the coding approach see
-#' \href{https://doi.org/10.1017/S0003055416000058}{Benoit et al. (2016)}.
+#' [Benoit et al. (2016)](https://doi.org/10.1017/S0003055416000058).
 #'
 #' @description The
 #' corpus contains the aggregated crowd coding values on the level of sentences.
 #' Note that the segmentation into sentences does not always work correctly due
 #' to missing punctuation. See Examples for how to remove very short and very
-#' long sentences using \link[quanteda]{corpus_trim}.
+#' long sentences using [corpus_trim][quanteda::corpus_trim].
 #' @format
 #'   The corpus consists of 69,280 documents (i.e. sentences) and includes the following
 #'   document-level variables: \describe{
@@ -27,7 +27,7 @@
 #'   \item{year}{integer; 4-digit year of the election.}
 #'   \item{crowd_econsocial_label}{factor; indicates the majority label assigned
 #'   by crowd workers (Economic Policy, Social Policy, or Neither). The variable
-#'   has missing values (\code{NA}) for all non-annotated manifestos.}
+#'   has missing values (`NA`) for all non-annotated manifestos.}
 #'   \item{crowd_econsocial_mean}{numeric; the direction of statements coded as
 #'   "Economic Policy" or "Social Policy" based on the aggregated crowd codings.
 #'   The variable is the mean of the scores assigned by the workers workers who
@@ -40,21 +40,21 @@
 #'   conservative". The variable has missing values (NA) for all sentences that
 #'   were aggregated as "Neither" and for all non-annotated manifestos.)}
 #'   \item{crowd_econsocial_n}{integer; the number of coders who contributed to the
-#'   mean score \code{crowd_econsocial_mean}.}
+#'   mean score `crowd_econsocial_mean`.}
 #'   \item{crowd_immigration_label}{Factor indicating whether the majority of
 #'   crowd workers labelled a sentence as referring to immigration or not. The
-#'   variable has missing values (\code{NA}) for all non-annotated manifestos.}
+#'   variable has missing values (`NA`) for all non-annotated manifestos.}
 #'   \item{crowd_immigration_mean}{numeric; the direction
 #'   of statements coded as "Immigration" based on the aggregated crowd codings.
 #'   The variable is the mean of the scores assigned by workers who coded a
 #'   sentence and who allocated the sentence to the "Immigration" category. The
 #'   variable ranges from -1 ("Negative and closed immigration policy") to +1
 #'   (Favorable and open immigration policy). The variable has missing values
-#'   (\code{NA}) for all non-annotated manifestos or if a sentence was not coded as
+#'   (`NA`) for all non-annotated manifestos or if a sentence was not coded as
 #'   referring to immigration policy based on the aggregation of crowd codings.}
 #'   \item{crowd_immigration_n}{integer; the number of coders who
 #'   contributed to the
-#'   mean score \code{crowd_immigration_mean}.}
+#'   mean score `crowd_immigration_mean`.}
 #'   }
 #' @examples
 #' \donttest{
@@ -73,11 +73,11 @@
 #'     corpus_subset(data_corpus_manifestosentsUK, !is.na(crowd_immigration_label))
 #' }
 #' @references Benoit, K., Conway, D., Lauderdale, B.E., Laver, M., & Mikhaylov, S. (2016).
-#'   \href{https://doi.org/10.1017/S0003055416000058}{Crowd-sourced Text Analysis:
-#'   Reproducible and Agile Production of Political Data}.
-#'   \emph{American Political Science Review}, 100,(2), 278--295.
+#'   [Crowd-sourced Text Analysis:
+#'   Reproducible and Agile Production of Political Data](https://doi.org/10.1017/S0003055416000058).
+#'   *American Political Science Review*, 100,(2), 278--295.
 #' @format
-#'  A \link[quanteda]{corpus} object.
+#'  A [corpus][quanteda::corpus] object.
 #' @keywords data
 "data_corpus_manifestosentsUK"
 
@@ -95,7 +95,7 @@
 #'   Greek, Italian, Polish and Spanish. The unit of observation is the
 #'   individual crowd coding of each natural sentence. For more information on
 #'   the coding approach see
-#'   \href{https://doi.org/10.1017/S0003055416000058}{Benoit et al. (2016)}.
+#'   [Benoit et al. (2016)](https://doi.org/10.1017/S0003055416000058).
 #' @format
 #'   The corpus consists of 16,806 documents (i.e. codings of a sentence) and includes the following
 #'   document-level variables: \describe{
@@ -114,11 +114,11 @@
 #'    0.8 are included in the corpus.}
 #'   }
 #' @references Benoit, K., Conway, D., Lauderdale, B.E., Laver, M., & Mikhaylov,
-#'   S. (2016). \href{https://doi.org/10.1017/S0003055416000058}{Crowd-sourced
-#'   Text Analysis: Reproducible and Agile Production of Political Data}.
-#'   \emph{American Political Science Review}, 100,(2), 278--295.
+#'   S. (2016). [Crowd-sourced
+#'   Text Analysis: Reproducible and Agile Production of Political Data](https://doi.org/10.1017/S0003055416000058).
+#'   *American Political Science Review*, 100,(2), 278--295.
 #' @format
-#'  A \link[quanteda]{corpus} object.
+#'  A [corpus][quanteda::corpus] object.
 #' @keywords data
 "data_corpus_EPcoaldebate"
 
@@ -132,15 +132,15 @@
 #'   \item{docnumber}{serial (within set and polarity) document number}
 #'   \item{rating}{user-assigned movie rating on a 1-10 point integer scale}
 #'   \item{set}{used for test v. training set}
-#'   \item{polarity}{either \code{neg} or \code{pos} to indicate whether the 
+#'   \item{polarity}{either `neg` or `pos` to indicate whether the 
 #'     movie review was negative or positive.  See Maas et al (2011) for the 
 #'     cut-off values that governed this assignment.}
 #'   }
 #' @references Andrew L. Maas, Raymond E. Daly, Peter T. Pham, Dan Huang, Andrew
 #'   Y. Ng, and Christopher Potts. (2011).
-#'   "\href{http://ai.stanford.edu/~amaas/papers/wvSent_acl2011.pdf}{Learning
-#'   Word Vectors for Sentiment Analysis}". The 49th Annual Meeting of the
+#'   "[Learning
+#'   Word Vectors for Sentiment Analysis](http://ai.stanford.edu/~amaas/papers/wvSent_acl2011.pdf)". The 49th Annual Meeting of the
 #'   Association for Computational Linguistics (ACL 2011).
-#' @source \url{http://ai.stanford.edu/~amaas/data/sentiment/}
+#' @source <http://ai.stanford.edu/~amaas/data/sentiment/>
 #' @keywords data
 "data_corpus_LMRD"

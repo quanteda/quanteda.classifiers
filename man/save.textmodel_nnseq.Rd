@@ -18,12 +18,12 @@
 \arguments{
 \item{x}{a \pkg{keras}-based fitted textmodel}
 
-\item{...}{additional arguments passed to [save()] or [load()]}
+\item{...}{additional arguments passed to \code{\link[=save]{save()}} or \code{\link[=load]{load()}}}
 }
 \description{
 Functions for loading and saving \pkg{keras}-based models.  Because these are
 stored as references, they need to be "serialized" prior to saving, or
 serialized upon loading.  This applies to models fit using
-[textmodel_cnnlstmemb()] and [textmodel_nnseq()].
+\code{\link[=textmodel_cnnlstmemb]{textmodel_cnnlstmemb()}} and \code{\link[=textmodel_nnseq]{textmodel_nnseq()}}.
 }
 \keyword{internal}

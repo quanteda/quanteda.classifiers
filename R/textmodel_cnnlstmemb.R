@@ -1,4 +1,4 @@
-#' [Experimental] Convolutional NN + LSTM model fitted to word embeddings
+#' \[Experimental\] Convolutional NN + LSTM model fitted to word embeddings
 #'
 #' A function that combines a convolutional neural network layer with a
 #' long-term short-term layer. It is designed to incorporate word sequences,
@@ -6,7 +6,7 @@
 #' classification. The model takes as an input a \pkg{quanteda} tokens object.
 #'
 #' @param x tokens object
-#' @inheritParams textmodel_svm
+#' @inheritParams quanteda.textmodels::textmodel_svm
 #' @param dropout1 A floating variable bound between 0 and 1. It determines the
 #'   rate at which units are dropped for the linear transformation of the
 #'   inputs for the embedding layer.
@@ -26,19 +26,19 @@
 #' @param kernel_size An integer or list of a single integer, specifying the
 #'   length of the 1D convolution window
 #' @param pool_size Size of the max pooling windows.
-#'   \code{\link[keras]{layer_max_pooling_1d}}
+#'   [keras::layer_max_pooling_1d()]
 #' @param units_lstm The number of nodes of the lstm layer
 #' @param words The maximum number of words used to train model. Defaults to the
-#'   number of features in \code{x}
+#'   number of features in `x`
 #' @param maxsenlen The maximum sentence length of training data
 #' @param optimizer optimizer used to fit model to training data, see
-#'   \code{\link[keras]{compile.keras.engine.training.Model}}
+#'   [keras::compile.keras.engine.training.Model()]
 #' @param loss objective loss function, see
-#'   \code{\link[keras]{compile.keras.engine.training.Model}}
+#'   [keras::compile.keras.engine.training.Model()]
 #' @param metrics metric used to train algorithm, see
-#'   \code{\link[keras]{compile.keras.engine.training.Model}}
+#'   [keras::compile.keras.engine.training.Model()]
 #' @param ... additional options passed to
-#'   \code{\link[keras]{fit.keras.engine.training.Model}}
+#'   [keras::fit.keras.engine.training.Model()]
 #' @keywords textmodel
 #' @importFrom keras keras_model_sequential to_categorical
 #' @importFrom keras layer_dense layer_activation layer_dropout compile fit
@@ -144,18 +144,18 @@ textmodel_cnnlstmemb.tokens <-
 
 #' Prediction from a fitted textmodel_cnnlstmemb object
 #'
-#' \code{predict.textmodel_cnnlstmemb()} implements class predictions from a
+#' `predict.textmodel_cnnlstmemb()` implements class predictions from a
 #' fitted sequential neural network model.
-#' @param object a fitted \link{textmodel_cnnlstmemb} model
+#' @param object a fitted [textmodel_cnnlstmemb] model
 #' @param newdata dfm on which prediction should be made
 #' @param type the type of predicted values to be returned; see Value
-#' @param force make \code{newdata}'s feature set conformant to the model terms
+#' @param force make `newdata`'s feature set conformant to the model terms
 #' @param ... not used
-#' @return \code{predict.textmodel_cnnlstmemb} returns either a vector of class
-#'   predictions for each row of \code{newdata} (when \code{type = "class"}), or
-#'   a document-by-class matrix of class probabilities (when \code{type =
-#'   "probability"}).
-#' @seealso \code{\link{textmodel_cnnlstmemb}}
+#' @return `predict.textmodel_cnnlstmemb` returns either a vector of class
+#'   predictions for each row of `newdata` (when `type = "class"`), or
+#'   a document-by-class matrix of class probabilities (when `type =
+#'   "probability"`).
+#' @seealso [textmodel_cnnlstmemb()]
 #' @keywords textmodel internal
 #' @importFrom keras predict_classes predict_proba
 #' @export
@@ -193,6 +193,7 @@ predict.textmodel_cnnlstmemb <- function(object, newdata = NULL,
 }
 
 #' @export
+#' @importFrom stats na.omit
 #' @method print textmodel_cnnlstmemb
 print.textmodel_cnnlstmemb <- function(x, ...) {
     layer_names <- gsub(pattern = "_\\d*", "",
@@ -208,7 +209,7 @@ print.textmodel_cnnlstmemb <- function(x, ...) {
 }
 
 #' summary method for textmodel_cnnlstmemb objects
-#' @param object output from \code{\link{textmodel_cnnlstmemb}}
+#' @param object output from [textmodel_cnnlstmemb()]
 #' @param ... additional arguments not used
 #' @keywords textmodel internal
 #' @method summary textmodel_cnnlstmemb

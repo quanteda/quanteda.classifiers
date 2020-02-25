@@ -5,41 +5,41 @@
 \alias{data_corpus_manifestosentsUK}
 \title{Sentence-level corpus of UK party manifestos 1945--2017, partially annotated}
 \format{The corpus consists of 69,280 documents (i.e. sentences) and includes the following
-  document-level variables: \describe{
-  \item{party}{factor; abbreviation of the party that wrote the manifesto.}
-  \item{partyname}{factor; party that wrote the manifesto.}
-  \item{year}{integer; 4-digit year of the election.}
-  \item{crowd_econsocial_label}{factor; indicates the majority label assigned
-  by crowd workers (Economic Policy, Social Policy, or Neither). The variable
-  has missing values (\code{NA}) for all non-annotated manifestos.}
-  \item{crowd_econsocial_mean}{numeric; the direction of statements coded as
-  "Economic Policy" or "Social Policy" based on the aggregated crowd codings.
-  The variable is the mean of the scores assigned by the workers workers who
-  coded the sentence and who allocated the sentence to the "majority"
-  category. The variable ranges from -2 to +2.
+document-level variables: \describe{
+\item{party}{factor; abbreviation of the party that wrote the manifesto.}
+\item{partyname}{factor; party that wrote the manifesto.}
+\item{year}{integer; 4-digit year of the election.}
+\item{crowd_econsocial_label}{factor; indicates the majority label assigned
+by crowd workers (Economic Policy, Social Policy, or Neither). The variable
+has missing values (\code{NA}) for all non-annotated manifestos.}
+\item{crowd_econsocial_mean}{numeric; the direction of statements coded as
+"Economic Policy" or "Social Policy" based on the aggregated crowd codings.
+The variable is the mean of the scores assigned by the workers workers who
+coded the sentence and who allocated the sentence to the "majority"
+category. The variable ranges from -2 to +2.
 
-  For the statements aggregated as "Economic" Policy, -2 corresponds to "Very
-  left"; +2 corresponds to "Very right". For the statements aggregated as
-  "Social Policy"  -2 corresponds to "Very liberal"; +2 corresponds to "Very
-  conservative". The variable has missing values (NA) for all sentences that
-  were aggregated as "Neither" and for all non-annotated manifestos.)}
-  \item{crowd_econsocial_n}{integer; the number of coders who contributed to the
-  mean score \code{crowd_econsocial_mean}.}
-  \item{crowd_immigration_label}{Factor indicating whether the majority of
-  crowd workers labelled a sentence as referring to immigration or not. The
-  variable has missing values (\code{NA}) for all non-annotated manifestos.}
-  \item{crowd_immigration_mean}{numeric; the direction
-  of statements coded as "Immigration" based on the aggregated crowd codings.
-  The variable is the mean of the scores assigned by workers who coded a
-  sentence and who allocated the sentence to the "Immigration" category. The
-  variable ranges from -1 ("Negative and closed immigration policy") to +1
-  (Favorable and open immigration policy). The variable has missing values
-  (\code{NA}) for all non-annotated manifestos or if a sentence was not coded as
-  referring to immigration policy based on the aggregation of crowd codings.}
-  \item{crowd_immigration_n}{integer; the number of coders who
-  contributed to the
-  mean score \code{crowd_immigration_mean}.}
-  }}
+For the statements aggregated as "Economic" Policy, -2 corresponds to "Very
+left"; +2 corresponds to "Very right". For the statements aggregated as
+"Social Policy"  -2 corresponds to "Very liberal"; +2 corresponds to "Very
+conservative". The variable has missing values (NA) for all sentences that
+were aggregated as "Neither" and for all non-annotated manifestos.)}
+\item{crowd_econsocial_n}{integer; the number of coders who contributed to the
+mean score \code{crowd_econsocial_mean}.}
+\item{crowd_immigration_label}{Factor indicating whether the majority of
+crowd workers labelled a sentence as referring to immigration or not. The
+variable has missing values (\code{NA}) for all non-annotated manifestos.}
+\item{crowd_immigration_mean}{numeric; the direction
+of statements coded as "Immigration" based on the aggregated crowd codings.
+The variable is the mean of the scores assigned by workers who coded a
+sentence and who allocated the sentence to the "Immigration" category. The
+variable ranges from -1 ("Negative and closed immigration policy") to +1
+(Favorable and open immigration policy). The variable has missing values
+(\code{NA}) for all non-annotated manifestos or if a sentence was not coded as
+referring to immigration policy based on the aggregation of crowd codings.}
+\item{crowd_immigration_n}{integer; the number of coders who
+contributed to the
+mean score \code{crowd_immigration_mean}.}
+}}
 \usage{
 data_corpus_manifestosentsUK
 }
@@ -62,7 +62,7 @@ The
 corpus contains the aggregated crowd coding values on the level of sentences.
 Note that the segmentation into sentences does not always work correctly due
 to missing punctuation. See Examples for how to remove very short and very
-long sentences using \link[quanteda]{corpus_trim}.
+long sentences using \link[quanteda:corpus_trim]{corpus_trim}.
 }
 \examples{
 \donttest{
@@ -83,8 +83,7 @@ corp_crowdimmig <-
 }
 \references{
 Benoit, K., Conway, D., Lauderdale, B.E., Laver, M., & Mikhaylov, S. (2016).
-  \href{https://doi.org/10.1017/S0003055416000058}{Crowd-sourced Text Analysis:
-  Reproducible and Agile Production of Political Data}.
-  \emph{American Political Science Review}, 100,(2), 278--295.
+\href{https://doi.org/10.1017/S0003055416000058}{Crowd-sourced Text Analysis: Reproducible and Agile Production of Political Data}.
+\emph{American Political Science Review}, 100,(2), 278--295.
 }
 \keyword{data}

@@ -7,9 +7,9 @@
 tokens2sequences_conform(x, y)
 }
 \arguments{
-\item{x}{\code{\link{tokens2sequences}} object that will be forced to conform}
+\item{x}{\code{\link[=tokens2sequences]{tokens2sequences()}} object that will be forced to conform}
 
-\item{y}{\code{\link{tokens2sequences}} object whose feature names will be
+\item{y}{\code{\link[=tokens2sequences]{tokens2sequences()}} object whose feature names will be
 used to change token labels for \code{x}}
 }
 \description{
@@ -32,6 +32,6 @@ tokens2sequences_conform(seqx, seqy)
 }
 }
 \seealso{
-\code{\link{tokens2sequences}}
+\code{\link[=tokens2sequences]{tokens2sequences()}}
 }
 \keyword{internal}

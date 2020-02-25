@@ -18,7 +18,7 @@ This package requires the development version of **quanteda**, which
 will soon be released as v2.
 
 ``` r
-devtools::install_github("quanteda/quantedas") 
+devtools::install_github("quanteda/quanteda") 
 ```
 
 To install this package, use the following, which also installs what the
@@ -58,7 +58,7 @@ comparison](https://htmlpreview.github.io/?https://github.com/quanteda/quanteda.
 
 Benoit, Kenneth, Patrick Chester, and Stefan Müller (2019).
 quanteda.classifiers: Models for supervised text classification. R
-package version 0.1. URL: <http://github.com/quanteda/quanteda.svm>.
+package version 0.2. URL: <http://github.com/quanteda/quanteda.svm>.
 
 For a BibTeX entry, use the output from citation(package =
 “quanteda.classifiers”).

@@ -3,20 +3,20 @@
 #' This function is a wrapper for a sequential neural network model with a
 #' single hidden layer network with two layers, implemented in the \pkg{keras}
 #' package.
-#' @inheritParams textmodel_svm
+#' @inheritParams quanteda.textmodels::textmodel_svm
 #' @param units The number of network nodes used in the first layer of the
 #'   sequential model
 #' @param dropout A floating variable bound between 0 and 1. It determines the
 #'   rate at which units are dropped for the linear transformation of the
 #'   inputs.
 #' @param optimizer optimizer used to fit model to training data, see
-#'   \code{\link[keras]{compile.keras.engine.training.Model}}
+#'   [keras::compile.keras.engine.training.Model()]
 #' @param loss objective loss function, see
-#'   \code{\link[keras]{compile.keras.engine.training.Model}}
+#'   [keras::compile.keras.engine.training.Model()]
 #' @param metrics metric used to train algorithm, see
-#'   \code{\link[keras]{compile.keras.engine.training.Model}}
+#'   [keras::compile.keras.engine.training.Model()]
 #' @param ... additional options passed to
-#'   \code{\link[keras]{fit.keras.engine.training.Model}}
+#'   [keras::fit.keras.engine.training.Model()]
 #' @keywords textmodel
 #' @importFrom keras keras_model_sequential to_categorical
 #' @importFrom keras layer_dense layer_activation layer_dropout compile fit
@@ -88,18 +88,18 @@ textmodel_nnseq.dfm <- function(x, y, units = 512, dropout = .2,
 
 #' Prediction from a fitted textmodel_nnseq object
 #'
-#' \code{predict.textmodel_nnseq()} implements class predictions from a fitted
+#' `predict.textmodel_nnseq()` implements class predictions from a fitted
 #' sequential neural network model.
-#' @param object a fitted \link{textmodel_nnseq} model
+#' @param object a fitted [textmodel_nnseq] model
 #' @param newdata dfm on which prediction should be made
 #' @param type the type of predicted values to be returned; see Value
-#' @param force make \code{newdata}'s feature set conformant to the model terms
+#' @param force make `newdata`'s feature set conformant to the model terms
 #' @param ... not used
-#' @return \code{predict.textmodel_nnseq} returns either a vector of class
-#'   predictions for each row of \code{newdata} (when \code{type = "class"}), or
-#'   a document-by-class matrix of class probabilities (when \code{type =
-#'   "probability"}).
-#' @seealso \code{\link{textmodel_nnseq}}
+#' @return `predict.textmodel_nnseq` returns either a vector of class
+#'   predictions for each row of `newdata` (when `type = "class"`), or
+#'   a document-by-class matrix of class probabilities (when `type =
+#'   "probability"`).
+#' @seealso [textmodel_nnseq()]
 #' @keywords textmodel internal
 #' @importFrom keras predict_classes predict_proba
 #' @export
@@ -137,6 +137,7 @@ predict.textmodel_nnseq <- function(object, newdata = NULL,
 }
 
 #' @export
+#' @importFrom stats na.omit
 #' @method print textmodel_nnseq
 print.textmodel_nnseq <- function(x, ...) {
     layer_names <- gsub(pattern = "_\\d*", "", lapply(x$seqfitted$layers, function(z) z$name))
@@ -151,7 +152,7 @@ print.textmodel_nnseq <- function(x, ...) {
 }
 
 #' summary method for textmodel_nnseq objects
-#' @param object output from \code{\link{textmodel_nnseq}}
+#' @param object output from [textmodel_nnseq()]
 #' @param ... additional arguments not used
 #' @keywords textmodel internal
 #' @method summary textmodel_nnseq
