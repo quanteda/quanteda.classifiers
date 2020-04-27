@@ -46,7 +46,7 @@ the **keras** package. (The SVM models have been moved to
 
 | Corpus                                                                                                                       | Name                           |
 | ---------------------------------------------------------------------------------------------------------------------------- | ------------------------------ |
-| Sentence-level corpus of UK party manifestos 1945–2017, partially annotated                                                  | `data_corpus_manifestosentsUK` |
+| Sentence-level corpus of UK party manifestos 1945–2019, partially annotated                                                  | `data_corpus_manifestosentsUK` |
 | Large Movie Review Dataset of 50,000 annotated highly polar movie reviews for training and testing, from Maas et. al. (2011) | `data_corpus_LMRD`             |
 
 ## Demonstration
