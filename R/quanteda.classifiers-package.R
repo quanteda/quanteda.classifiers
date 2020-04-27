@@ -2,6 +2,8 @@
 #'
 #' Extensions to \pkg{quanteda} that provide supervised machine learning models
 #' for document-feature matrices.
+#' @import quanteda.textmodels
+#' @import quanteda
 #' @keywords internal
 "_PACKAGE"
 

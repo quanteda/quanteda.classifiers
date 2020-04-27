@@ -2,39 +2,37 @@
 % Please edit documentation in R/tokens2sequences.R
 \name{tokens2sequences}
 \alias{tokens2sequences}
-\title{Convert quanteda tokens to keras sequences}
+\title{[Experimental] Convert quanteda tokens to keras sequences}
 \usage{
 tokens2sequences(x, maxsenlen = 40, keepn = NULL)
 }
 \arguments{
-\item{x}{\code{\link[quanteda]{tokens}} object}
+\item{x}{\code{\link[quanteda:tokens]{quanteda::tokens()}} object}
 
 \item{maxsenlen}{the maximum sentence length kept in output matrix}
 
 \item{keepn}{the maximum number of features to keep}
 }
 \value{
-\code{\link{tokens2sequences}} The output matrix has a number of rows
-  which represent each tokenized sentence input into the function and a
-  number of columns determined by \code{maxsenlen}. The matrix contains a
-  numeric code for every unique token kept (determined by \code{keepn}) and
-  they are arranged in the same sequence indicated by the original
-  \code{\link[quanteda]{tokens}} object.
+\code{\link[=tokens2sequences]{tokens2sequences()}} The output matrix has a number of rows
+which represent each tokenized sentence input into the function and a
+number of columns determined by \code{maxsenlen}. The matrix contains a
+numeric code for every unique token kept (determined by \code{keepn}) and
+they are arranged in the same sequence indicated by the original
+\code{\link[quanteda:tokens]{quanteda::tokens()}} object.
 }
 \description{
-This function converts a \pkg{quanteda} \code{\link[quanteda]{tokens}} object
+This function converts a \pkg{quanteda} \code{\link[quanteda:tokens]{quanteda::tokens()}} object
 into a tokens sequence object as expected by some functions in the
 \pkg{keras} package.
 }
 \examples{
-corpcoded <- corpus_subset(data_corpus_manifestosentsUK, !is.na(crowd_immigration_label))
-corpuncoded <- data_corpus_manifestosentsUK \%>\%
-    corpus_subset(is.na(crowd_immigration_label) & year > 1980) \%>\%
-    corpus_sample(size = ndoc(corpcoded))
-corp <- corpcoded + corpuncoded
-
-corptok <- tokens(texts(corp))
+corp <- corpus_subset(data_corpus_inaugural, Year <= 1793)
+corptok <- tokens(corp)
 print(corp)
 seqs <- tokens2sequences(corptok, maxsenlen = 200)
 print(seqs)
+}
+\seealso{
+\code{\link[=is.tokens2sequences]{is.tokens2sequences()}}, \code{\link[=tokens2sequences_conform]{tokens2sequences_conform()}}
 }

@@ -2,7 +2,7 @@
 % Please edit documentation in R/textmodel_cnnlstmemb.R
 \name{textmodel_cnnlstmemb}
 \alias{textmodel_cnnlstmemb}
-\title{Convolutional NN + LSTM model fitted to word embeddings}
+\title{[Experimental] Convolutional NN + LSTM model fitted to word embeddings}
 \usage{
 textmodel_cnnlstmemb(
   x,
@@ -59,7 +59,7 @@ convolutional layer in the neural network model}
 length of the 1D convolution window}
 
 \item{pool_size}{Size of the max pooling windows.
-\code{\link[keras]{layer_max_pooling_1d}}}
+\code{\link[keras:layer_max_pooling_1d]{keras::layer_max_pooling_1d()}}}
 
 \item{units_lstm}{The number of nodes of the lstm layer}
 
@@ -69,16 +69,16 @@ number of features in \code{x}}
 \item{maxsenlen}{The maximum sentence length of training data}
 
 \item{optimizer}{optimizer used to fit model to training data, see
-\code{\link[keras]{compile.keras.engine.training.Model}}}
+\code{\link[keras:compile.keras.engine.training.Model]{keras::compile.keras.engine.training.Model()}}}
 
 \item{loss}{objective loss function, see
-\code{\link[keras]{compile.keras.engine.training.Model}}}
+\code{\link[keras:compile.keras.engine.training.Model]{keras::compile.keras.engine.training.Model()}}}
 
 \item{metrics}{metric used to train algorithm, see
-\code{\link[keras]{compile.keras.engine.training.Model}}}
+\code{\link[keras:compile.keras.engine.training.Model]{keras::compile.keras.engine.training.Model()}}}
 
 \item{...}{additional options passed to
-\code{\link[keras]{fit.keras.engine.training.Model}}}
+\code{\link[keras:fit.keras.engine.training.Model]{keras::fit.keras.engine.training.Model()}}}
 }
 \description{
 A function that combines a convolutional neural network layer with a
@@ -108,5 +108,8 @@ table(pred)
 tail(texts(corpuncoded)[pred == "Immigration"], 10)
 
 }
+}
+\seealso{
+\code{\link[=save.textmodel_cnnlstmemb]{save.textmodel_cnnlstmemb()}}, \code{\link[=load.textmodel_cnnlstmemb]{load.textmodel_cnnlstmemb()}}
 }
 \keyword{textmodel}

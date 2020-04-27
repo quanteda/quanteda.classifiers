@@ -1,22 +1,22 @@
 Package: quanteda.classifiers
 Type: Package
 Title: Models for supervised text classification
-Version: 0.1
+Version: 0.3
 Authors@R: c(person("Kenneth", "Benoit", email = "kbenoit@lse.ac.uk", role = c("aut", "cre")),
              person("Patrick", "Chester", email = "pjc468@nyu.edu", role = c("aut")),
              person("Müller", "Stefan", email = "mueller@ipz.uzh.ch", role = c("aut")))
-Description: A test package for developing additional text classifier models (textmodels) including linear SVMs and neural network-based methods.
+Description: A test package for developing additional text classifier models (textmodels) including neural network-based methods.
 Encoding: UTF-8
 License: GPL-3
 Depends:
     R (>= 3.4.0),
-    quanteda (>= 1.4.1),
-    methods
+    quanteda (>= 2.0)
 Imports:
     keras (>= 2.1.0),
     LiblineaR,
+    quanteda.textmodels,
     RSSL,
-    SparseM
+    SparseM,
 Suggests:
     spelling,
     testthat,
@@ -26,5 +26,6 @@ Remotes:
 URL: https://github.com/quanteda/quanteda.classifiers
 BugReports: https://github.com/quanteda/quanteda.classifiers/issues
 LazyData: TRUE
-RoxygenNote: 7.0.2
+RoxygenNote: 7.1.0
 Language: en-GB
+Roxygen: list(markdown = TRUE)

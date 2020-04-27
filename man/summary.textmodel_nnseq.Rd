@@ -7,7 +7,7 @@
 \method{summary}{textmodel_nnseq}(object, ...)
 }
 \arguments{
-\item{object}{output from \code{\link{textmodel_nnseq}}}
+\item{object}{output from \code{\link[=textmodel_nnseq]{textmodel_nnseq()}}}
 
 \item{...}{additional arguments not used}
 }

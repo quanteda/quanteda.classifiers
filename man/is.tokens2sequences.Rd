@@ -7,11 +7,12 @@
 is.tokens2sequences(x)
 }
 \arguments{
-\item{x}{Object that will be checked to see if it is of the type \code{\link{tokens2sequences}}}
+\item{x}{Object that will be checked to see if it is of the type \code{\link[=tokens2sequences]{tokens2sequences()}}}
 }
 \description{
 Check to see if function is a tokens2sequences type
 }
 \seealso{
-\code{\link{tokens2sequences}}
+\code{\link[=tokens2sequences]{tokens2sequences()}}
 }
+\keyword{internal}

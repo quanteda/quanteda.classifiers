@@ -25,16 +25,15 @@
 }
 \value{
 \code{predict.textmodel_nnseq} returns either a vector of class
-  predictions for each row of \code{newdata} (when \code{type = "class"}), or
-  a document-by-class matrix of class probabilities (when \code{type =
-  "probability"}).
+predictions for each row of \code{newdata} (when \code{type = "class"}), or
+a document-by-class matrix of class probabilities (when \code{type = "probability"}).
 }
 \description{
 \code{predict.textmodel_nnseq()} implements class predictions from a fitted
 sequential neural network model.
 }
 \seealso{
-\code{\link{textmodel_nnseq}}
+\code{\link[=textmodel_nnseq]{textmodel_nnseq()}}
 }
 \keyword{internal}
 \keyword{textmodel}
