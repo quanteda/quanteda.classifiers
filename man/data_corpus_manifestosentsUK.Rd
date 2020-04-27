@@ -4,7 +4,8 @@
 \name{data_corpus_manifestosentsUK}
 \alias{data_corpus_manifestosentsUK}
 \title{Sentence-level corpus of UK party manifestos 1945--2017, partially annotated}
-\format{The corpus consists of 69,280 documents (i.e. sentences) and includes the following
+\format{
+The corpus consists of 69,280 documents (i.e. sentences) and includes the following
 document-level variables: \describe{
 \item{party}{factor; abbreviation of the party that wrote the manifesto.}
 \item{partyname}{factor; party that wrote the manifesto.}
@@ -39,7 +40,10 @@ referring to immigration policy based on the aggregation of crowd codings.}
 \item{crowd_immigration_n}{integer; the number of coders who
 contributed to the
 mean score \code{crowd_immigration_mean}.}
-}}
+}
+
+A \link[quanteda:corpus]{corpus} object.
+}
 \usage{
 data_corpus_manifestosentsUK
 }

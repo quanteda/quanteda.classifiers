@@ -38,6 +38,7 @@ test_that("the cnnlstmemb model works", {
 test_that("multiclass prediction works", {
     skip_on_cran()
 
+    data(data_corpus_irishbudget2010, package = "quanteda.textmodels")
     toks <- tokens(data_corpus_irishbudget2010)
     y <- docvars(data_corpus_irishbudget2010, "party")
     y[5] <- NA

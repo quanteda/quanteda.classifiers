@@ -118,9 +118,9 @@ predict.textmodel_nnseq <- function(object, newdata = NULL,
     }
     model_featnames <- colnames(object$x)
     data <- if (is.null(newdata)) {
-        suppressWarnings(quanteda:::force_conformance(data, model_featnames, force))
+        suppressWarnings(quanteda.textmodels:::force_conformance(data, model_featnames, force))
     } else {
-        quanteda:::force_conformance(data, model_featnames, force)
+        quanteda.textmodels:::force_conformance(data, model_featnames, force)
     }
 
     if (type == "class") {

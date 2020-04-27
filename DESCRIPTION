@@ -1,7 +1,7 @@
 Package: quanteda.classifiers
 Type: Package
 Title: Models for supervised text classification
-Version: 0.2
+Version: 0.3
 Authors@R: c(person("Kenneth", "Benoit", email = "kbenoit@lse.ac.uk", role = c("aut", "cre")),
              person("Patrick", "Chester", email = "pjc468@nyu.edu", role = c("aut")),
              person("Müller", "Stefan", email = "mueller@ipz.uzh.ch", role = c("aut")))
@@ -16,18 +16,16 @@ Imports:
     LiblineaR,
     quanteda.textmodels,
     RSSL,
-    SparseM
+    SparseM,
 Suggests:
     spelling,
     testthat,
     covr
 Remotes:
-    quanteda/quanteda.corpora,
-    quanteda/quanteda,
-    quanteda/quanteda.textmodels
+    quanteda/quanteda.corpora
 URL: https://github.com/quanteda/quanteda.classifiers
 BugReports: https://github.com/quanteda/quanteda.classifiers/issues
 LazyData: TRUE
-RoxygenNote: 7.0.2
+RoxygenNote: 7.1.0
 Language: en-GB
 Roxygen: list(markdown = TRUE)

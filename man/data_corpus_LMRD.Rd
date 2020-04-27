@@ -4,7 +4,8 @@
 \name{data_corpus_LMRD}
 \alias{data_corpus_LMRD}
 \title{Large Movie Review Dataset from Maas et. al. (2011)}
-\format{The corpus docvars consist of:
+\format{
+The corpus docvars consist of:
 \describe{
 \item{docnumber}{serial (within set and polarity) document number}
 \item{rating}{user-assigned movie rating on a 1-10 point integer scale}
@@ -12,7 +13,8 @@
 \item{polarity}{either \code{neg} or \code{pos} to indicate whether the
 movie review was negative or positive.  See Maas et al (2011) for the
 cut-off values that governed this assignment.}
-}}
+}
+}
 \source{
 \url{http://ai.stanford.edu/~amaas/data/sentiment/}
 }
