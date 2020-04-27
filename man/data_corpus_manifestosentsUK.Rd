@@ -66,7 +66,7 @@ The
 corpus contains the aggregated crowd coding values on the level of sentences.
 Note that the segmentation into sentences does not always work correctly due
 to missing punctuation. See Examples for how to remove very short and very
-long sentences using \link[quanteda:corpus_trim]{quanteda::corpus_trim}.
+long sentences using \code{\link[quanteda:corpus_trim]{quanteda::corpus_trim()}}.
 }
 \examples{
 \donttest{
