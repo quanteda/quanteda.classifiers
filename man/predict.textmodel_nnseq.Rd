@@ -4,8 +4,13 @@
 \alias{predict.textmodel_nnseq}
 \title{Prediction from a fitted textmodel_nnseq object}
 \usage{
-\method{predict}{textmodel_nnseq}(object, newdata = NULL,
-  type = c("class", "probability"), force = TRUE, ...)
+\method{predict}{textmodel_nnseq}(
+  object,
+  newdata = NULL,
+  type = c("class", "probability"),
+  force = TRUE,
+  ...
+)
 }
 \arguments{
 \item{object}{a fitted \link{textmodel_nnseq} model}
@@ -20,16 +25,15 @@
 }
 \value{
 \code{predict.textmodel_nnseq} returns either a vector of class
-  predictions for each row of \code{newdata} (when \code{type = "class"}), or
-  a document-by-class matrix of class probabilities (when \code{type =
-  "probability"}).
+predictions for each row of \code{newdata} (when \code{type = "class"}), or
+a document-by-class matrix of class probabilities (when \code{type = "probability"}).
 }
 \description{
 \code{predict.textmodel_nnseq()} implements class predictions from a fitted
 sequential neural network model.
 }
 \seealso{
-\code{\link{textmodel_nnseq}}
+\code{\link[=textmodel_nnseq]{textmodel_nnseq()}}
 }
 \keyword{internal}
 \keyword{textmodel}

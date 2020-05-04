@@ -3,9 +3,8 @@
 environment:
   USE_RTOOLS: true
   matrix:
-    - TF_VERSION: 1.13.1
-    - TF_VERSION: 1.12.0
-
+   - TF_VERSION: 2.0.0
+   
 # Download script file from GitHub
 init:
   ps: |
@@ -22,8 +21,10 @@ cache:
 # Adapt as necessary starting from here
 
 build_script:
-  - C:\Miniconda3-x64\Scripts\conda create -y --name r-tensorflow tensorflow=%TF_VERSION% keras python=3.6.8
   - travis-tool.sh install_deps
+  - R CMD INSTALL .
+  - R -e "keras::install_keras(tensorflow = Sys.getenv('TF_VERSION'), extra_packages = 'IPython')"
+
 
 test_script:
   - travis-tool.sh run_tests

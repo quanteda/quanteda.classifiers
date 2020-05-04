@@ -4,16 +4,23 @@
 \alias{textmodel_nnseq}
 \title{sequential neural network model for text classification}
 \usage{
-textmodel_nnseq(x, y, units = 512, dropout = 0.2, optimizer = "adam",
-  loss = "categorical_crossentropy", metrics = "categorical_accuracy",
-  ...)
+textmodel_nnseq(
+  x,
+  y,
+  units = 512,
+  dropout = 0.2,
+  optimizer = "adam",
+  loss = "categorical_crossentropy",
+  metrics = "categorical_accuracy",
+  ...
+)
 }
 \arguments{
 \item{x}{the \link{dfm} on which the model will be fit.  Does not need to
 contain only the training documents.}
 
-\item{y}{vector of training labels associated with each document identified 
-in \code{train}.  (These will be converted to factors if not already 
+\item{y}{vector of training labels associated with each document identified
+in \code{train}.  (These will be converted to factors if not already
 factors.)}
 
 \item{units}{The number of network nodes used in the first layer of the
@@ -24,16 +31,16 @@ rate at which units are dropped for the linear transformation of the
 inputs.}
 
 \item{optimizer}{optimizer used to fit model to training data, see
-\code{\link[keras]{compile.keras.engine.training.Model}}}
+\code{\link[keras:compile.keras.engine.training.Model]{keras::compile.keras.engine.training.Model()}}}
 
 \item{loss}{objective loss function, see
-\code{\link[keras]{compile.keras.engine.training.Model}}}
+\code{\link[keras:compile.keras.engine.training.Model]{keras::compile.keras.engine.training.Model()}}}
 
 \item{metrics}{metric used to train algorithm, see
-\code{\link[keras]{compile.keras.engine.training.Model}}}
+\code{\link[keras:compile.keras.engine.training.Model]{keras::compile.keras.engine.training.Model()}}}
 
 \item{...}{additional options passed to
-\code{\link[keras]{fit.keras.engine.training.Model}}}
+\code{\link[keras:fit.keras.engine.training.Model]{keras::fit.keras.engine.training.Model()}}}
 }
 \description{
 This function is a wrapper for a sequential neural network model with a
@@ -60,5 +67,8 @@ pred <- predict(tmod, newdata = dfm_subset(dfmat, is.na(crowd_immigration_label)
 table(pred)
 tail(texts(corpuncoded)[pred == "Immigration"], 10)
 }
+}
+\seealso{
+\code{\link[=save.textmodel_nnseq]{save.textmodel_nnseq()}}, \code{\link[=load.textmodel_nnseq]{load.textmodel_nnseq()}}
 }
 \keyword{textmodel}

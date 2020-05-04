@@ -1,5 +1,5 @@
 
-# quanteda.classifiers: text classification textmodel extensions for quanteda
+# quanteda.classifiers: Text classification textmodel extensions for quanteda
 
 [![CRAN
 Version](https://www.r-pkg.org/badges/version/quanteda.classifiers)](https://CRAN.R-project.org/package=quanteda.classifiers)
@@ -9,147 +9,59 @@ status](https://travis-ci.org/quanteda/quanteda.classifiers.svg?branch=master)](
 status](https://ci.appveyor.com/api/projects/status/l80oet8swj2q6h4y/branch/master?svg=true)](https://ci.appveyor.com/project/kbenoit/quanteda-svm/branch/master)
 [![Coverage
 status](https://codecov.io/gh/quanteda/quanteda.classifiers/branch/master/graph/badge.svg)](https://codecov.io/github/quanteda/quanteda.classifiers?branch=master)
+[![Lifecycle:
+experimental](https://img.shields.io/badge/lifecycle-experimental-orange.svg)](https://www.tidyverse.org/lifecycle/#experimental)
 
 ## Installation
+
+This package requires the development version of **quanteda**, which
+will soon be released as v2.
+
+``` r
+devtools::install_github("quanteda/quanteda") 
+```
+
+To install this package, use the following, which also installs what the
+R **keras** package needs in order to run.
 
 ``` r
 # devtools package required to install quanteda from Github 
 devtools::install_github("quanteda/quanteda.classifiers") 
+
+keras::install_keras(method = "conda")
 ```
 
-## How to use
+## Available classifiers
 
-Examples:
+This package contains two experimental methods that are built on top of
+the **keras** package. (The SVM models have been moved to
+[**quanteda.textmodels**](https://github.com/quanteda/quanteda.textmodels).)
 
-``` r
-library("quanteda.classifiers")
-## Loading required package: quanteda
-## Registered S3 methods overwritten by 'ggplot2':
-##   method         from 
-##   [.quosures     rlang
-##   c.quosures     rlang
-##   print.quosures rlang
-## Package version: 1.4.4
-## Parallel computing: 2 of 12 threads used.
-## See https://quanteda.io for tutorials and examples.
-## 
-## Attaching package: 'quanteda'
-## The following object is masked from 'package:utils':
-## 
-##     View
+| Classifier                                                          | Command                  |
+| ------------------------------------------------------------------- | ------------------------ |
+| Sequential neural network                                           | `textmodel_nnseq()`      |
+| Convolutional neural network + LSTM model fitted to word embeddings | `textmodel_cnnlstmemb()` |
 
-performance <- function(mytable, verbose = TRUE) {
-  truePositives <- mytable[1, 1]
-  trueNegatives <- sum(diag(mytable)[-1])
-  falsePositives <- sum(mytable[1, ]) - truePositives
-  falseNegatives <- sum(mytable[, 1]) - truePositives
-  precision <- truePositives / (truePositives + falsePositives)
-  recall <- truePositives / (truePositives + falseNegatives)
-  accuracy <- sum(diag(mytable)) / sum(mytable)
-  tnr <- trueNegatives / (trueNegatives + falsePositives)
-  balanced_accuracy <- sum(c(precision, tnr), na.rm = TRUE) / 2
-  if (verbose) {
-    print(mytable)
-    cat(
-      "\n    precision =", round(precision, 2),
-      "\n       recall =", round(recall, 2),
-      "\n     accuracy =", round(accuracy, 2),
-      "\n    bal. acc. =", round(balanced_accuracy, 2),
-      "\n"
-    )
-  }
-  invisible(c(precision, recall))
-}
+## Available human-annotated corpora
 
-# define training texts and the "true" govt/opp status
-y <- ifelse(docvars(data_corpus_dailnoconf1991, "name") == "Haughey", "Govt", NA)
-y <- ifelse(docvars(data_corpus_dailnoconf1991, "name") %in% c("Spring", "deRossa"), "Opp", y)
-truth <- ifelse(docvars(data_corpus_dailnoconf1991, "party") %in% c("FF", "PD"), "Govt", "Opp")
+| Corpus                                                                                                                       | Name                           |
+| ---------------------------------------------------------------------------------------------------------------------------- | ------------------------------ |
+| Sentence-level corpus of UK party manifestos 1945–2019, partially annotated                                                  | `data_corpus_manifestosentsUK` |
+| Large Movie Review Dataset of 50,000 annotated highly polar movie reviews for training and testing, from Maas et. al. (2011) | `data_corpus_LMRD`             |
 
-# no weighting: poor
-dfm(data_corpus_dailnoconf1991) %>%
-  textmodel_svm(y) %>%
-  predict() %>%
-  table(truth) %>%
-  performance()
-##       truth
-## .      Govt Opp
-##   Govt    6   0
-##   Opp    19  33
-## 
-##     precision = 1 
-##        recall = 0.24 
-##      accuracy = 0.67 
-##     bal. acc. = 1
+## Demonstration
 
-# proportions: poor, predicts everyone to be opposition
-dfm(data_corpus_dailnoconf1991) %>%
-  dfm_weight(scheme = "prop") %>%
-  textmodel_svm(y) %>%
-  predict() %>%
-  table(truth) %>%
-  performance()
-##      truth
-## .     Govt Opp
-##   Opp   25  33
-## 
-##     precision = 0.43 
-##        recall = 1 
-##      accuracy = 0.43 
-##     bal. acc. = 0.22
+See this (very preliminary\!) [performance
+comparison](https://htmlpreview.github.io/?https://github.com/quanteda/quanteda.classifiers/blob/master/tests/misc/test-LMRD.nb.html).
 
-# scaled - results in a fully dense dfm, and poor performance
-dfm(data_corpus_dailnoconf1991) %>%
-  scale() %>%
-  as.dfm() %>%
-  textmodel_svm(y) %>%
-  predict() %>%
-  table(truth) %>%
-  performance()
-##       truth
-## .      Govt Opp
-##   Govt   24  25
-##   Opp     1   8
-## 
-##     precision = 0.49 
-##        recall = 0.96 
-##      accuracy = 0.55 
-##     bal. acc. = 0.37
+## How to cite
 
-# tf-idf: better
-dfm(data_corpus_dailnoconf1991) %>%
-  dfm_tfidf() %>%
-  textmodel_svm(y) %>%
-  predict() %>%
-  table(truth) %>%
-  performance()
-##       truth
-## .      Govt Opp
-##   Govt   16   3
-##   Opp     9  30
-## 
-##     precision = 0.84 
-##        recall = 0.64 
-##      accuracy = 0.79 
-##     bal. acc. = 0.88
+Benoit, Kenneth, Patrick Chester, and Stefan Müller (2019).
+quanteda.classifiers: Models for supervised text classification. R
+package version 0.2. URL: <http://github.com/quanteda/quanteda.svm>.
 
-# tf-idf: best with document frequency weights
-dfm(data_corpus_dailnoconf1991) %>%
-  dfm_tfidf() %>%
-  textmodel_svm(y, weight = "docfreq") %>%
-  predict() %>%
-  table(truth) %>%
-  performance()
-##       truth
-## .      Govt Opp
-##   Govt   15   2
-##   Opp    10  31
-## 
-##     precision = 0.88 
-##        recall = 0.6 
-##      accuracy = 0.79 
-##     bal. acc. = 0.91
-```
+For a BibTeX entry, use the output from citation(package =
+“quanteda.classifiers”).
 
 ## Issues
 
