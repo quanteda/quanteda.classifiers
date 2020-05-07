@@ -28,3 +28,4 @@ rsconnect/
 quanteda.svm.Rproj
 .DS_Store
 
+tests/misc/test-LMRD.md
