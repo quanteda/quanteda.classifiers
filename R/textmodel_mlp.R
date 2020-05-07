@@ -1,6 +1,6 @@
-#' sequential neural network model for text classification
+#' multilayer perceptron network model for text classification
 #'
-#' This function is a wrapper for a sequential neural network model with a
+#' This function is a wrapper for a multilayer perceptron network model with a
 #' single hidden layer network with two layers, implemented in the \pkg{keras}
 #' package.
 #' @inheritParams quanteda.textmodels::textmodel_svm
@@ -20,7 +20,7 @@
 #' @keywords textmodel
 #' @importFrom keras keras_model_sequential to_categorical
 #' @importFrom keras layer_dense layer_activation layer_dropout compile fit
-#' @seealso [save.textmodel_nnseq()], [load.textmodel_nnseq()]
+#' @seealso [save.textmodel_mlp()], [load.textmodel_mlp()]
 #' @export
 #' @examples
 #' \dontrun{
@@ -36,22 +36,22 @@
 #'     dfm_tfidf()
 #'
 #' set.seed(1000)
-#' tmod <- textmodel_nnseq(dfmat, y = docvars(dfmat, "crowd_immigration_label"),
+#' tmod <- textmodel_mlp(dfmat, y = docvars(dfmat, "crowd_immigration_label"),
 #'                         epochs = 5, verbose = 1)
 #' pred <- predict(tmod, newdata = dfm_subset(dfmat, is.na(crowd_immigration_label)))
 #' table(pred)
 #' tail(texts(corpuncoded)[pred == "Immigration"], 10)
 #' }
-textmodel_nnseq <- function(x, y, units = 512, dropout = .2,
+textmodel_mlp <- function(x, y, units = 512, dropout = .2,
                             optimizer = "adam",
                             loss = "categorical_crossentropy",
                             metrics = "categorical_accuracy",
                             ...) {
-    UseMethod("textmodel_nnseq")
+    UseMethod("textmodel_mlp")
 }
 
 #' @export
-textmodel_nnseq.dfm <- function(x, y, units = 512, dropout = .2,
+textmodel_mlp.dfm <- function(x, y, units = 512, dropout = .2,
                                 optimizer = "adam",
                                 loss = "categorical_crossentropy",
                                 metrics = "categorical_accuracy", ...) {
@@ -82,28 +82,28 @@ textmodel_nnseq.dfm <- function(x, y, units = 512, dropout = .2,
 
     # compile, class, and return the result
     result <- c(result, nfeatures = nfeat(x), list(seqfitted = model))
-    class(result) <- c("textmodel_nnseq", "textmodel", "list")
+    class(result) <- c("textmodel_mlp", "textmodel", "list")
     return(result)
 }
 
-#' Prediction from a fitted textmodel_nnseq object
+#' Prediction from a fitted textmodel_mlp object
 #'
-#' `predict.textmodel_nnseq()` implements class predictions from a fitted
-#' sequential neural network model.
-#' @param object a fitted [textmodel_nnseq] model
+#' `predict.textmodel_mlp()` implements class predictions from a fitted
+#' multilayer perceptron network model.
+#' @param object a fitted [textmodel_mlp] model
 #' @param newdata dfm on which prediction should be made
 #' @param type the type of predicted values to be returned; see Value
 #' @param force make `newdata`'s feature set conformant to the model terms
 #' @param ... not used
-#' @return `predict.textmodel_nnseq` returns either a vector of class
+#' @return `predict.textmodel_mlp` returns either a vector of class
 #'   predictions for each row of `newdata` (when `type = "class"`), or
 #'   a document-by-class matrix of class probabilities (when `type =
 #'   "probability"`).
-#' @seealso [textmodel_nnseq()]
+#' @seealso [textmodel_mlp()]
 #' @keywords textmodel internal
 #' @importFrom keras predict_classes predict_proba
 #' @export
-predict.textmodel_nnseq <- function(object, newdata = NULL,
+predict.textmodel_mlp <- function(object, newdata = NULL,
                                   type = c("class", "probability"),
                                   force = TRUE,
                                   ...) {
@@ -138,8 +138,8 @@ predict.textmodel_nnseq <- function(object, newdata = NULL,
 
 #' @export
 #' @importFrom stats na.omit
-#' @method print textmodel_nnseq
-print.textmodel_nnseq <- function(x, ...) {
+#' @method print textmodel_mlp
+print.textmodel_mlp <- function(x, ...) {
     layer_names <- gsub(pattern = "_\\d*", "", lapply(x$seqfitted$layers, function(z) z$name))
     cat("\nCall:\n")
     print(x$call)
@@ -151,13 +151,13 @@ print.textmodel_nnseq <- function(x, ...) {
         sep = "")
 }
 
-#' summary method for textmodel_nnseq objects
-#' @param object output from [textmodel_nnseq()]
+#' summary method for textmodel_mlp objects
+#' @param object output from [textmodel_mlp()]
 #' @param ... additional arguments not used
 #' @keywords textmodel internal
-#' @method summary textmodel_nnseq
+#' @method summary textmodel_mlp
 #' @export
-summary.textmodel_nnseq <- function(object, ...) {
+summary.textmodel_mlp <- function(object, ...) {
     layer_names <- gsub(pattern = "_\\d*", "", lapply(object$seqfitted$layers, function(x) x$name))
 
     result <- list(
@@ -168,8 +168,8 @@ summary.textmodel_nnseq <- function(object, ...) {
 }
 
 #' @export
-#' @method print predict.textmodel_nnseq
-print.predict.textmodel_nnseq <- function(x, ...) {
+#' @method print predict.textmodel_mlp
+print.predict.textmodel_mlp <- function(x, ...) {
     print(unclass(x))
 }
 
@@ -178,23 +178,23 @@ print.predict.textmodel_nnseq <- function(x, ...) {
 #' Functions for loading and saving \pkg{keras}-based models.  Because these are
 #' stored as references, they need to be "serialized" prior to saving, or
 #' serialized upon loading.  This applies to models fit using
-#' [textmodel_cnnlstmemb()] and [textmodel_nnseq()].
+#' [textmodel_cnnlstmemb()] and [textmodel_mlp()].
 #' @param x a \pkg{keras}-based fitted textmodel
 #' @param ... additional arguments passed to [save()] or [load()]
 #' @importFrom keras serialize_model
 #' @keywords internal
 #' @export
-#' @method save textmodel_nnseq
-save.textmodel_nnseq <- function(x, ...) {
+#' @method save textmodel_mlp
+save.textmodel_mlp <- function(x, ...) {
     x$seqfitted <- serialize_model(x$seqfitted)
     save(x, ...)
 }
 
-#' @rdname save.textmodel_nnseq
+#' @rdname save.textmodel_mlp
 #' @importFrom keras unserialize_model
-#' @method load textmodel_nnseq
+#' @method load textmodel_mlp
 #' @export
-load.textmodel_nnseq <- function(x, ...) {
+load.textmodel_mlp <- function(x, ...) {
     load(x, ...)
     x$seqfitted <- unserialize_model(x$seqfitted)
 }

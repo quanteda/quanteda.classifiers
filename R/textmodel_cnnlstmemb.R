@@ -145,7 +145,7 @@ textmodel_cnnlstmemb.tokens <-
 #' Prediction from a fitted textmodel_cnnlstmemb object
 #'
 #' `predict.textmodel_cnnlstmemb()` implements class predictions from a
-#' fitted sequential neural network model.
+#' fitted long-term short-term neural network model.
 #' @param object a fitted [textmodel_cnnlstmemb] model
 #' @param newdata dfm on which prediction should be made
 #' @param type the type of predicted values to be returned; see Value
@@ -232,7 +232,7 @@ print.predict.textmodel_cnnlstmemb <- function(x, ...) {
 }
 
 
-#' @rdname save.textmodel_nnseq
+#' @rdname save.textmodel_mlp
 #' @importFrom keras serialize_model
 #' @method save textmodel_cnnlstmemb
 #' @export
@@ -241,7 +241,7 @@ save.textmodel_cnnlstmemb <- function(x, ...) {
     save(x, ...)
 }
 
-#' @rdname save.textmodel_nnseq
+#' @rdname save.textmodel_mlp
 #' @importFrom keras unserialize_model
 #' @method load textmodel_cnnlstmemb
 #' @export

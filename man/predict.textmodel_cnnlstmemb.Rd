@@ -30,7 +30,7 @@ a document-by-class matrix of class probabilities (when \code{type = "probabilit
 }
 \description{
 \code{predict.textmodel_cnnlstmemb()} implements class predictions from a
-fitted sequential neural network model.
+fitted long-term short-term neural network model.
 }
 \seealso{
 \code{\link[=textmodel_cnnlstmemb]{textmodel_cnnlstmemb()}}

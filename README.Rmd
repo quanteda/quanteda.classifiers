@@ -40,7 +40,7 @@ This package contains two experimental methods that are built on top of the **ke
 
 Classifier | Command
 --|--
-Sequential neural network | `textmodel_nnseq()`
+Multilevel perceptron network | `textmodel_mlp()`
 Convolutional neural network + LSTM model fitted to word embeddings | `textmodel_cnnlstmemb()`
 
 ## Available human-annotated corpora

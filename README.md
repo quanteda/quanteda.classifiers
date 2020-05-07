@@ -39,7 +39,7 @@ the **keras** package. (The SVM models have been moved to
 
 | Classifier                                                          | Command                  |
 | ------------------------------------------------------------------- | ------------------------ |
-| Sequential neural network                                           | `textmodel_nnseq()`      |
+| Multilevel perceptron network                                       | `textmodel_mlp()`        |
 | Convolutional neural network + LSTM model fitted to word embeddings | `textmodel_cnnlstmemb()` |
 
 ## Available human-annotated corpora
@@ -47,7 +47,7 @@ the **keras** package. (The SVM models have been moved to
 | Corpus                                                                                                                       | Name                           |
 | ---------------------------------------------------------------------------------------------------------------------------- | ------------------------------ |
 | Sentence-level corpus of UK party manifestos 1945–2019, partially annotated                                                  | `data_corpus_manifestosentsUK` |
-| Large Movie Review Dataset of 50,000 annotated highly polar movie reviews for training and testing, from Maas et. al. (2011) | `data_corpus_LMRD`             |
+| Large Movie Review Dataset of 50,000 annotated highly polar movie reviews for training and testing, from Maas et. al. (2011) | `data_corpus_LMRD`             |
 
 ## Demonstration
 
