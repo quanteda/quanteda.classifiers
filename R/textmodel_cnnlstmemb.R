@@ -1,7 +1,7 @@
 #' \[Experimental\] Convolutional NN + LSTM model fitted to word embeddings
 #'
-#' A function that combines a convolutional neural network layer with a
-#' long-term short-term layer. It is designed to incorporate word sequences,
+#' A function that combines a convolutional neural network layer with a long
+#' short-term memory layer. It is designed to incorporate word sequences,
 #' represented as sequentially ordered word embeddings, into text
 #' classification. The model takes as an input a \pkg{quanteda} tokens object.
 #'
@@ -145,7 +145,7 @@ textmodel_cnnlstmemb.tokens <-
 #' Prediction from a fitted textmodel_cnnlstmemb object
 #'
 #' `predict.textmodel_cnnlstmemb()` implements class predictions from a
-#' fitted long-term short-term neural network model.
+#' fitted long short-term memory neural network model.
 #' @param object a fitted [textmodel_cnnlstmemb] model
 #' @param newdata dfm on which prediction should be made
 #' @param type the type of predicted values to be returned; see Value

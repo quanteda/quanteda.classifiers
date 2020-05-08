@@ -81,8 +81,8 @@ number of features in \code{x}}
 \code{\link[keras:fit.keras.engine.training.Model]{keras::fit.keras.engine.training.Model()}}}
 }
 \description{
-A function that combines a convolutional neural network layer with a
-long-term short-term layer. It is designed to incorporate word sequences,
+A function that combines a convolutional neural network layer with a long
+short-term memory layer. It is designed to incorporate word sequences,
 represented as sequentially ordered word embeddings, into text
 classification. The model takes as an input a \pkg{quanteda} tokens object.
 }
