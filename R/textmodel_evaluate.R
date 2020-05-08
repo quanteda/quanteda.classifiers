@@ -1,3 +1,4 @@
+
 #' Model evaluation function
 #' 
 #' Designed to streamline the parameter tuning and evaluation process. 
@@ -54,10 +55,10 @@ textmodel_evaluate.dfm <- function(x, y, model, fun = "f1_score", k = 5, paramet
             x_test <- x[test_set, ]
             y_test <- y[test_set]
             start <- Sys.time()
-            model <- do.call(what = model, args = c(list(x = x_train, y = y_train), param_list))
+            mod <- do.call(what = model, args = c(list(x = x_train, y = y_train), param_list))
             time <- round(as.numeric(difftime(Sys.time(), start, units = "secs")), 2) # Outputs time in seconds
             names(time) <- "time"
-            y_pred <- predict(model, x_test)
+            y_pred <- predict(mod, x_test)
             met <- do.call(what = fun, args = list(y_pred, y_test)) # Accepts any evaluation function that takes predicted and test vectors as inputs
             met <- as.list(met)
             if(is.null(names(met))) {names(met) <- fun}
@@ -89,14 +90,17 @@ print.textmodel_evaluate <- function(x, ...) {
 
     # output
     cat("Evaluation of", attr(x, "model"), "using the", attr(x, "fun"), "function.",
-        "\n A total of", attr(x, "nparameters"), "model variations were fit with", attr(x, "k"), "folds.")
+        "\n",
+        "\nA total of", attr(x, "nparameters"), "model variations were fit with", attr(x, "k"), "folds.")
 }
 
+#' @seealso [textmodel_evaluate()]
+#' @export
 f1_score <- function(pred, true){
     true <- as.factor(true)
     pred <- factor(pred, levels = levels(true))
     CMat <- table(pred, true)
-    if(length(levels(y_true)) == 2) {
+    if(length(levels(true)) == 2) {
         r <- CMat[1, 1] / sum(CMat[, 1])
         p <- CMat[1, 1] / sum(CMat[1, ])
         f1 <- ifelse(r + p != 0, 2 * (r * p) / (r + p), 0)
@@ -115,11 +119,13 @@ f1_score <- function(pred, true){
     return(out)
 }
 
+#' @seealso [textmodel_evaluate()]
+#' @export
 precision <- function(pred, true){
     true <- as.factor(true)
     pred <- factor(pred, levels = levels(true))
     CMat <- table(pred, true)
-    if(length(levels(y_true)) == 2) {
+    if(length(levels(true)) == 2) {
         p <- CMat[1, 1] / sum(CMat[1, ])
     } else {
         diag_vec <- 1:length(diag(CMat))
@@ -134,11 +140,13 @@ precision <- function(pred, true){
     return(out)
 }
 
+#' @seealso [textmodel_evaluate()]
+#' @export
 recall <- function(pred, true){
     true <- as.factor(true)
     pred <- factor(pred, levels = levels(true))
     CMat <- table(pred, true)
-    if(length(levels(y_true)) == 2) {
+    if(length(levels(true)) == 2) {
         r <- CMat[1, 1] / sum(CMat[, 1])
     } else {
         diag_vec <- 1:length(diag(CMat))
@@ -153,6 +161,8 @@ recall <- function(pred, true){
     return(out)
 }
 
+#' @seealso [textmodel_evaluate()]
+#' @export
 accuracy <- function(pred, true){
     true <- as.factor(true)
     pred <- factor(pred, levels = levels(true))
