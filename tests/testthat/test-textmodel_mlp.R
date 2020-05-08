@@ -1,6 +1,6 @@
-context("test textmodel_nnseq")
+context("test textmodel_mlp")
 
-test_that("the nnseq model works", {
+test_that("the mlp model works", {
     skip_on_cran()
 
     set.seed(100)
@@ -9,7 +9,7 @@ test_that("the nnseq model works", {
     dfmat_train <- dfm(corp_train)
     dfmat_test <- dfm(corp_test)
 
-    tmod <- textmodel_nnseq(dfmat_train, y = docvars(dfmat_train, "crowd_subsidy_label"), epoch = 5)
+    tmod <- textmodel_mlp(dfmat_train, y = docvars(dfmat_train, "crowd_subsidy_label"), epoch = 5)
 
     # label
     pred <- predict(tmod, newdata = dfmat_test, type = "class")

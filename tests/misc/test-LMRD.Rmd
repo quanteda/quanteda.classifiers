@@ -4,7 +4,7 @@ author: "Kenneth Benoit"
 output:
   html_notebook:
     toc: yes
-    toc_float: true
+    toc_float: yes
 ---
 
 
@@ -14,13 +14,18 @@ Source: Andrew L. Maas, Raymond E. Daly, Peter T. Pham, Dan Huang, Andrew Y. Ng,
 
 # Setting up {.tabset .tabset-fade}
 
+```{r setup, echo=FALSE}
+knitr::opts_chunk$set(echo=FALSE, warning=FALSE, message=FALSE)
+```
+
+
 ## Test and training data 
 
 ```{r}
 dfmat <- dfm(data_corpus_LMRD)
-dfmat_train <- dfm_trim(dfmat, min_termfreq = 20) %>%
+dfmat_train <- dfm_trim(dfmat, min_termfreq = 100) %>%
     dfm_subset(set == "train")
-dfmat_test <- dfm_trim(dfmat, min_termfreq = 20) %>%
+dfmat_test <- dfm_trim(dfmat, min_termfreq = 100) %>%
     dfm_subset(set == "test")
 ```
 
@@ -109,14 +114,14 @@ table(pred_svm, dfmat_test$polarity)[2:1, 2:1] %>% performance()
 ```
 
 
-# Sequential network model
+# Multilayer Perceptron Network (MLP)
 
 ```{r}
 system.time({
-tmod_nnseq <- textmodel_nnseq(dfmat_train,
+tmod_mlp <- textmodel_mlp(dfmat_train,
                               y = docvars(dfmat_train, "polarity"), epochs = 10)
-pred_nnseq <- predict(tmod_nnseq, newdata = dfmat_test, type = "class")
-table(pred_nnseq, dfmat_test$polarity)[2:1, 2:1] %>% performance()
+pred_mlp <- predict(tmod_mlp, newdata = dfmat_test, type = "class")
+table(pred_mlp, dfmat_test$polarity)[2:1, 2:1] %>% performance()
 })
 ```
 
