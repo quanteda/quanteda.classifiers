@@ -4,9 +4,10 @@ test_that("textmodel_evaluate works", {
     skip_on_cran()
     
     set.seed(100)
-    corp <- corpus_sample(data_corpus_EPcoaldebate, size = 3000, by = "crowd_subsidy_label")
-    dfmat <- dfm(corp_train)
-
+    corp <- corpus_sample(data_corpus_EPcoaldebate, size = 1000, by = "crowd_subsidy_label")
+    dfmat <- dfm(corp) %>% 
+        dfm_trim(min_termfreq = 10)
+    labels <- docvars(dfmat, "crowd_subsidy_label")
     model_eval <- textmodel_evaluate(x = dfmat, y = labels, model = "textmodel_mlp", fun = "f1_score", k = 3, seed = 5)
         
     # Check ouptuts for consistency
@@ -15,7 +16,7 @@ test_that("textmodel_evaluate works", {
     expect_equal(max(model_eval$k), 3)
     
     
-    model_eval2 <- textmodel_evaluate(x = dfmat, y = labels, fun = "textmodel_mlp", fun = "f1_score", k = 2, params = list(epochs = c(3, 4)), seed = 5)
+    model_eval2 <- textmodel_evaluate(x = dfmat, y = labels, model = "textmodel_mlp", fun = "f1_score", k = 2, parameters = list(epochs = c(3, 4)), seed = 5)
     
     # Check ouptuts for consistency
     expect_equal(dim(model_eval2), c(4, 5))
