@@ -1,4 +1,4 @@
-#' multilayer perceptron network model for text classification
+#' Multilayer perceptron network (MLP) model for text classification
 #'
 #' This function is a wrapper for a multilayer perceptron network model with a
 #' single hidden layer network with two layers, implemented in the \pkg{keras}
@@ -102,6 +102,7 @@ textmodel_mlp.dfm <- function(x, y, units = 512, dropout = .2,
 #' @seealso [textmodel_mlp()]
 #' @keywords textmodel internal
 #' @importFrom keras predict_classes predict_proba
+#' @importFrom stats predict
 #' @export
 predict.textmodel_mlp <- function(object, newdata = NULL,
                                   type = c("class", "probability"),
