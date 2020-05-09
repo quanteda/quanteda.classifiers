@@ -158,6 +158,7 @@ textmodel_cnnlstmemb.tokens <-
 #' @seealso [textmodel_cnnlstmemb()]
 #' @keywords textmodel internal
 #' @importFrom keras predict_classes predict_proba
+#' @importFrom stats predict
 #' @export
 predict.textmodel_cnnlstmemb <- function(object, newdata = NULL,
                                   type = c("class", "probability"),
