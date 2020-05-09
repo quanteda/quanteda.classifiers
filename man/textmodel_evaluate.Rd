@@ -41,7 +41,7 @@ time (in seconds) of model}
 \description{
 Designed to streamline the parameter tuning and evaluation process.
 Users chose a function to evaluate and include parameter values as a list.
-If multiple parameter values are provided, the function will estimate a separate
+If multiple parameter values are provided, the function will perform a grid search by estimating a separate
 model for every combination of parameters.
 }
 \examples{

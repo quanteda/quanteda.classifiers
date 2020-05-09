@@ -2,7 +2,7 @@
 % Please edit documentation in R/textmodel_mlp.R
 \name{textmodel_mlp}
 \alias{textmodel_mlp}
-\title{multilayer perceptron network model for text classification}
+\title{Multilayer perceptron network (MLP) model for text classification}
 \usage{
 textmodel_mlp(
   x,
