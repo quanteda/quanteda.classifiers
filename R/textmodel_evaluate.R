@@ -1,10 +1,8 @@
-
-
 #' Model evaluation function
 #' 
 #' Designed to streamline the parameter tuning and evaluation process. 
 #' Users chose a function to evaluate and include parameter values as a list.
-#' If multiple parameter values are provided, the function will estimate a separate
+#' If multiple parameter values are provided, the function will perform a grid search by estimating a separate
 #' model for every combination of parameters.
 #' 
 #' @param x the \link{dfm} or \link{tokens} object on which the model will be fit.  Does not need to
@@ -21,6 +19,7 @@
 #' If seed is not provided a seed is chosen based on the current time.
 #' @param time a logical parameter that determines whether output will include training
 #' time (in seconds) of model
+#' @importFrom stats predict
 #' @examples
 #' # evaluate immigration classification performance
 #' \dontrun{
@@ -93,8 +92,18 @@ print.textmodel_evaluate <- function(x, ...) {
     cat("Evaluation of", attr(x, "model"), "using the", attr(x, "fun"), "function.",
         "\n",
         "\nA total of", attr(x, "nparameters"), "model variations were fit with", attr(x, "k"), "folds.")
+    cat(nrow(x), " x ", ncol(x),
+        " Data Frame of class \"textmodel_evaluate\" \n", sep = "")
+    head(x, 4)
 }
 
+#' F1-score
+#'
+#' `f1_score()` Implements a function that calculates the harmonic mean of precision and recall of predicted labels and a vector of true values. 
+#' Its values range from 0 to 1, where 0 would be a harmonic mean in which one or both of precision or recall are 0 and 1 where both parameters are 1.
+#' @param pred vector of predicted labels derived from some model, such as \link{textmodel_mlp}, 
+#' which is being subjected to evaluation
+#' @param true a vector of known labels that are used to evaluate model performance
 #' @seealso [textmodel_evaluate()]
 #' @export
 f1_score <- function(pred, true){
@@ -105,7 +114,7 @@ f1_score <- function(pred, true){
         r <- CMat[1, 1] / sum(CMat[, 1])
         p <- CMat[1, 1] / sum(CMat[1, ])
         f1 <- ifelse(r + p != 0, 2 * (r * p) / (r + p), 0)
-    } else {
+    } else{ 
         diag_vec <- 1:length(diag(CMat))
         r <- p <- f1 <-  vector(length = length(diag_vec))
         for(k in diag_vec) {
@@ -120,6 +129,14 @@ f1_score <- function(pred, true){
     return(out)
 }
 
+#' Precision
+#'
+#' `precision()` Implements a function that calculates the precision, also known as the positive predictive value, of labels predicted by a machine learning model and a vector of true values. 
+#' It is calculated by calculating the ratio of true predicted positives to total predicted positives. Its values range from 0 to 1, where 0 would indicate that no predicted positives were true positives
+#' and 1 would indicate that all predicted positives were true positives.
+#' @param pred vector of predicted labels derived from some model, such as \link{textmodel_mlp}, 
+#' which is being subjected to evaluation
+#' @param true a vector of known labels that are used to evaluate model performance
 #' @seealso [textmodel_evaluate()]
 #' @export
 precision <- function(pred, true){
@@ -141,6 +158,14 @@ precision <- function(pred, true){
     return(out)
 }
 
+#' Recall
+#'
+#' `recall()` Implements a function that calculates the recall, also known as the sensitivity, of labels predicted by a machine learning model and a vector of true values. 
+#' It is calculated by calculating the ratio of true predicted positives to total true positives. Its values range from 0 to 1, where 0 would indicate that no true positives 
+#' were predicted by the model while 1 would indicate that all true positives in the data were identified.
+#' @param pred vector of predicted labels derived from some model, such as \link{textmodel_mlp}, 
+#' which is being subjected to evaluation
+#' @param true a vector of known labels that are used to evaluate model performance
 #' @seealso [textmodel_evaluate()]
 #' @export
 recall <- function(pred, true){
@@ -162,6 +187,14 @@ recall <- function(pred, true){
     return(out)
 }
 
+#' Accuracy
+#'
+#' `accuracy()` Implements a function that calculates the proportion of positive and negative values that have been correctly identified by a machine learning model and a vector of true values. 
+#' It is calculated by calculating the quotient of the total correctly identified labels and the total number of labels. Its values range from 0 to 1, where 0 would indicate that no predicted labels were correct
+#' and 1 would indicate that all predicted labels were correct.
+#' @param pred vector of predicted labels derived from some model, such as \link{textmodel_mlp}, 
+#' which is being subjected to evaluation
+#' @param true a vector of known labels that are used to evaluate model performance
 #' @seealso [textmodel_evaluate()]
 #' @export
 accuracy <- function(pred, true){
