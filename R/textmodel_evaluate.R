@@ -33,7 +33,13 @@
 #' }
 #' @export
 #' 
-textmodel_evaluate <- function(x, y, model, fun = "f1_score", k = 5, parameters = list(), seed = as.numeric(Sys.time()), time = TRUE) {
+textmodel_evaluate <- function(x, y, 
+                               model, 
+                               fun = "f1_score", 
+                               k = 5, 
+                               parameters = list(), 
+                               seed = as.numeric(Sys.time()), 
+                               time = TRUE) {
     UseMethod("textmodel_evaluate")
 }
 textmodel_evaluate.dfm <- function(x, y, model, fun = "f1_score", k = 5, parameters = list(), seed = as.numeric(Sys.time()), time = TRUE) {
@@ -85,16 +91,20 @@ textmodel_evaluate.dfm <- function(x, y, model, fun = "f1_score", k = 5, paramet
 #' @seealso [textmodel_evaluate()]
 #' @export
 #' @importFrom utils head
+#' @method head textmodel_evaluate
+head.textmodel_evaluate <- function(x, n = 5, ...) {
+    return(head(as.data.frame(x), n))
+}
+
+#' @seealso [textmodel_evaluate()]
+#' @export
+#' @importFrom quanteda.classifiers head
 #' @method print textmodel_evaluate
 print.textmodel_evaluate <- function(x, ...) {
-
     # output
     cat("Evaluation of", attr(x, "model"), "using the", attr(x, "fun"), "function.",
-        "\n",
-        "\nA total of", attr(x, "nparameters"), "model variations were fit with", attr(x, "k"), "folds.")
-    cat(nrow(x), " x ", ncol(x),
-        " Data Frame of class \"textmodel_evaluate\" \n", sep = "")
-    head(x, 4)
+        "\n")
+    #return(head(x, 4))
 }
 
 #' F1-score
