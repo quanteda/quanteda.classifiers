@@ -44,6 +44,7 @@ textmodel_evaluate <- function(x, y,
     UseMethod("textmodel_evaluate")
 }
 
+#' @export
 textmodel_evaluate.dfm <- function(x, y, model, fun = "f1_score", k = 5, parameters = list(), seed = as.numeric(Sys.time()), time = TRUE) {
     total_start <- Sys.time()
     set.seed(seed)
