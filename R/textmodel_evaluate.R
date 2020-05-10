@@ -33,6 +33,7 @@
 #' }
 #' @export
 #' 
+
 textmodel_evaluate <- function(x, y, 
                                model, 
                                fun = "f1_score", 
@@ -42,6 +43,7 @@ textmodel_evaluate <- function(x, y,
                                time = TRUE) {
     UseMethod("textmodel_evaluate")
 }
+
 textmodel_evaluate.dfm <- function(x, y, model, fun = "f1_score", k = 5, parameters = list(), seed = as.numeric(Sys.time()), time = TRUE) {
     total_start <- Sys.time()
     set.seed(seed)
@@ -89,17 +91,19 @@ textmodel_evaluate.dfm <- function(x, y, model, fun = "f1_score", k = 5, paramet
 }
 
 #' @seealso [textmodel_evaluate()]
-#' @export
 #' @importFrom utils head
 #' @method head textmodel_evaluate
+#' @export
+#' 
+
 head.textmodel_evaluate <- function(x, n = 5, ...) {
     return(head(as.data.frame(x), n))
 }
 
 #' @seealso [textmodel_evaluate()]
-#' @export
-#' @importFrom quanteda.classifiers head
 #' @method print textmodel_evaluate
+#' @export
+
 print.textmodel_evaluate <- function(x, ...) {
     # output
     cat("Evaluation of", attr(x, "model"), "using the", attr(x, "fun"), "function.",
@@ -116,6 +120,7 @@ print.textmodel_evaluate <- function(x, ...) {
 #' @param true a vector of known labels that are used to evaluate model performance
 #' @seealso [textmodel_evaluate()]
 #' @export
+
 f1_score <- function(pred, true){
     true <- as.factor(true)
     pred <- factor(pred, levels = levels(true))
@@ -149,6 +154,7 @@ f1_score <- function(pred, true){
 #' @param true a vector of known labels that are used to evaluate model performance
 #' @seealso [textmodel_evaluate()]
 #' @export
+
 precision <- function(pred, true){
     true <- as.factor(true)
     pred <- factor(pred, levels = levels(true))
@@ -178,6 +184,7 @@ precision <- function(pred, true){
 #' @param true a vector of known labels that are used to evaluate model performance
 #' @seealso [textmodel_evaluate()]
 #' @export
+
 recall <- function(pred, true){
     true <- as.factor(true)
     pred <- factor(pred, levels = levels(true))
@@ -207,6 +214,7 @@ recall <- function(pred, true){
 #' @param true a vector of known labels that are used to evaluate model performance
 #' @seealso [textmodel_evaluate()]
 #' @export
+
 accuracy <- function(pred, true){
     true <- as.factor(true)
     pred <- factor(pred, levels = levels(true))
