@@ -22,4 +22,9 @@ test_that("textmodel_evaluate works", {
     expect_equal(dim(model_eval2), c(4, 5))
     expect_equal(names(model_eval2), c("k", "f1_score", "epochs", "time", "seed"))
     expect_equal(max(model_eval2$k), 2)
-})
+    
+    # Check by_class
+    model_eval3 <- textmodel_evaluate(x = dfmat, y = labels, model = "textmodel_mlp", fun = "recall", k = 2, seed = 5, by_class = TRUE)
+    labels_names <- gsub(" |-", ".", levels(labels))
+    expect_equal(sum(labels_names %in% names(model_eval3)), 3)
+    })
