@@ -12,13 +12,14 @@
 #'   factors.)
 #' @param model the name of the machine learning function that will be evaluated
 #' @param fun the name of the function that will be used to evaluate the machine learning model. 
-#' For example, accuracy, precision, recall, or f1_score
+#' Can take the values "accuracy", "precision", "recall", or "f1_score"
 #' @param k number of folds
 #' @param parameters model hyperparameters
 #' @param seed a seed that can allow for replication of k training data splits. 
 #' If seed is not provided a seed is chosen based on the current time.
 #' @param time a logical parameter that determines whether output will include training
 #' time (in seconds) of model
+#' @param by_class estimates a separate value of provided evaluation function for every class of the true vector
 #' @importFrom stats predict
 #' @examples
 #' # evaluate immigration classification performance
@@ -40,12 +41,16 @@ textmodel_evaluate <- function(x, y,
                                k = 5, 
                                parameters = list(), 
                                seed = as.numeric(Sys.time()), 
-                               time = TRUE) {
+                               time = TRUE,
+                               by_class = FALSE) {
     UseMethod("textmodel_evaluate")
 }
 
 #' @export
-textmodel_evaluate.dfm <- function(x, y, model, fun = "f1_score", k = 5, parameters = list(), seed = as.numeric(Sys.time()), time = TRUE) {
+textmodel_evaluate.dfm <- function(x, y, model, fun = "f1_score", k = 5, parameters = list(), seed = as.numeric(Sys.time()), time = TRUE, by_class = FALSE) {
+    if(fun == "accuracy" & by_class){
+        cat("No class oriented accuracy score defined. Calculating average accuracy accross all classes.\n")
+        }
     total_start <- Sys.time()
     set.seed(seed)
     y <- as.factor(y)
@@ -68,7 +73,11 @@ textmodel_evaluate.dfm <- function(x, y, model, fun = "f1_score", k = 5, paramet
             time <- round(as.numeric(difftime(Sys.time(), start, units = "secs")), 2) # Outputs time in seconds
             names(time) <- "time"
             y_pred <- predict(mod, x_test)
-            met <- do.call(what = fun, args = list(y_pred, y_test)) # Accepts any evaluation function that takes predicted and test vectors as inputs
+            if(fun == "accuracy"){
+                met <- do.call(what = fun, args = list(y_pred, y_test)) # Accepts any evaluation function that takes predicted and test vectors as inputs
+            } else {
+                met <- do.call(what = fun, args = list(y_pred, y_test, by_class)) # Accepts any evaluation function that takes predicted and test vectors as inputs
+            }
             met <- as.list(met)
             if(is.null(names(met))) {names(met) <- fun}
             if(length(parameters) != 0){
@@ -119,13 +128,15 @@ print.textmodel_evaluate <- function(x, ...) {
 #' @param pred vector of predicted labels derived from some model, such as \link{textmodel_mlp}, 
 #' which is being subjected to evaluation
 #' @param true a vector of known labels that are used to evaluate model performance
+#' @param by_class estimates a separate f1-score score for every class of the true vector
 #' @seealso [textmodel_evaluate()]
 #' @export
 
-f1_score <- function(pred, true){
+f1_score <- function(pred, true, by_class = FALSE){
     true <- as.factor(true)
     pred <- factor(pred, levels = levels(true))
     CMat <- table(pred, true)
+    lab_names <- levels(true)
     if(length(levels(true)) == 2) {
         r <- CMat[1, 1] / sum(CMat[, 1])
         p <- CMat[1, 1] / sum(CMat[1, ])
@@ -138,10 +149,10 @@ f1_score <- function(pred, true){
             p[k] <- ifelse(sum(CMat[k, ]) != 0, diag(CMat)[k] / sum(CMat[k, ]), 0)
             f1[k] <- ifelse(r[k] + p[k] != 0, 2 * (r[k] * p[k]) / (r[k] + p[k]), 0)
         }
-        f1 <- mean(f1)
+        if(!by_class) {f1 <- mean(f1)}
     }
     out <- f1
-    names(out) <- c("f1_score")
+    names(out) <- if(by_class) lab_names else "f1_score"
     return(out)
 }
 
@@ -153,13 +164,15 @@ f1_score <- function(pred, true){
 #' @param pred vector of predicted labels derived from some model, such as \link{textmodel_mlp}, 
 #' which is being subjected to evaluation
 #' @param true a vector of known labels that are used to evaluate model performance
+#' @param by_class estimates a separate precision score for every class of the true vector
 #' @seealso [textmodel_evaluate()]
 #' @export
 
-precision <- function(pred, true){
+precision <- function(pred, true, by_class = FALSE){
     true <- as.factor(true)
     pred <- factor(pred, levels = levels(true))
     CMat <- table(pred, true)
+    lab_names <- levels(true)
     if(length(levels(true)) == 2) {
         p <- CMat[1, 1] / sum(CMat[1, ])
     } else {
@@ -168,10 +181,10 @@ precision <- function(pred, true){
         for(k in diag_vec) {
             p[k] <- ifelse(sum(CMat[k, ]) != 0, diag(CMat)[k] / sum(CMat[k, ]), 0)
         }
-        p <- mean(p)
+        if(!by_class) {p <- mean(p)}
     }
     out <- p
-    names(out) <- c("precision")
+    names(out) <- if(by_class) lab_names else "precision"
     return(out)
 }
 
@@ -183,13 +196,15 @@ precision <- function(pred, true){
 #' @param pred vector of predicted labels derived from some model, such as \link{textmodel_mlp}, 
 #' which is being subjected to evaluation
 #' @param true a vector of known labels that are used to evaluate model performance
+#' @param by_class estimates a separate recall score for every class of the true vector
 #' @seealso [textmodel_evaluate()]
 #' @export
 
-recall <- function(pred, true){
+recall <- function(pred, true, by_class = FALSE){
     true <- as.factor(true)
     pred <- factor(pred, levels = levels(true))
     CMat <- table(pred, true)
+    lab_names <- levels(true)
     if(length(levels(true)) == 2) {
         r <- CMat[1, 1] / sum(CMat[, 1])
     } else {
@@ -198,10 +213,10 @@ recall <- function(pred, true){
         for(k in diag_vec) {
             r[k] <- ifelse(sum(CMat[,k]) != 0, diag(CMat)[k] / sum(CMat[, k]), 0)
         }
-        r <- mean(r)
+        if(!by_class) {r <- mean(r)}
     }
     out <- r
-    names(out) <- c("recall")
+    names(out) <- if(by_class) lab_names else "recall"
     return(out)
 }
 
