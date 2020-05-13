@@ -4,13 +4,15 @@
 \alias{recall}
 \title{Recall}
 \usage{
-recall(pred, true)
+recall(pred, true, by_class = FALSE)
 }
 \arguments{
 \item{pred}{vector of predicted labels derived from some model, such as \link{textmodel_mlp},
 which is being subjected to evaluation}
 
 \item{true}{a vector of known labels that are used to evaluate model performance}
+
+\item{by_class}{estimates a separate recall score for every class of the true vector}
 }
 \description{
 \code{recall()} Implements a function that calculates the recall, also known as the sensitivity, of labels predicted by a machine learning model and a vector of true values.

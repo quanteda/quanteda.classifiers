@@ -12,7 +12,8 @@ textmodel_evaluate(
   k = 5,
   parameters = list(),
   seed = as.numeric(Sys.time()),
-  time = TRUE
+  time = TRUE,
+  by_class = FALSE
 )
 }
 \arguments{
@@ -26,7 +27,7 @@ factors.)}
 \item{model}{the name of the machine learning function that will be evaluated}
 
 \item{fun}{the name of the function that will be used to evaluate the machine learning model.
-For example, accuracy, precision, recall, or f1_score}
+Can take the values "accuracy", "precision", "recall", or "f1_score"}
 
 \item{k}{number of folds}
 
@@ -37,6 +38,8 @@ If seed is not provided a seed is chosen based on the current time.}
 
 \item{time}{a logical parameter that determines whether output will include training
 time (in seconds) of model}
+
+\item{by_class}{estimates a separate value of provided evaluation function for every class of the true vector}
 }
 \description{
 Designed to streamline the parameter tuning and evaluation process.

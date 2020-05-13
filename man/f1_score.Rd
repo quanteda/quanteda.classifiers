@@ -4,13 +4,15 @@
 \alias{f1_score}
 \title{F1-score}
 \usage{
-f1_score(pred, true)
+f1_score(pred, true, by_class = FALSE)
 }
 \arguments{
 \item{pred}{vector of predicted labels derived from some model, such as \link{textmodel_mlp},
 which is being subjected to evaluation}
 
 \item{true}{a vector of known labels that are used to evaluate model performance}
+
+\item{by_class}{estimates a separate f1-score score for every class of the true vector}
 }
 \description{
 \code{f1_score()} Implements a function that calculates the harmonic mean of precision and recall of predicted labels and a vector of true values.
