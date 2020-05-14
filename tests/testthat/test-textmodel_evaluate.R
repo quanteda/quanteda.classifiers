@@ -25,6 +25,6 @@ test_that("textmodel_evaluate works", {
     
     # Check by_class
     model_eval3 <- textmodel_evaluate(x = dfmat, y = labels, model = "textmodel_mlp", fun = "recall", k = 2, seed = 5, by_class = TRUE)
-    labels_names <- gsub(" |-", ".", levels(labels))
-    expect_equal(sum(labels_names %in% names(model_eval3)), 3)
+    expect_true("class" %in% names(model_eval3)) 
+    expect_true(sum(levels(labels) %in% model_eval3$class) == 3)
     })
