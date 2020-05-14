@@ -48,7 +48,7 @@ textmodel_evaluate <- function(x, y,
 
 #' @export
 textmodel_evaluate.dfm <- function(x, y, model, fun = "f1_score", k = 5, parameters = list(), seed = as.numeric(Sys.time()), time = TRUE, by_class = FALSE) {
-    if(fun == "accuracy" & by_class){
+    if("accuracy" %in% fun & by_class){
         cat("No class oriented accuracy score defined. Calculating average accuracy accross all classes.\n")
         }
     total_start <- Sys.time()
@@ -73,22 +73,22 @@ textmodel_evaluate.dfm <- function(x, y, model, fun = "f1_score", k = 5, paramet
             time <- round(as.numeric(difftime(Sys.time(), start, units = "secs")), 2) # Outputs time in seconds
             names(time) <- "time"
             y_pred <- predict(mod, x_test)
-            if(fun == "accuracy"){
-                met <- do.call(what = fun, args = list(y_pred, y_test)) # Accepts any evaluation function that takes predicted and test vectors as inputs
-            } else {
-                met <- do.call(what = fun, args = list(y_pred, y_test, by_class)) # Accepts any evaluation function that takes predicted and test vectors as inputs
-            }
-            met <- as.list(met)
+            met <- lapply(fun, function(x) do.call(what = x, args = list(y_pred, y_test, by_class))) # Accepts any evaluation function that takes predicted and test vectors as inputs
+            #met <- as.list(met)
             if(is.null(names(met))) {names(met) <- fun}
             if(length(parameters) != 0){
                 output[[w]] <- data.frame(k = i, met, param_list, as.list(time), seed)
             } else {
                 output[[w]] <- data.frame(k = i, met, as.list(time), seed)
             }
+            if(by_class) {
+                output[[w]]$class <- rownames(output[[w]])
+            }
             w <- w + 1
         }
     }
     output <- do.call(rbind, output)
+    rownames(output) <- NULL
     total_time <- round(as.numeric(difftime(Sys.time(), total_start, units = "secs")), 2) # Outputs time in seconds
     attr(output, "model") <- model
     attr(output, "fun") <- fun
@@ -231,7 +231,7 @@ recall <- function(pred, true, by_class = FALSE){
 #' @seealso [textmodel_evaluate()]
 #' @export
 
-accuracy <- function(pred, true){
+accuracy <- function(pred, true, ...){
     true <- as.factor(true)
     pred <- factor(pred, levels = levels(true))
     CMat <- table(pred, true)
