@@ -4,13 +4,15 @@
 \alias{accuracy}
 \title{Accuracy}
 \usage{
-accuracy(pred, true)
+accuracy(pred, true, ...)
 }
 \arguments{
 \item{pred}{vector of predicted labels derived from some model, such as \link{textmodel_mlp},
 which is being subjected to evaluation}
 
 \item{true}{a vector of known labels that are used to evaluate model performance}
+
+\item{...}{additional arguments}
 }
 \description{
 \code{accuracy()} Implements a function that calculates the proportion of positive and negative values that have been correctly identified by a machine learning model and a vector of true values.

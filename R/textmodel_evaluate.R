@@ -228,6 +228,8 @@ recall <- function(pred, true, by_class = FALSE){
 #' @param pred vector of predicted labels derived from some model, such as \link{textmodel_mlp}, 
 #' which is being subjected to evaluation
 #' @param true a vector of known labels that are used to evaluate model performance
+#' @param ... additional arguments
+#' @aliases 
 #' @seealso [textmodel_evaluate()]
 #' @export
 
