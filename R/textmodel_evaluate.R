@@ -129,10 +129,11 @@ print.textmodel_evaluate <- function(x, ...) {
 #' which is being subjected to evaluation
 #' @param true a vector of known labels that are used to evaluate model performance
 #' @param by_class estimates a separate f1-score score for every class of the true vector
+#' @param ... additional arguments
 #' @seealso [textmodel_evaluate()]
 #' @export
 
-f1_score <- function(pred, true, by_class = FALSE){
+f1_score <- function(pred, true, by_class = FALSE, ...){
     true <- as.factor(true)
     pred <- factor(pred, levels = levels(true))
     CMat <- table(pred, true)
@@ -165,10 +166,11 @@ f1_score <- function(pred, true, by_class = FALSE){
 #' which is being subjected to evaluation
 #' @param true a vector of known labels that are used to evaluate model performance
 #' @param by_class estimates a separate precision score for every class of the true vector
+#' @param ... additional arguments
 #' @seealso [textmodel_evaluate()]
 #' @export
 
-precision <- function(pred, true, by_class = FALSE){
+precision <- function(pred, true, by_class = FALSE, ...){
     true <- as.factor(true)
     pred <- factor(pred, levels = levels(true))
     CMat <- table(pred, true)
@@ -197,10 +199,11 @@ precision <- function(pred, true, by_class = FALSE){
 #' which is being subjected to evaluation
 #' @param true a vector of known labels that are used to evaluate model performance
 #' @param by_class estimates a separate recall score for every class of the true vector
+#' @param ... additional arguments
 #' @seealso [textmodel_evaluate()]
 #' @export
 
-recall <- function(pred, true, by_class = FALSE){
+recall <- function(pred, true, by_class = FALSE, ...){
     true <- as.factor(true)
     pred <- factor(pred, levels = levels(true))
     CMat <- table(pred, true)
@@ -217,6 +220,31 @@ recall <- function(pred, true, by_class = FALSE){
     }
     out <- r
     names(out) <- if(by_class) lab_names else "recall"
+    return(out)
+}
+
+#' Balanced Accuracy
+#'
+#' `accuracy()` Implements a function that calculates the average proportion of positive and negative values that have been correctly identified within each class by a machine learning model and a vector of true values. 
+#' It is calculated by first calculating the proportion of correct predictions within each label and then taking the mean of the resulting vector. Its values range from 0 to 1, where 0 would indicate that the average proportion 
+#' of correctly classified labels is 0 and 1 would indicate that the average proportion of correctly classified labels is 1.
+#' @param pred vector of predicted labels derived from some model, such as \link{textmodel_mlp}, 
+#' which is being subjected to evaluation
+#' @param true a vector of known labels that are used to evaluate model performance
+#' @param by_class instead of returning the average accuracy across all labels, this function will return the balanced accuracy score for every class of the true vector
+#' @param ... additional arguments
+#' @aliases 
+#' @seealso [textmodel_evaluate()]
+#' @export
+
+balanced_accuracy <- function(pred, true, by_class = FALSE, ...){
+    true <- as.factor(true)
+    pred <- factor(pred, levels = levels(true))
+    lab_names <- levels(true)
+    CMat <- table(pred, true)
+    out <- diag(CMat) / colSums(CMat)
+    if(!by_class) out <- mean(out)
+    names(out) <- if(by_class) lab_names else "balanced_accuracy"
     return(out)
 }
 
