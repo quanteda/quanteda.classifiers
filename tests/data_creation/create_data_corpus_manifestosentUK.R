@@ -372,4 +372,3 @@ data_corpus_manifestosentsUK <- corpus(dat_corpus_renamed,
 
 # add corpus to package
 usethis::use_data(data_corpus_manifestosentsUK, overwrite = TRUE)
-  

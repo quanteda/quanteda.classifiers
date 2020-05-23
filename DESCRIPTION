@@ -17,6 +17,7 @@ Imports:
     quanteda.textmodels,
     RSSL,
     SparseM,
+    glmnet
 Suggests:
     spelling,
     testthat,
