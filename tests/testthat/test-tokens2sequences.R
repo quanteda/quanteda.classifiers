@@ -25,6 +25,16 @@ test_that("tokens2sequences works", {
     tok_mat <- keras::texts_to_sequences(tok,texts = text) %>% keras::pad_sequences(maxlen = 10)
     seq_mat <- unname(seq$matrix)
     expect_equal(seq_mat, tok_mat)
+    
+    # Check whether it works on character vectors
+    seq2 <- tokens2sequences(text, maxsenlen = 10, keepn = 5)
+    expect_equal(dim(seq$matrix), dim(seq2$matrix)) 
+    expect_equal(seq$nfeatures, seq2$nfeatures) 
+    
+    # Check whether tokens2sequences performs recursively
+    seq_short <- tokens2sequences(x = seq2, maxsenlen = 2, keepn = 5)
+    expect_equal(ncol(seq_short$matrix), 2)
+    expect_equal(seq_short$nfeatures, 4)
 })
 
 test_that("tokens2sequences_conform works", {
@@ -45,9 +55,4 @@ test_that("tokens2sequences_conform works", {
     seqxy <- tokens2sequences_conform(seqx, seqy)
     expect_equal(dim(seqxy$matrix), c(2, 4))
     expect_equal(ncol(seqxy$features), 3)
-    expect_output(
-        print(seqxy),
-        "Ordered feature matrix of: 2 documents, 4 features (12.5% sparse).",
-        fixed = TRUE
-    )
 })
