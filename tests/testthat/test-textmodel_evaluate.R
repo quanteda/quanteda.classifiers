@@ -4,7 +4,7 @@ test_that("textmodel_evaluate works", {
     skip_on_cran()
     
     set.seed(100)
-    corp <- corpus_sample(data_corpus_EPcoaldebate, size = 1000, by = "crowd_subsidy_label")
+    corp <- corpus_sample(data_corpus_EPcoaldebate, size = 500, by = "crowd_subsidy_label")
     dfmat <- dfm(corp) %>% 
         dfm_trim(min_termfreq = 10)
     labels <- docvars(dfmat, "crowd_subsidy_label")
@@ -30,13 +30,13 @@ test_that("textmodel_evaluate works", {
     
     # Check if it works with textmodel_cnnlstm
     
-    corp_tok <- corpus_sample(data_corpus_EPcoaldebate, size = 1000, by = "crowd_subsidy_label")
+    corp_tok <- corpus_sample(data_corpus_EPcoaldebate, size = 500, by = "crowd_subsidy_label")
     tok <- tokens(corp_tok)
     labels <- docvars(corp_tok, "crowd_subsidy_label")
     model_eval4 <- textmodel_evaluate(x = tok, y = labels, model = "textmodel_cnnlstmemb", fun = "f1_score", k = 3, seed = 5)
     expect_equal(dim(model_eval4), c(3, 4))
     expect_equal(names(model_eval4), c("k", "f1_score", "time", "seed"))
     expect_equal(max(model_eval4$k), 3)
-    expect_condition(min(model_eval4$f1_score) > 0.1 & max(model_eval4$f1_score < 1))
+    expect_true(min(model_eval4$f1_score) > 0.1 & max(model_eval4$f1_score) < 1)
     })
 
