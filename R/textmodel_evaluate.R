@@ -48,6 +48,7 @@ textmodel_evaluate <- function(x, y,
 
 #' @export
 textmodel_evaluate.dfm <- function(x, y, model, fun = "f1_score", k = 5, parameters = list(), seed = as.numeric(Sys.time()), time = TRUE, by_class = FALSE) {
+    stopifnot(is.dfm(x))
     if("accuracy" %in% fun & by_class){
         cat("No class oriented accuracy score defined. Calculating average accuracy accross all classes.\n")
         }
@@ -102,6 +103,7 @@ textmodel_evaluate.dfm <- function(x, y, model, fun = "f1_score", k = 5, paramet
 
 #' @export
 textmodel_evaluate.tokens <- function(x, y, model, fun = "f1_score", k = 5, parameters = list(), seed = as.numeric(Sys.time()), time = TRUE, by_class = FALSE) {
+    stopifnot(is.tokens(x))
     if("accuracy" %in% fun & by_class){
         cat("No class oriented accuracy score defined. Calculating average accuracy accross all classes.\n")
     }
