@@ -201,3 +201,22 @@ coef.textmodel_lr <- function(object, ...) {
 coefficients.textmodel_lr <- function(object, ...) {
     UseMethod("coef")
 }
+
+#' summary method for textmodel_lr objects
+#' @param object output from [textmodel_lr()]
+#' @param n how many coefficients to print before truncating
+#' @param ... additional arguments not used
+#' @keywords textmodel internal
+#' @method summary textmodel_lr
+#' @export
+summary.textmodel_lr <- function(object, n = 30, ...) {
+    result <- list(
+        "call" = object$call,
+        "folds" = object$nfolds,
+        "lambda min" = object$lrfitted$lambda.min,
+        "lambda 1se" = object$lrfitted$lambda.1se,
+        "estimated.feature.scores" = as.matrix(head(coef(object), n))
+    )
+    as.summary.textmodel(result)
+}
+
