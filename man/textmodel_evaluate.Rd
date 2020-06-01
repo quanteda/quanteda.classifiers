@@ -17,8 +17,8 @@ textmodel_evaluate(
 )
 }
 \arguments{
-\item{x}{the \link{dfm} or \link{tokens} object on which the model will be fit.  Does not need to
-contain only the training documents.}
+\item{x}{the \link{dfm} or \link{tokens} object on which the model will be
+fit.  Does not need to contain only the training documents.}
 
 \item{y}{vector of training labels associated with each document identified
 in \code{train}.  (These will be converted to factors if not already
@@ -26,8 +26,9 @@ factors.)}
 
 \item{model}{the name of the machine learning function that will be evaluated}
 
-\item{fun}{the name of the function that will be used to evaluate the machine learning model.
-Can take the values "accuracy", "precision", "recall", or "f1_score"}
+\item{fun}{the name of the function that will be used to evaluate the machine
+learning model. Can take the values "accuracy", "precision", "recall", or
+"f1_score"}
 
 \item{k}{number of folds}
 
@@ -36,25 +37,26 @@ Can take the values "accuracy", "precision", "recall", or "f1_score"}
 \item{seed}{a seed that can allow for replication of k training data splits.
 If seed is not provided a seed is chosen based on the current time.}
 
-\item{time}{a logical parameter that determines whether output will include training
-time (in seconds) of model}
+\item{time}{a logical parameter that determines whether output will include
+training time (in seconds) of model}
 
-\item{by_class}{estimates a separate value of provided evaluation function for every class of the true vector}
+\item{by_class}{estimates a separate value of provided evaluation function
+for every class of the true vector}
 }
 \description{
-Designed to streamline the parameter tuning and evaluation process.
-Users chose a function to evaluate and include parameter values as a list.
-If multiple parameter values are provided, the function will perform a grid search by estimating a separate
-model for every combination of parameters.
+Designed to streamline the parameter tuning and evaluation process. Users
+chose a function to evaluate and include parameter values as a list. If
+multiple parameter values are provided, the function will perform a grid
+search by estimating a separate model for every combination of parameters.
 }
 \examples{
 # evaluate immigration classification performance
 \dontrun{
 dfmat <- dfm(data_corpus_manifestosentsUK)
 codes <- docvars(data_corpus_manifestosentsUK, "crowd_immigration_label")
-evaluation <- textmodel_evaluate(dfmat, codes, k = 3, model = "textmodel_mlp", fun = "f1_score",
-  parameters = list(epochs = c(3, 4)))
-
+evaluation <- textmodel_evaluate(dfmat, codes, k = 3,
+                                 model = "textmodel_mlp", fun = "f1_score",
+                                 parameters = list(epochs = c(3, 4)))
 head(evaluation)
 aggregate(evaluation, by = list(evaluation$cost), FUN = "mean")
 }
