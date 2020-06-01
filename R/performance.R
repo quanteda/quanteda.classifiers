@@ -145,7 +145,7 @@ f1_score.list <- function(data, ...) {
     if (!all(c("precision", "recall") %in% names(data)))
         stop("list must contain both precision and recall")
     result <- list(f1 = apply(data.frame(data[c("precision", "recall")]), 1, 
-                              function(y) 1/mean(y)))
+                              function(y) 2 / sum(y^(-1))))
     if (length(result[[1]]) == 1) result[[1]] <- unname(result[[1]])
     result
 }
