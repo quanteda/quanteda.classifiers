@@ -1,6 +1,7 @@
 context("test textmodel_evaluate")
 
 test_that("textmodel_evaluate works", {
+    skip("until rewritten")
     skip_on_cran()
     
     set.seed(100)
@@ -38,5 +39,5 @@ test_that("textmodel_evaluate works", {
     expect_equal(names(model_eval4), c("k", "f1_score", "time", "seed"))
     expect_equal(max(model_eval4$k), 3)
     expect_true(min(model_eval4$f1_score) > 0.1 & max(model_eval4$f1_score) < 1)
-    })
+})
 
