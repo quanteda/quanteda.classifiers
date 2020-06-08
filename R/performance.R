@@ -63,8 +63,8 @@ performance.table <- function(data, truth = 2, by_class = TRUE, ...) {
     result <- as.list(c(precision(data, by_class = by_class),
                         recall(data, by_class = by_class),
                         accuracy(data),
-                        balanced_accuracy(data)))
-    result <- c(result, f1_score(result))
+                        balanced_accuracy(data),
+                        f1_score(data, by_class = by_class)))
     result[c("precision", "recall", "f1", "accuracy", "balanced_accuracy")]
 }
 
@@ -135,20 +135,26 @@ f1_score.default <- function(data, truth, by_class = TRUE, ...) {
 #' @export
 f1_score.table <- function(data, truth = 2, by_class = TRUE, ...) {
     data <- check_table(data, truth)
-    pr <- list(precision = precision(data, by_class = by_class),
-               recall = recall(data, by_class = by_class))
-    f1_score(pr)
+    pr <- data.frame(precision = precision(data, by_class = TRUE)[[1]],
+                recall = recall(data, by_class = TRUE)[[1]])
+    #f1_score(pr)
+    f1 <- list(f1 = apply(pr[c("precision", "recall")], 1, 
+                              function(y) 2 / sum(y^(-1))))
+    if (by_class) f1 else sapply(f1, mean)
 }
 
-#' @export
-f1_score.list <- function(data, ...) {
-    if (!all(c("precision", "recall") %in% names(data)))
-        stop("list must contain both precision and recall")
-    result <- list(f1 = apply(data.frame(data[c("precision", "recall")]), 1, 
-                              function(y) 2 / sum(y^(-1))))
-    if (length(result[[1]]) == 1) result[[1]] <- unname(result[[1]])
-    result
-}
+# #' @export
+# f1_score.list <- function(data, ...) {
+#    if (!all(c("precision", "recall") %in% names(data)))
+#        stop("list must contain both precision and recall")
+#    pr <- list(precision = precision(data, by_class = by_class),
+#               recall = recall(data, by_class = by_class))
+#    
+#    result <- list(f1 = apply(data.frame(data[c("precision", "recall")]), 1, 
+#                              function(y) 2 / sum(y^(-1))))
+#    if (length(result[[1]]) == 1) result[[1]] <- unname(result[[1]])
+#    result
+#}
 
 # accuracy ----------
 
