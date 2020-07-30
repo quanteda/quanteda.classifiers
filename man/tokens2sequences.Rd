@@ -4,7 +4,7 @@
 \alias{tokens2sequences}
 \title{[Experimental] Convert quanteda tokens to keras sequences}
 \usage{
-tokens2sequences(x, maxsenlen = 40, keepn = NULL)
+tokens2sequences(x, maxsenlen = 100, keepn = NULL)
 }
 \arguments{
 \item{x}{\code{\link[quanteda:tokens]{quanteda::tokens()}} object}

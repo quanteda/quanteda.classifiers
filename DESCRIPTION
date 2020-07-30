@@ -13,10 +13,8 @@ Depends:
     quanteda (>= 2.0)
 Imports:
     keras (>= 2.1.0),
-    LiblineaR,
     quanteda.textmodels,
-    RSSL,
-    SparseM,
+    groupdata2
 Suggests:
     spelling,
     testthat,

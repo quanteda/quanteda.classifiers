@@ -18,7 +18,7 @@ textmodel_cnnlstmemb(
   pool_size = 4,
   units_lstm = 128,
   words = NULL,
-  maxsenlen = 50,
+  maxsenlen = 100,
   optimizer = "adam",
   loss = "categorical_crossentropy",
   metrics = "categorical_accuracy",

@@ -54,3 +54,23 @@ test_that("multiclass prediction works", {
     expect_equal(colnames(probmat), tmod2$classnames)
     expect_equal(unname(rowSums(probmat)), rep(1, nrow(probmat)), tol = .000001)
 })
+
+test_that("cnnlstmemb works with tokens2sequences", {
+    skip_on_cran()
+
+    data(data_corpus_irishbudget2010, package = "quanteda.textmodels")
+    toks1 <- tokens2sequences(x = tokens(data_corpus_irishbudget2010),keepn = 100)
+    y <- docvars(data_corpus_irishbudget2010, "party")
+    y[5] <- NA
+    tmod2 <- textmodel_cnnlstmemb(x = toks1, y = y)
+    expect_equal(
+        names(predict(tmod2, type = "class"))[5],
+        "Cowen, Brian (FF)"
+    )
+
+    probmat <- predict(tmod2, type = "probability")
+    expect_equal(dim(probmat), c(14, 5))
+    expect_equal(rownames(probmat), rownames(toks1$matrix))
+    expect_equal(colnames(probmat), tmod2$classnames)
+    expect_equal(unname(rowSums(probmat)), rep(1, nrow(probmat)), tol = .000001)
+})
