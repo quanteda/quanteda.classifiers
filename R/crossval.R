@@ -4,14 +4,17 @@
 #' @param x a fitted textmodel
 #' @param k number of folds
 #' @inheritParams performance
+#' @param verbose logical; if `TRUE`, output results to the console
 #' @export
 #' @examples
+#' library("quanteda")
 #' library("quanteda.textmodels")
-#' dfmat <- quanteda::dfm(data_corpus_moviereviews)
+#' dfmat <- dfm(data_corpus_moviereviews)
 #' tmod <- textmodel_nb(dfmat, y = data_corpus_moviereviews$sentiment)
 #' crossval(tmod, k = 5, by_class = TRUE)
-#'
-crossval <- function(x, k = 5, by_class = FALSE) {
+#' crossval(tmod, k = 5, by_class = FALSE)
+#' crossval(tmod, k = 5, by_class = FALSE, verbose = TRUE)
+crossval <- function(x, k = 5, by_class = FALSE, verbose = FALSE) {
     UseMethod("crossval")
 }
 
@@ -19,7 +22,7 @@ crossval <- function(x, k = 5, by_class = FALSE) {
 #' @importFrom quanteda dfm dfm_subset
 #' @import quanteda.textmodels
 #' @export
-crossval.textmodel <- function(x, k = 5, by_class = FALSE) {
+crossval.textmodel <- function(x, k = 5, by_class = FALSE, verbose = FALSE) {
     # create folds vector - many ways to do this, I chose something available
     folds <- fold(data.frame(doc_id = docnames(x)), k = k)[[".folds"]]
 
@@ -47,9 +50,13 @@ crossval.textmodel <- function(x, k = 5, by_class = FALSE) {
     if (!by_class)
         summ <- apply(summ, 2, mean)
 
-    cat("Cross-validation:\n\nMean results for k =", k, "folds:\n\n")
-    print(summ)
-    invisible(summ)
+    if (verbose) {
+        cat("Cross-validation:\n\nMean results for k =", k, "folds:\n\n")
+        print(summ)
+        invisible(summ)
+    } else {
+        summ
+    }
 }
 
 # old-skool function to aggregate across a 3-D array
