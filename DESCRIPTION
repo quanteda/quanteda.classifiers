@@ -9,9 +9,9 @@ Description: A test package for developing additional text classifier models (te
 Encoding: UTF-8
 License: GPL-3
 Depends:
-    R (>= 3.4.0),
-    quanteda (>= 2.0)
+    R (>= 3.5.0),
 Imports:
+    quanteda (>= 2.0),
     keras (>= 2.1.0),
     quanteda.textmodels,
     groupdata2
@@ -22,6 +22,6 @@ Suggests:
 URL: https://github.com/quanteda/quanteda.classifiers
 BugReports: https://github.com/quanteda/quanteda.classifiers/issues
 LazyData: TRUE
-RoxygenNote: 7.1.0
+RoxygenNote: 7.1.1
 Language: en-GB
 Roxygen: list(markdown = TRUE)

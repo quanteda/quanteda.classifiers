@@ -15,6 +15,7 @@
 #' @seealso [is.tokens2sequences()], [tokens2sequences_conform()]
 #' @export
 #' @examples
+#' library("quanteda")
 #' corp <- corpus_subset(data_corpus_inaugural, Year <= 1793)
 #' corptok <- tokens(corp)
 #' print(corp)
