@@ -23,10 +23,8 @@ Cross-validate a fitted textmodel using \emph{k}-fold cross-validation.
 library("quanteda")
 library("quanteda.textmodels")
 dfmat <- dfm(data_corpus_moviereviews)
-textmodel_nb(dfmat, y = data_corpus_moviereviews$sentiment) \%>\%
-    crossval(k = 5, by_class = TRUE)
-textmodel_nb(dfmat, y = data_corpus_moviereviews$sentiment) \%>\%
-    crossval(k = 5, by_class = FALSE)
-textmodel_svmlin(dfmat, y = data_corpus_moviereviews$sentiment) \%>\%
-    crossval(k = 5, by_class = TRUE)
+tmod <- textmodel_nb(dfmat, y = data_corpus_moviereviews$sentiment)
+crossval(tmod, k = 5, by_class = TRUE)
+crossval(tmod, k = 5, by_class = FALSE)
+crossval(tmod, k = 5, by_class = FALSE, verbose = TRUE)
 }

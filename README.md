@@ -14,13 +14,6 @@ experimental](https://img.shields.io/badge/lifecycle-experimental-orange.svg)](h
 
 ## Installation
 
-This package requires the development version of **quanteda**, which
-will soon be released as v2.
-
-``` r
-devtools::install_github("quanteda/quanteda") 
-```
-
 To install this package, use the following, which also installs what the
 R **keras** package needs in order to run.
 
@@ -38,20 +31,20 @@ the **keras** package. (The SVM models have been moved to
 [**quanteda.textmodels**](https://github.com/quanteda/quanteda.textmodels).)
 
 | Classifier                                                          | Command                  |
-| ------------------------------------------------------------------- | ------------------------ |
+|---------------------------------------------------------------------|--------------------------|
 | Multilevel perceptron network                                       | `textmodel_mlp()`        |
 | Convolutional neural network + LSTM model fitted to word embeddings | `textmodel_cnnlstmemb()` |
 
 ## Available human-annotated corpora
 
 | Corpus                                                                                                                       | Name                           |
-| ---------------------------------------------------------------------------------------------------------------------------- | ------------------------------ |
+|------------------------------------------------------------------------------------------------------------------------------|--------------------------------|
 | Sentence-level corpus of UK party manifestos 1945–2019, partially annotated                                                  | `data_corpus_manifestosentsUK` |
-| Large Movie Review Dataset of 50,000 annotated highly polar movie reviews for training and testing, from Maas et. al. (2011) | `data_corpus_LMRD`             |
+| Large Movie Review Dataset of 50,000 annotated highly polar movie reviews for training and testing, from Maas et. al. (2011) | `data_corpus_LMRD`             |
 
 ## Demonstration
 
-See this (very preliminary\!) [performance
+See this (very preliminary!) [performance
 comparison](https://htmlpreview.github.io/?https://github.com/quanteda/quanteda.classifiers/blob/master/tests/misc/test-LMRD.nb.html).
 
 ## How to cite
@@ -65,5 +58,5 @@ For a BibTeX entry, use the output from citation(package =
 
 ## Issues
 
-  - Please file an issue (with a bug, wish list, etc.) [via
+-   Please file an issue (with a bug, wish list, etc.) [via
     GitHub](https://github.com/quanteda/quanteda.classifiers/issues).

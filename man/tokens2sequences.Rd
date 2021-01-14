@@ -27,6 +27,7 @@ into a tokens sequence object as expected by some functions in the
 \pkg{keras} package.
 }
 \examples{
+library("quanteda")
 corp <- corpus_subset(data_corpus_inaugural, Year <= 1793)
 corptok <- tokens(corp)
 print(corp)
