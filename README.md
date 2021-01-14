@@ -12,13 +12,6 @@ experimental](https://img.shields.io/badge/lifecycle-experimental-orange.svg)](h
 
 ## Installation
 
-This package requires the development version of **quanteda**, which
-will soon be released as v2.
-
-``` r
-devtools::install_github("quanteda/quanteda") 
-```
-
 To install this package, use the following, which also installs what the
 R **keras** package needs in order to run.
 
