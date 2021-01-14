@@ -4,7 +4,7 @@
 \alias{crossval}
 \title{Cross-validate a fitted textmodel}
 \usage{
-crossval(x, k = 5, by_class = FALSE)
+crossval(x, k = 5, by_class = FALSE, verbose = FALSE)
 }
 \arguments{
 \item{x}{a fitted textmodel}
@@ -13,11 +13,14 @@ crossval(x, k = 5, by_class = FALSE)
 
 \item{by_class}{logical; if \code{TRUE}, estimate performance score separately for
 each class, otherwise average across classes}
+
+\item{verbose}{logical; if \code{TRUE}, output results to the console}
 }
 \description{
 Cross-validate a fitted textmodel using \emph{k}-fold cross-validation.
 }
 \examples{
+library("quanteda")
 library("quanteda.textmodels")
 dfmat <- dfm(data_corpus_moviereviews)
 textmodel_nb(dfmat, y = data_corpus_moviereviews$sentiment) \%>\%
