@@ -30,6 +30,9 @@
 #' @param units_lstm The number of nodes of the lstm layer
 #' @param words The maximum number of words used to train model. Defaults to the
 #'   number of features in `x`
+#' @param fitted_embeddings A fitted embeddings model formatted such that the 
+#' columns include a word identifier and embedding dimensions.The rows should 
+#' represent individual tokens.
 #' @param maxsenlen The maximum sentence length of training data
 #' @param optimizer optimizer used to fit model to training data, see
 #'   [keras::compile.keras.engine.training.Model()]
@@ -72,7 +75,7 @@ textmodel_cnnlstmemb <- function(x, y, dropout1 = 0.2, dropout2 = 0.2,
                                  dropout3 = 0.2, dropout4 = 0.2,
                                  wordembeddim = 30, cnnlayer = TRUE,
                                  filter = 48, kernel_size = 5, pool_size = 4,
-                                 units_lstm = 128, words = NULL,
+                                 units_lstm = 128, words = NULL, fitted_embeddings = NULL,
                                  maxsenlen = 100, optimizer = "adam",
                                  loss = "categorical_crossentropy",
                                  metrics = "categorical_accuracy", ...) {
@@ -82,7 +85,7 @@ textmodel_cnnlstmemb <- function(x, y, dropout1 = 0.2, dropout2 = 0.2,
 #' @export
 textmodel_cnnlstmemb.tokens <- function(x, y, dropout1 = 0.2, dropout2 = 0.2, dropout3 = 0.2,
                                         dropout4 = 0.2, wordembeddim = 30, cnnlayer = TRUE, filter = 48,
-                                        kernel_size = 5, pool_size = 4, units_lstm = 128, words = NULL,
+                                        kernel_size = 5, pool_size = 4, units_lstm = 128, words = NULL, fitted_embeddings = NULL,
                                         maxsenlen = 100, optimizer = "adam",
                                         loss = "categorical_crossentropy",
                                         metrics = "categorical_accuracy", ...) {
@@ -102,17 +105,34 @@ textmodel_cnnlstmemb.tokens <- function(x, y, dropout1 = 0.2, dropout2 = 0.2, dr
     
     x <- tokens2sequences(x, maxsenlen = maxsenlen, keepn = words)
     
+    
+    if(!is.null(fitted_embeddings)){
+        test_embeddings(fitted_embeddings)
+        wordembeddim <- ncol(fitted_embeddings) - 1
+        names(fitted_embeddings) <- c('features',paste('dim',1:(ncol(fitted_embeddings) - 1),sep = '_'))
+        dic <- x$features[, c("features"), drop = FALSE]
+        fitted_embeddings <- dic %>% 
+            merge(y = fitted_embeddings, by = "features", all.x = TRUE) 
+        fitted_embeddings <- fitted_embeddings[, 2:ncol(fitted_embeddings)]
+        fitted_embeddings <- replace(fitted_embeddings, is.na(fitted_embeddings), 0) %>% 
+            as.matrix() %>% 
+            list()
+    }
+    
     if (is.null(words))
         words <- x$nfeatures
     # "one-hot" encode y
     y2 <- to_categorical(as.integer(y) - 1, num_classes = nlevels(y))
     
     # use keras to fit the model
+    #model <- cnnlstm_model(x, y2)
     model <- keras_model_sequential()
     
     model %>%
-        layer_embedding(input_dim = words + 1, output_dim = wordembeddim,
-                        input_length = maxsenlen) %>%
+        layer_embedding(input_dim = words, 
+                        output_dim = wordembeddim,
+                        input_length = maxsenlen, 
+                        weights = fitted_embeddings) %>%
         layer_dropout(rate = dropout1)
     
     if (cnnlayer == TRUE) {
@@ -130,7 +150,6 @@ textmodel_cnnlstmemb.tokens <- function(x, y, dropout1 = 0.2, dropout2 = 0.2, dr
     
     compile(model, loss = loss, optimizer = optimizer, metrics = metrics)
     history <- fit(model, x$matrix, y2, ...)
-    
     # compile, class, and return the result
     result <- c(result,
                 nfeatures = x$nfeatures,
@@ -140,10 +159,11 @@ textmodel_cnnlstmemb.tokens <- function(x, y, dropout1 = 0.2, dropout2 = 0.2, dr
     return(result)
 }
 
+
 #' @export
 textmodel_cnnlstmemb.tokens2sequences <- function(x, y, dropout1 = 0.2, dropout2 = 0.2, dropout3 = 0.2,
                                                   dropout4 = 0.2, wordembeddim = 30, cnnlayer = TRUE, filter = 48,
-                                                  kernel_size = 5, pool_size = 4, units_lstm = 128, words = NULL,
+                                                  kernel_size = 5, pool_size = 4, units_lstm = 128, words = NULL,fitted_embeddings = NULL,
                                                   maxsenlen = 100,
                                                   optimizer = "adam",
                                                   loss = "categorical_crossentropy",
@@ -152,8 +172,8 @@ textmodel_cnnlstmemb.tokens2sequences <- function(x, y, dropout1 = 0.2, dropout2
     stopifnot(is.tokens2sequences(x))
     x <- tokens2sequences(x, maxsenlen = maxsenlen, keepn = words)
     y <- as.factor(y)
-    result <- list(x = x, y = y, call = match.call(), classnames = levels(y))
     
+    result <- list(x = x, y = y, call = match.call(), classnames = levels(y))
     # trim missings for fitting model
     na_ind <- which(is.na(y))
     if (length(na_ind) > 0) {
@@ -169,12 +189,27 @@ textmodel_cnnlstmemb.tokens2sequences <- function(x, y, dropout1 = 0.2, dropout2
     # "one-hot" encode y
     y2 <- to_categorical(as.integer(y) - 1, num_classes = nlevels(y))
     
+    if(!is.null(fitted_embeddings)){
+        test_embeddings(fitted_embeddings)
+        wordembeddim <- ncol(fitted_embeddings) - 1
+        names(fitted_embeddings) <- c('features',paste('dim',1:(ncol(fitted_embeddings) - 1),sep = '_'))
+        dic <- x$features[, c("features"), drop = FALSE]
+        fitted_embeddings <- dic %>% 
+            merge(y = fitted_embeddings, by = "features", all.x = TRUE) 
+        fitted_embeddings <- fitted_embeddings[, 2:ncol(fitted_embeddings)]
+        fitted_embeddings <- replace(fitted_embeddings, is.na(fitted_embeddings), 0) %>% 
+            as.matrix() %>% 
+            list()
+    }
     # use keras to fit the model
+    #model <- cnnlstm_model(x, y2)
     model <- keras_model_sequential()
     
     model %>%
-        layer_embedding(input_dim = words + 1, output_dim = wordembeddim,
-                        input_length = maxsenlen) %>%
+        layer_embedding(input_dim = words, 
+                        output_dim = wordembeddim,
+                        input_length = maxsenlen, 
+                        weights = fitted_embeddings) %>%
         layer_dropout(rate = dropout1)
     
     if (cnnlayer == TRUE) {
@@ -186,8 +221,8 @@ textmodel_cnnlstmemb.tokens2sequences <- function(x, y, dropout1 = 0.2, dropout2
     }
     
     model %>%
-        layer_lstm(units = units_lstm, dropout = dropout3,
-                                 recurrent_dropout = dropout4) %>%
+        bidirectional(layer_lstm(units = units_lstm, dropout = dropout3,
+                                 recurrent_dropout = dropout4)) %>%
         layer_dense(units = nlevels(y), activation = "softmax")
     
     compile(model, loss = loss, optimizer = optimizer, metrics = metrics)
@@ -314,3 +349,22 @@ load.textmodel_cnnlstmemb <- function(x, ...) {
     load(x, ...)
     x$clefitted <- unserialize_model(x$clefitted)
 }
+
+#' Test whether embeddings are of the correct format: n x k + 1, 
+#' where the rows are n tokens and columns are the k dimensions. The first column should be the token labels.
+#' @param matrix Embedding matrix
+test_embeddings <- function(matrix){
+    if(class(matrix[,1]) != "character"){
+        cat("Embeddings are not in the correct format.\n")
+        break
+        }
+}
+
+#' @param model
+#' @param dimensions
+#' @param language
+#' @export
+download_embeddings <- function(model, dimensions, language){
+    
+}
+
