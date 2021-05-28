@@ -131,7 +131,7 @@ table(pred_mlp, dfmat_test$polarity)[2:1, 2:1] %>% performance()
 ```{r}
 system.time({
 toks_train <- data_corpus_LMRD %>%
-    corpus_subset(set == "test") %>%
+    corpus_subset(set == "train") %>%
     tokens() %>%
     tokens_remove("\\p{P}", valuetype = "regex", padding = TRUE)
 tmod_cnn <- textmodel_cnnlstmemb(toks_train, 
@@ -139,7 +139,7 @@ tmod_cnn <- textmodel_cnnlstmemb(toks_train,
                                  epochs = 10)
 
 toks_test <- data_corpus_LMRD %>%
-    corpus_subset(set == "train") %>%
+    corpus_subset(set == "test") %>%
     tokens() %>%
     tokens_remove("\\p{P}", valuetype = "regex", padding = TRUE)
 pred_cnn <- predict(tmod_cnn, newdata = toks_test, type = "class")
