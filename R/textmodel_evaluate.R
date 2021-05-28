@@ -55,7 +55,8 @@ textmodel_evaluate.dfm <- function(x, y, model, fun = "f1_score", k = 5,
     stopifnot(is.dfm(x))
     if ("accuracy" %in% fun & by_class) {
         cat("No class oriented accuracy score defined. Calculating average accuracy accross all classes.\n")
-        }
+    }
+    if(is.tokens2sequences(x)) x <- x$matrix
     total_start <- Sys.time()
     set.seed(seed)
     y <- as.factor(y)
