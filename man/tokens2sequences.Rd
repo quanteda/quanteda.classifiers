@@ -4,7 +4,7 @@
 \alias{tokens2sequences}
 \title{[Experimental] Convert quanteda tokens to keras sequences}
 \usage{
-tokens2sequences(x, maxsenlen = 100, keepn = NULL)
+tokens2sequences(x, maxsenlen = 100, keepn = NULL, tolower = TRUE)
 }
 \arguments{
 \item{x}{\code{\link[quanteda:tokens]{quanteda::tokens()}} object}
@@ -12,6 +12,8 @@ tokens2sequences(x, maxsenlen = 100, keepn = NULL)
 \item{maxsenlen}{the maximum sentence length kept in output matrix}
 
 \item{keepn}{the maximum number of features to keep}
+
+\item{tolower}{converts text to the lower case}
 }
 \value{
 \code{\link[=tokens2sequences]{tokens2sequences()}} The output matrix has a number of rows
