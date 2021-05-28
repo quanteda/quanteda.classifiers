@@ -360,11 +360,3 @@ test_embeddings <- function(matrix){
         }
 }
 
-#' @param model
-#' @param dimensions
-#' @param language
-#' @export
-download_embeddings <- function(model, dimensions, language){
-    
-}
-
