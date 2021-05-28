@@ -10,17 +10,16 @@ test_that("tokens2sequences works", {
               "Tokyo Japan",
               "Chinese Chinese Chinese Tokyo Japan")
     text_tokens <- tokens(text)
-    seq <- tokens2sequences(text_tokens, maxsenlen = 10, keepn = 5)
-
+    seq <- tokens2sequences(x = text_tokens, maxsenlen = 10, keepn = 5)
     # Check ouptuts for consistency
     expect_equal(dim(seq$matrix), c(5, 10))
     expect_equal(seq$nfeatures, 5)
-    expect_equal(max(seq$matrix), 5)
+    expect_equal(max(seq$matrix), 4)
     expect_equal(min(seq$matrix), 0)
-    expect_equal(as.integer(apply(seq$matrix, 1, function(x) sum(x != 0))), c(3, 3, 1, 2, 5))
+    expect_equal(as.integer(apply(seq$matrix, 1, function(x) sum(x != 0))), c(3, 2, 1, 2, 5))
 
     # Compare with keras's texts_to_sequences function
-    tok <- keras::text_tokenizer(filters = "!\"#$%&()*+,-./:;<=>?@[\\]^_`{|}~\t\n\r",lower = T,num_words = 6) %>% # Note: Keras includes 0 as a word. tokens2sequences does not
+    tok <- keras::text_tokenizer(filters = "!\"#$%&()*+,-./:;<=>?@[\\]^_`{|}~\t\n\r",lower = T,num_words = 5) %>% # Note: Keras includes 0 as a word. tokens2sequences does not
         keras::fit_text_tokenizer(text)
     tok_mat <- keras::texts_to_sequences(tok,texts = text) %>% keras::pad_sequences(maxlen = 10)
     seq_mat <- unname(seq$matrix)
@@ -34,7 +33,7 @@ test_that("tokens2sequences works", {
     # Check whether tokens2sequences performs recursively
     seq_short <- tokens2sequences(x = seq2, maxsenlen = 2, keepn = 5)
     expect_equal(ncol(seq_short$matrix), 2)
-    expect_equal(seq_short$nfeatures, 4)
+    expect_equal(seq_short$nfeatures, 5)
 })
 
 test_that("tokens2sequences_conform works", {
