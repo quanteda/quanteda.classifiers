@@ -18,6 +18,7 @@ textmodel_cnnlstmemb(
   pool_size = 4,
   units_lstm = 128,
   words = NULL,
+  fitted_embeddings = NULL,
   maxsenlen = 100,
   optimizer = "adam",
   loss = "categorical_crossentropy",
@@ -65,6 +66,10 @@ length of the 1D convolution window}
 
 \item{words}{The maximum number of words used to train model. Defaults to the
 number of features in \code{x}}
+
+\item{fitted_embeddings}{A fitted embeddings model formatted such that the
+columns include a word identifier and embedding dimensions.The rows should
+represent individual tokens.}
 
 \item{maxsenlen}{The maximum sentence length of training data}
 
