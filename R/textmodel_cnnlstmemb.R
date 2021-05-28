@@ -355,8 +355,7 @@ load.textmodel_cnnlstmemb <- function(x, ...) {
 #' @param matrix Embedding matrix
 test_embeddings <- function(matrix){
     if(class(matrix[,1]) != "character"){
-        cat("Embeddings are not in the correct format.\n")
-        break
+        stop("Embeddings are not in the correct format.\n")
         }
 }
 
