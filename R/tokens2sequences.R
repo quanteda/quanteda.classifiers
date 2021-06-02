@@ -201,24 +201,37 @@ tokens2sequences_conform <- function(x, y) {
 #' @export
 #' @importFrom stats na.omit
 tokens2sequences_conform.tokens2sequences <- function(x, y) {
-    stopifnot(is.tokens2sequences(x) & is.tokens2sequences(y))
-    joint_feat <- merge(x$features, y$features[, -3], by = "features",
+    stopifnot(is.tokens2sequences(x))
+    if("tokens2sequences" %in% class(y)){
+        joint_feat <- merge(x$features, y$features[, -3], by = "features",
                         all.x = TRUE)
-    joint_feat <- joint_feat[order(joint_feat$label.x, decreasing = FALSE), ]
-    mat <- apply(x$matrix, 1,
-                 function(x) as.integer(na.omit(joint_feat$label.y[x])))
+        joint_feat <- joint_feat[order(joint_feat$label.x, decreasing = FALSE), ]      
+    } else if("textmodel_cnnlstmemb" %in% class(y)){
+        joint_feat <- merge(x$features, y$features[, -3], by = "features",
+                        all.x = TRUE)
+        joint_feat <- joint_feat[order(joint_feat$label.x, decreasing = FALSE), ]       
+    } else {
+        stop("Object y should be either a tokens2sequences or a textmodel_cnnlstmemb object\n")
+    }
+    x <- x$matrix
+    mat <- lapply(1:nrow(x), function(y) {
+        j <- x[y, ]
+        return(j[j != 0])
+    })
+    mat <- lapply(mat, function(y) as.integer(na.omit(joint_feat$label.y[y])))
     mat <- do.call("rbind", lapply(mat, function(y)
-        if (length(y) >= ncol(x$matrix))
-            y[1:ncol(x$matrix)]
+        if (length(y) >= ncol(x))
+            y[1:ncol(x)]
         else
-            c(rep(0L, times = ncol(x$matrix) - length(y)), y)
+            c(rep(0L, times = ncol(x) - length(y)), y)
     ))
-    rownames(mat) <- rownames(x$matrix)
-    colnames(mat) <- colnames(x$matrix)
+    rownames(mat) <- rownames(x)
+    colnames(mat) <- colnames(x)
     joint_feat <- joint_feat[, c("features", "label.y", "freq")]
     names(joint_feat)[2] <- "label"
-    joint_feat <- joint_feat[order(joint_feat$label, decreasing = F), ]
+    joint_feat <- joint_feat[order(joint_feat$label, decreasing = FALSE), ]
     joint_feat <- joint_feat[!is.na(joint_feat$label), ]
+    joint_feat$freq[is.na(joint_feat$freq)] <- 0
     rownames(joint_feat) <- NULL
 
     output <-
@@ -233,7 +246,6 @@ tokens2sequences_conform.tokens2sequences <- function(x, y) {
 #' @param x Object that will be checked to see if it is of the type [tokens2sequences()]
 #' @seealso [tokens2sequences()]
 #' @keywords internal
-#' @export
 is.tokens2sequences <- function(x) {
     "tokens2sequences" %in% class(x)
 }
@@ -264,4 +276,40 @@ remove_features <- function(x, data, maxsenlen, keepn){
         mapping <- data[order(data$label1, decreasing = FALSE), ]$label
     }
     return(list(data = data, mapping = mapping))
+}
+
+#' Subset a tokens2sequences object using index numbers
+#' @param x [tokens2sequences()] object that will be subsetted
+#' @param indexes [tokens2sequences()] range of indexes indicating rows of tokens2sequences object that will be kept
+#' @export
+tokens2sequences_subset <- function(x, indexes) {
+    stopifnot(is.tokens2sequences(x))
+    stopifnot(class(indexes) == "integer")
+    stopifnot(length(setdiff(indexes, 1:nrow(x$matrix))) == 0)
+    doc_nam <- rownames(x$matrix) # Store docnames from tokens object for future use
+    data <- x$features
+    maxsenlen <- ncol(x$matrix)
+    data$freq <- NULL
+    x <- x$matrix[indexes, ]
+    doc_nam <- doc_nam[indexes]
+    x <- lapply(1:nrow(x), function(y) {
+        j <- x[y, ]
+        return(j[j != 0])
+    })
+    mat <- do.call("rbind", lapply(x, function(y) {
+        if (length(y) < maxsenlen) {y = c(rep(0L, times = maxsenlen - length(y)), y)} # Adds zeros to ensure an even number of rows across word sequences and binds into a single data frame
+        return(y)
+    }
+    ))
+    rownames(mat) <- doc_nam # Adds docname to each row of the matrix
+    colnames(mat) <- as.character(1:maxsenlen) # Adds a numeric label to each column
+    words <- data.frame(table(unlist(x)))
+    names(words) <- c("label", "freq")
+    data <- merge(data, words, by = "label", all.x = TRUE)
+    data <- data[order(data$label, decreasing = FALSE),
+                 c("features", "label", "freq")] # selects feature names, ids, and frequency for dictionary and orders by frequency-based ID
+    rownames(data) <- NULL # Resets rownames of dictionary
+    output <- list(matrix = mat, nfeatures = nrow(data), features = data)
+    class(output) <- "tokens2sequences"
+    return(output)
 }
