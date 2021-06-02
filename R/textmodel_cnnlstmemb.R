@@ -94,17 +94,15 @@ textmodel_cnnlstmemb.tokens <- function(x, y, dropout1 = 0.2, dropout2 = 0.2, dr
     y <- as.factor(y)
     result <- list(x = x, y = y, call = match.call(), classnames = levels(y))
     # trim missings for fitting model
-    na_ind <- which(is.na(y))
-    if (length(na_ind) > 0) {
-        y <- y[-na_ind]
-        # workaround just because negative indexing is broken in v2 for now
-        na_ind_logical <- rep(TRUE, length(y))
-        na_ind_logical[na_ind] <- FALSE
-        x <- x[na_ind_logical]
-    }
     
     x <- tokens2sequences(x, maxsenlen = maxsenlen, keepn = words)
-    
+    full_ind <- which(!is.na(y))
+    if (length(full_ind) < length(y)) {
+        y <- y[full_ind]
+        x <- tokens2sequences_subset(x, full_ind)
+    }
+    words <- x$nfeatures
+    maxsenlen <- ncol(x$matrix)
     
     if(!is.null(fitted_embeddings)){
         test_embeddings(fitted_embeddings)
@@ -117,10 +115,11 @@ textmodel_cnnlstmemb.tokens <- function(x, y, dropout1 = 0.2, dropout2 = 0.2, dr
         fitted_embeddings <- replace(fitted_embeddings, is.na(fitted_embeddings), 0) %>% 
             as.matrix() %>% 
             list()
+        trainable <- FALSE
+    } else {
+        trainable <- TRUE
     }
     
-    if (is.null(words))
-        words <- x$nfeatures
     # "one-hot" encode y
     y2 <- to_categorical(as.integer(y) - 1, num_classes = nlevels(y))
     
@@ -132,7 +131,8 @@ textmodel_cnnlstmemb.tokens <- function(x, y, dropout1 = 0.2, dropout2 = 0.2, dr
         layer_embedding(input_dim = words, 
                         output_dim = wordembeddim,
                         input_length = maxsenlen, 
-                        weights = fitted_embeddings) %>%
+                        weights = fitted_embeddings,
+                        trainable = trainable) %>%
         layer_dropout(rate = dropout1)
     
     if (cnnlayer == TRUE) {
@@ -144,8 +144,8 @@ textmodel_cnnlstmemb.tokens <- function(x, y, dropout1 = 0.2, dropout2 = 0.2, dr
     }
     
     model %>%
-        bidirectional(layer_lstm(units = units_lstm, dropout = dropout3,
-                                 recurrent_dropout = dropout4)) %>%
+        layer_lstm(units = units_lstm, dropout = dropout3,
+                                 recurrent_dropout = dropout4) %>%
         layer_dense(units = nlevels(y), activation = "softmax")
     
     compile(model, loss = loss, optimizer = optimizer, metrics = metrics)
@@ -153,6 +153,7 @@ textmodel_cnnlstmemb.tokens <- function(x, y, dropout1 = 0.2, dropout2 = 0.2, dr
     # compile, class, and return the result
     result <- c(result,
                 nfeatures = x$nfeatures,
+                features = list(x$features),
                 maxsenlen = maxsenlen,
                 list(clefitted = model))
     class(result) <- c("textmodel_cnnlstmemb", "textmodel", "list")
@@ -164,26 +165,23 @@ textmodel_cnnlstmemb.tokens <- function(x, y, dropout1 = 0.2, dropout2 = 0.2, dr
 textmodel_cnnlstmemb.tokens2sequences <- function(x, y, dropout1 = 0.2, dropout2 = 0.2, dropout3 = 0.2,
                                                   dropout4 = 0.2, wordembeddim = 30, cnnlayer = TRUE, filter = 48,
                                                   kernel_size = 5, pool_size = 4, units_lstm = 128, words = NULL,fitted_embeddings = NULL,
-                                                  maxsenlen = 100,
+                                                  maxsenlen = NULL,
                                                   optimizer = "adam",
                                                   loss = "categorical_crossentropy",
                                                   metrics = "categorical_accuracy", ...) {
     stopifnot(nrow(x$matrix) == length(y))
     stopifnot(is.tokens2sequences(x))
-    x <- tokens2sequences(x, maxsenlen = maxsenlen, keepn = words)
+    if(is.null(maxsenlen)) maxsenlen <- ncol(x$matrix)
     y <- as.factor(y)
     
     result <- list(x = x, y = y, call = match.call(), classnames = levels(y))
     # trim missings for fitting model
-    na_ind <- which(is.na(y))
-    if (length(na_ind) > 0) {
-        y <- y[-na_ind]
-        # workaround just because negative indexing is broken in v2 for now
-        na_ind_logical <- rep(TRUE, length(y))
-        na_ind_logical[na_ind] <- FALSE
-        x$matrix <- x$matrix[na_ind_logical, ]
+    x <- tokens2sequences(x, maxsenlen = maxsenlen, keepn = words)
+    full_ind <- which(!is.na(y))
+    if (length(full_ind) < length(y)) {
+        y <- y[full_ind]
+        x <- tokens2sequences_subset(x, full_ind)
     }
-    
     words <- x$nfeatures
     maxsenlen <- ncol(x$matrix)
     # "one-hot" encode y
@@ -200,6 +198,9 @@ textmodel_cnnlstmemb.tokens2sequences <- function(x, y, dropout1 = 0.2, dropout2
         fitted_embeddings <- replace(fitted_embeddings, is.na(fitted_embeddings), 0) %>% 
             as.matrix() %>% 
             list()
+        trainable <- FALSE
+    } else {
+        trainable <- TRUE
     }
     # use keras to fit the model
     #model <- cnnlstm_model(x, y2)
@@ -209,7 +210,8 @@ textmodel_cnnlstmemb.tokens2sequences <- function(x, y, dropout1 = 0.2, dropout2
         layer_embedding(input_dim = words, 
                         output_dim = wordembeddim,
                         input_length = maxsenlen, 
-                        weights = fitted_embeddings) %>%
+                        weights = fitted_embeddings, 
+                        trainable = trainable) %>%
         layer_dropout(rate = dropout1)
     
     if (cnnlayer == TRUE) {
@@ -221,16 +223,16 @@ textmodel_cnnlstmemb.tokens2sequences <- function(x, y, dropout1 = 0.2, dropout2
     }
     
     model %>%
-        bidirectional(layer_lstm(units = units_lstm, dropout = dropout3,
-                                 recurrent_dropout = dropout4)) %>%
+        layer_lstm(units = units_lstm, dropout = dropout3,
+                                 recurrent_dropout = dropout4) %>%
         layer_dense(units = nlevels(y), activation = "softmax")
     
     compile(model, loss = loss, optimizer = optimizer, metrics = metrics)
     history <- fit(model, x$matrix, y2, ...)
-    
     # compile, class, and return the result
     result <- c(result,
                 nfeatures = x$nfeatures,
+                features = list(x$features),
                 maxsenlen = maxsenlen,
                 list(clefitted = model))
     class(result) <- c("textmodel_cnnlstmemb", "textmodel", "list")
@@ -264,15 +266,9 @@ predict.textmodel_cnnlstmemb <- function(object, newdata = NULL,
     type <- match.arg(type)
 
     if (!is.null(newdata)) {
-        if(is.tokens(newdata)) {
          data <- tokens2sequences(newdata, maxsenlen = object$maxsenlen,
-                                 keepn = object$nfeatures)           
-        } else {
-            data <- newdata
-        }
-        t2s_object <- tokens2sequences(object$x, maxsenlen = object$maxsenlen,
-                                       keepn = object$nfeatures)
-        data <- tokens2sequences_conform(data, t2s_object)
+                                 keepn = object$nfeatures)
+         data <- tokens2sequences_conform(x = data, y = object)
     } else {
         data <- tokens2sequences(object$x, maxsenlen = object$maxsenlen,
                                  keepn = object$nfeatures)
