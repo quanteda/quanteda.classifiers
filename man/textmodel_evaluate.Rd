@@ -17,7 +17,7 @@ textmodel_evaluate(
 )
 }
 \arguments{
-\item{x}{the \link{dfm} or \link{tokens} object on which the model will be
+\item{x}{the \link{dfm}, \link{tokens}, or \link{tokens2sequences} object on which the model will be
 fit.  Does not need to contain only the training documents.}
 
 \item{y}{vector of training labels associated with each document identified
