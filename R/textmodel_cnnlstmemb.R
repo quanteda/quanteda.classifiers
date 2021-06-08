@@ -7,21 +7,9 @@
 #'
 #' @param x tokens object
 #' @inheritParams quanteda.textmodels::textmodel_svm
-#' @param dropout1 A floating variable bound between 0 and 1. It determines the
+#' @param dropout A floating variable bound between 0 and 1. It determines the
 #'   rate at which units are dropped for the linear transformation of the
 #'   inputs for the embedding layer.
-#' @param dropout2 A floating variable bound between 0 and 1. It determines the
-#'   rate at which units are dropped for the linear transformation of the
-#'   inputs for the CNN layer.
-#' @param dropout3 A floating variable bound between 0 and 1. It determines the
-#'   rate at which units are dropped for the linear transformation of the
-#'   inputs for the recurrent layer.
-#' @param dropout4 A floating variable bound between 0 and 1. It determines the
-#'   rate at which units are dropped for the linear transformation of the
-#'   inputs for the recurrent layer.
-#' @param wordembeddim The number of word embedding dimensions to be fit
-#' @param cnnlayer A logical parameter that allows user to include or exclude a
-#'   convolutional layer in the neural network model
 #' @param filter The number of output filters in the convolution
 #' @param kernel_size An integer or list of a single integer, specifying the
 #'   length of the 1D convolution window
@@ -30,10 +18,13 @@
 #' @param units_lstm The number of nodes of the lstm layer
 #' @param words The maximum number of words used to train model. Defaults to the
 #'   number of features in `x`
-#' @param fitted_embeddings A fitted embeddings model formatted such that the 
-#' columns include a word identifier and embedding dimensions.The rows should 
-#' represent individual tokens.
 #' @param maxsenlen The maximum sentence length of training data
+#' @param wordembeddim The number of word embedding dimensions to be fit
+#' @param cnnlayer A logical parameter that allows user to include or exclude a
+#'   convolutional layer in the neural network model' 
+#' @param fitted_embeddings A fitted embeddings model formatted such that the 
+#'   columns include a word identifier and embedding dimensions.The rows should 
+#'   represent individual tokens.
 #' @param optimizer optimizer used to fit model to training data, see
 #'   [keras::compile.keras.engine.training.Model()]
 #' @param loss objective loss function, see
@@ -71,24 +62,26 @@
 #' tail(texts(corpuncoded)[pred == "Immigration"], 10)
 #'
 #' }
-textmodel_cnnlstmemb <- function(x, y, dropout1 = 0.2, dropout2 = 0.2,
-                                 dropout3 = 0.2, dropout4 = 0.2,
+textmodel_cnnlstmemb <- function(x, y, dropout = 0.2,filter = 48, 
+                                 kernel_size = 5, pool_size = 4, units_lstm = 128, 
+                                 words = NULL,maxsenlen = 100,
                                  wordembeddim = 30, cnnlayer = TRUE,
-                                 filter = 48, kernel_size = 5, pool_size = 4,
-                                 units_lstm = 128, words = NULL, fitted_embeddings = NULL,
-                                 maxsenlen = 100, optimizer = "adam",
+                                 fitted_embeddings = NULL,
+                                 optimizer = "adam",
                                  loss = "categorical_crossentropy",
                                  metrics = "categorical_accuracy", ...) {
     UseMethod("textmodel_cnnlstmemb")
 }
 
 #' @export
-textmodel_cnnlstmemb.tokens <- function(x, y, dropout1 = 0.2, dropout2 = 0.2, dropout3 = 0.2,
-                                        dropout4 = 0.2, wordembeddim = 30, cnnlayer = TRUE, filter = 48,
-                                        kernel_size = 5, pool_size = 4, units_lstm = 128, words = NULL, fitted_embeddings = NULL,
-                                        maxsenlen = 100, optimizer = "adam",
-                                        loss = "categorical_crossentropy",
-                                        metrics = "categorical_accuracy", ...) {
+textmodel_cnnlstmemb.tokens <- function(x, y, dropout = 0.2,filter = 48, 
+                                 kernel_size = 5, pool_size = 4, units_lstm = 128, 
+                                 words = NULL,maxsenlen = 100,
+                                 wordembeddim = 30, cnnlayer = TRUE,
+                                 fitted_embeddings = NULL, 
+                                 optimizer = "adam",
+                                 loss = "categorical_crossentropy",
+                                 metrics = "categorical_accuracy", ...) {
     stopifnot(ndoc(x) == length(y))
     stopifnot(is.tokens(x))
     y <- as.factor(y)
@@ -133,19 +126,19 @@ textmodel_cnnlstmemb.tokens <- function(x, y, dropout1 = 0.2, dropout2 = 0.2, dr
                         input_length = maxsenlen, 
                         weights = fitted_embeddings,
                         trainable = trainable) %>%
-        layer_dropout(rate = dropout1)
+        layer_dropout(rate = dropout)
     
     if (cnnlayer == TRUE) {
         model %>%
             layer_conv_1d(filters = filter, kernel_size = kernel_size,
                           activation = "relu") %>%
             layer_max_pooling_1d(pool_size = pool_size) %>%
-            layer_dropout(rate = dropout2)
+            layer_dropout(rate = dropout)
     }
     
     model %>%
-        layer_lstm(units = units_lstm, dropout = dropout3,
-                                 recurrent_dropout = dropout4) %>%
+        layer_lstm(units = units_lstm, dropout = dropout,
+                                 recurrent_dropout = dropout) %>%
         layer_dense(units = nlevels(y), activation = "softmax")
     
     compile(model, loss = loss, optimizer = optimizer, metrics = metrics)
@@ -162,13 +155,14 @@ textmodel_cnnlstmemb.tokens <- function(x, y, dropout1 = 0.2, dropout2 = 0.2, dr
 
 
 #' @export
-textmodel_cnnlstmemb.tokens2sequences <- function(x, y, dropout1 = 0.2, dropout2 = 0.2, dropout3 = 0.2,
-                                                  dropout4 = 0.2, wordembeddim = 30, cnnlayer = TRUE, filter = 48,
-                                                  kernel_size = 5, pool_size = 4, units_lstm = 128, words = NULL,fitted_embeddings = NULL,
-                                                  maxsenlen = NULL,
-                                                  optimizer = "adam",
-                                                  loss = "categorical_crossentropy",
-                                                  metrics = "categorical_accuracy", ...) {
+textmodel_cnnlstmemb.tokens2sequences <- function(x, y, dropout = 0.2,filter = 48, 
+                                 kernel_size = 5, pool_size = 4, units_lstm = 128, 
+                                 words = NULL,maxsenlen = 100,
+                                 wordembeddim = 30, cnnlayer = TRUE,
+                                 fitted_embeddings = NULL, 
+                                 optimizer = "adam",
+                                 loss = "categorical_crossentropy",
+                                 metrics = "categorical_accuracy", ...) {
     stopifnot(nrow(x$matrix) == length(y))
     stopifnot(is.tokens2sequences(x))
     if(is.null(maxsenlen)) maxsenlen <- ncol(x$matrix)
@@ -212,19 +206,19 @@ textmodel_cnnlstmemb.tokens2sequences <- function(x, y, dropout1 = 0.2, dropout2
                         input_length = maxsenlen, 
                         weights = fitted_embeddings, 
                         trainable = trainable) %>%
-        layer_dropout(rate = dropout1)
+        layer_dropout(rate = dropout)
     
     if (cnnlayer == TRUE) {
         model %>%
             layer_conv_1d(filters = filter, kernel_size = kernel_size,
                           activation = "relu") %>%
             layer_max_pooling_1d(pool_size = pool_size) %>%
-            layer_dropout(rate = dropout2)
+            layer_dropout(rate = dropout)
     }
     
     model %>%
-        layer_lstm(units = units_lstm, dropout = dropout3,
-                                 recurrent_dropout = dropout4) %>%
+        layer_lstm(units = units_lstm, dropout = dropout,
+                                 recurrent_dropout = dropout) %>%
         layer_dense(units = nlevels(y), activation = "softmax")
     
     compile(model, loss = loss, optimizer = optimizer, metrics = metrics)
@@ -284,8 +278,7 @@ predict.textmodel_cnnlstmemb <- function(object, newdata = NULL,
         colnames(pred_y) <- object$classnames
         rownames(pred_y) <- rownames(data$matrix)
     }
-
-    pred_y
+    return(pred_y)
 }
 
 #' @export
