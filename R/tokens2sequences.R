@@ -7,6 +7,8 @@
 #' @param maxsenlen the maximum sentence length kept in output matrix
 #' @param keepn the maximum number of features to keep
 #' @param tolower converts text to the lower case
+#' @param keep_beginning Boolean indicating whether tokens kept are 
+#' those at the beginning of the text sequence or the end
 #' @return [tokens2sequences()] The output matrix has a number of rows
 #'   which represent each tokenized sentence input into the function and a
 #'   number of columns determined by `maxsenlen`. The matrix contains a
@@ -21,12 +23,12 @@
 #' print(corp)
 #' seqs <- tokens2sequences(corptok, maxsenlen = 200)
 #' print(seqs)
-tokens2sequences <- function(x, maxsenlen = 100, keepn = NULL, tolower = TRUE) {
+tokens2sequences <- function(x, maxsenlen = 100, keepn = NULL, tolower = TRUE, keep_beginning = TRUE) {
     UseMethod("tokens2sequences")
 }
 
 #' @export
-tokens2sequences.tokens <- function(x, maxsenlen = 100, keepn = NULL, tolower = TRUE) {
+tokens2sequences.tokens <- function(x, maxsenlen = 100, keepn = NULL, tolower = TRUE, keep_beginning = TRUE) {
     stopifnot(is.tokens(x))
     if(tolower) x <- lapply(x, function(y) tolower(y)) %>% 
             tokens()
@@ -39,11 +41,15 @@ tokens2sequences.tokens <- function(x, maxsenlen = 100, keepn = NULL, tolower = 
                        freq1 = as.integer(tfeq[features]),
                        stringsAsFactors = FALSE)
     attributes(x) <- NULL
-    out <- remove_features(x = x, data = data, maxsenlen = maxsenlen, keepn = keepn)
+    out <- remove_features(x = x, data = data, maxsenlen = maxsenlen, keepn = keepn, keep_beginning = keep_beginning)
     data <- out$data
     keep_tokens <- data$label1[-which.max(data$label)]
     x <- lapply(x, function(y) y[y %in% keep_tokens])
-    x <- lapply(x, function(y) if(length(y) > maxsenlen) y[1:maxsenlen] else y)
+    if(keep_beginning) {
+        x <- lapply(x, function(y) if(length(y) > maxsenlen) y[1:maxsenlen] else y)
+        } else {
+            x <- lapply(x, function(y) if(length(y) > maxsenlen) y[(length(y) - maxsenlen + 1):length(y)] else y)
+            }
     words <- data.frame(table(unlist(x)))
     names(words) <- c("label1", "freq")
     data <- merge(data, words, by = "label1", all.x = TRUE)
@@ -68,7 +74,7 @@ tokens2sequences.tokens <- function(x, maxsenlen = 100, keepn = NULL, tolower = 
 }
 
 #' @export
-tokens2sequences.character <- function(x, maxsenlen = 100, keepn = NULL, tolower = TRUE) {
+tokens2sequences.character <- function(x, maxsenlen = 100, keepn = NULL, tolower = TRUE, keep_beginning = TRUE) {
     stopifnot(is.character(x))
     if(tolower) x <- tolower(x)
     x <- tokens(x)
@@ -81,11 +87,15 @@ tokens2sequences.character <- function(x, maxsenlen = 100, keepn = NULL, tolower
                        freq1 = as.integer(tfeq[features]),
                        stringsAsFactors = FALSE)
     attributes(x) <- NULL
-    out <- remove_features(x, data, maxsenlen, keepn)
+    out <- remove_features(x, data, maxsenlen, keepn, keep_beginning = keep_beginning)
     data <- out$data
     keep_tokens <- data$label1[-which.max(data$label)]
     x <- lapply(x, function(y) y[y %in% keep_tokens])
-    x <- lapply(x, function(y) if(length(y) > maxsenlen) y[1:maxsenlen] else y)
+    if(keep_beginning) {
+        x <- lapply(x, function(y) if(length(y) > maxsenlen) y[1:maxsenlen] else y)
+        } else {
+            x <- lapply(x, function(y) if(length(y) > maxsenlen) y[(length(y) - maxsenlen + 1):length(y)] else y)
+            }
     words <- data.frame(table(unlist(x)))
     names(words) <- c("label1", "freq")
     data <- merge(data, words, by = "label1", all.x = TRUE)
@@ -109,7 +119,7 @@ tokens2sequences.character <- function(x, maxsenlen = 100, keepn = NULL, tolower
 }
 
 #' @export
-tokens2sequences.tokens2sequences <- function(x, maxsenlen = 100, keepn = NULL, tolower = TRUE) {
+tokens2sequences.tokens2sequences <- function(x, maxsenlen = 100, keepn = NULL, tolower = TRUE, keep_beginning = TRUE) {
     stopifnot(is.tokens2sequences(x))
     doc_nam <- rownames(x$matrix) # Store docnames from tokens object for future use
     data <- x$features
@@ -120,11 +130,16 @@ tokens2sequences.tokens2sequences <- function(x, maxsenlen = 100, keepn = NULL, 
         j <- x[y, ]
         return(j[j != 0])
     })
-    out <- remove_features(x, data, maxsenlen, keepn)
+    out <- remove_features(x, data, maxsenlen, keepn, keep_beginning = keep_beginning)
     data <- out$data
     keep_tokens <- data$label1[-which.max(data$label)]
+    
     x <- lapply(x, function(y) y[y %in% keep_tokens])
-    x <- lapply(x, function(y) if(length(y) > maxsenlen) y[1:maxsenlen] else y)
+    if(keep_beginning) {
+        x <- lapply(x, function(y) if(length(y) > maxsenlen) y[1:maxsenlen] else y)
+        } else {
+            x <- lapply(x, function(y) if(length(y) > maxsenlen) y[(length(y) - maxsenlen + 1):length(y)] else y)
+            }
     words <- data.frame(table(unlist(x)))
     names(words) <- c("label1", "freq")
     data <- merge(data, words, by = "label1", all.x = TRUE)
@@ -255,13 +270,20 @@ is.tokens2sequences <- function(x) {
 #' @param data Data frame that maps features to their IDs
 #' @param maxsenlen the maximum sentence length kept in output matrix
 #' @param keepn the maximum number of features to keep
-remove_features <- function(x, data, maxsenlen, keepn){
+#' @param keep_beginning Boolean indicating whether tokens kept are 
+#' those at the beginning of the text sequence or the end
+remove_features <- function(x, data, maxsenlen, keepn, keep_beginning){
     data <- data[order(data$freq1, decreasing = TRUE), ] # Reorders feature dictionary by frequency
     data$label <- NA
     if (!is.null(keepn)) {
         if (keepn > nrow(data)) keepn <- nrow(data) # Makes sure that we are not attempting to keep more features than exist
-        x1 <- lapply(x, function(y) if(length(y) > maxsenlen) y[1:maxsenlen] else y)
-        x2 <- lapply(x, function(y) if(length(y) > maxsenlen) y[maxsenlen:length(y)] else NULL)
+        if(keep_beginning) {
+            x1 <- lapply(x, function(y) if(length(y) > maxsenlen) y[1:maxsenlen] else y)
+            x2 <- lapply(x, function(y) if(length(y) > maxsenlen) y[(maxsenlen + 1):length(y)] else NULL)            
+        } else {
+            x1 <- lapply(x, function(y) if(length(y) > maxsenlen) y[(length(y) - maxsenlen + 1):length(y)] else NULL)
+            x2 <- lapply(x, function(y) if(length(y) > maxsenlen) y[1:(length(y) - maxsenlen)] else y)
+        }
         x1_unique = unique(unlist(x1))
         x2_unique = unique(unlist(x2))
         x2_x1 = setdiff(x2_unique, x1_unique)
