@@ -15,13 +15,17 @@
 #'   learning model. Can take the values "accuracy", "precision", "recall", or
 #'   "f1_score"
 #' @param k number of folds
-#' @param parameters model hyperparameters
+#' @param parameters model hyperparameters that vary across model iterations
+#' @param parameters_fixed model hyperparameters that are held constant across
+#' model iterations
 #' @param seed a seed that can allow for replication of k training data splits.
 #'   If seed is not provided a seed is chosen based on the current time.
 #' @param time a logical parameter that determines whether output will include
 #'   training time (in seconds) of model
 #' @param by_class estimates a separate value of provided evaluation function
 #'   for every class of the true vector
+#' @param verbose Boolean parameter that determines whether the model provides 
+#' updates regarding model-fitting progress
 #' @importFrom stats predict
 #' @examples
 #' # evaluate immigration classification performance
@@ -41,17 +45,19 @@ textmodel_evaluate <- function(x, y,
                                fun = "f1_score",
                                k = 5,
                                parameters = list(),
+                               parameters_fixed = list(),
                                seed = as.numeric(Sys.time()),
                                time = TRUE,
-                               by_class = FALSE) {
+                               by_class = FALSE, verbose = TRUE) {
     UseMethod("textmodel_evaluate")
 }
 
 #' @export
 textmodel_evaluate.dfm <- function(x, y, model, fun = "f1_score", k = 5,
                                    parameters = list(),
+                                   parameters_fixed = list(),
                                    seed = as.numeric(Sys.time()),
-                                   time = TRUE, by_class = FALSE) {
+                                   time = TRUE, by_class = FALSE, verbose = TRUE) {
     correct_format <- (is.dfm(x))
     stopifnot(correct_format)
     if ("accuracy" %in% fun & by_class) {
@@ -71,13 +77,14 @@ textmodel_evaluate.dfm <- function(x, y, model, fun = "f1_score", k = 5,
         # there is only a single input parameter
         param_list <- as.list(params_df[t, , drop = FALSE])
         for (i in 1:k) {
+            if(verbose) cat("Fitting model", w, "out of", param_len * k, "\n")
             test_set <- which(folds == i)
             x_train <- x[-test_set, ]
             x_test <- x[test_set, ]
             y_train <- y[-test_set]
             y_test <- y[test_set]
             start <- Sys.time()
-            mod <- do.call(what = model, args = c(list(x = x_train, y = y_train), param_list))
+            mod <- do.call(what = model, args = c(list(x = x_train, y = y_train), param_list, parameters_fixed))
             time <- round(as.numeric(difftime(Sys.time(), start, units = "secs")), 2) # Outputs time in seconds
             names(time) <- "time"
             y_pred <- predict(mod, x_test)
@@ -111,8 +118,9 @@ textmodel_evaluate.dfm <- function(x, y, model, fun = "f1_score", k = 5,
 #' @export
 textmodel_evaluate.tokens <- function(x, y, model, fun = "f1_score", k = 5,
                                       parameters = list(),
+                                      parameters_fixed = list(),
                                       seed = as.numeric(Sys.time()),
-                                      time = TRUE, by_class = FALSE) {
+                                      time = TRUE, by_class = FALSE, verbose = TRUE) {
     stopifnot(is.tokens(x))
     if ("accuracy" %in% fun & by_class) {
         cat("No class oriented accuracy score defined. Calculating average accuracy accross all classes.\n")
@@ -129,13 +137,14 @@ textmodel_evaluate.tokens <- function(x, y, model, fun = "f1_score", k = 5,
     for (t in 1:param_len) {
         param_list <- as.list(params_df[t, , drop = FALSE]) # drop = FALSE ensures that params_df remains a data.frame even if there is only a single input parameter
         for (i in 1:k) {
+            if(verbose) cat("Fitting model", w, "out of", param_len * k, "\n")
             test_set <- which(folds == i)
             x_train <- x[-test_set]
             y_train <- y[-test_set]
             x_test <- x[test_set]
             y_test <- y[test_set]
             start <- Sys.time()
-            mod <- do.call(what = model, args = c(list(x = x_train, y = y_train), param_list))
+            mod <- do.call(what = model, args = c(list(x = x_train, y = y_train), param_list, parameters_fixed))
             time <- round(as.numeric(difftime(Sys.time(), start, units = "secs")), 2) # Outputs time in seconds
             names(time) <- "time"
             y_pred <- predict(mod, x_test)
@@ -169,8 +178,9 @@ textmodel_evaluate.tokens <- function(x, y, model, fun = "f1_score", k = 5,
 #' @export
 textmodel_evaluate.tokens2sequences <- function(x, y, model, fun = "f1_score", k = 5,
                                    parameters = list(),
+                                   parameters_fixed = list(),
                                    seed = as.numeric(Sys.time()),
-                                   time = TRUE, by_class = FALSE) {
+                                   time = TRUE, by_class = FALSE, verbose = TRUE) {
     stopifnot(is.tokens2sequences(x))
     if ("accuracy" %in% fun & by_class) {
         cat("No class oriented accuracy score defined. Calculating average accuracy accross all classes.\n")
@@ -189,6 +199,7 @@ textmodel_evaluate.tokens2sequences <- function(x, y, model, fun = "f1_score", k
         # there is only a single input parameter
         param_list <- as.list(params_df[t, , drop = FALSE])
         for (i in 1:k) {
+            if(verbose) cat("Fitting model", w, "out of", param_len * k, "\n")
             train_set <- which(folds != i)
             test_set <- which(folds == i)
             x_train <- tokens2sequences_subset(x, train_set)
@@ -196,7 +207,7 @@ textmodel_evaluate.tokens2sequences <- function(x, y, model, fun = "f1_score", k
             y_train <- y[-test_set]
             y_test <- y[test_set]
             start <- Sys.time()
-            mod <- do.call(what = model, args = c(list(x = x_train, y = y_train), param_list))
+            mod <- do.call(what = model, args = c(list(x = x_train, y = y_train), param_list, parameters_fixed))
             time <- round(as.numeric(difftime(Sys.time(), start, units = "secs")), 2) # Outputs time in seconds
             names(time) <- "time"
             y_pred <- predict(object = mod, newdata = x_test, type = 'class')
