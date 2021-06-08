@@ -157,7 +157,7 @@ textmodel_cnnlstmemb.tokens <- function(x, y, dropout = 0.2,filter = 48,
 #' @export
 textmodel_cnnlstmemb.tokens2sequences <- function(x, y, dropout = 0.2,filter = 48, 
                                  kernel_size = 5, pool_size = 4, units_lstm = 128, 
-                                 words = NULL,maxsenlen = 100,
+                                 words = NULL, maxsenlen = 100,
                                  wordembeddim = 30, cnnlayer = TRUE,
                                  fitted_embeddings = NULL, 
                                  optimizer = "adam",
@@ -170,7 +170,8 @@ textmodel_cnnlstmemb.tokens2sequences <- function(x, y, dropout = 0.2,filter = 4
     
     result <- list(x = x, y = y, call = match.call(), classnames = levels(y))
     # trim missings for fitting model
-    x <- tokens2sequences(x, maxsenlen = maxsenlen, keepn = words)
+    x_tmp <- tokens2sequences(x, maxsenlen = maxsenlen, keepn = words)
+    x <- tokens2sequences_conform(x_tmp, x)
     full_ind <- which(!is.na(y))
     if (length(full_ind) < length(y)) {
         y <- y[full_ind]
