@@ -7,19 +7,16 @@
 textmodel_cnnlstmemb(
   x,
   y,
-  dropout1 = 0.2,
-  dropout2 = 0.2,
-  dropout3 = 0.2,
-  dropout4 = 0.2,
-  wordembeddim = 30,
-  cnnlayer = TRUE,
+  dropout = 0.2,
   filter = 48,
   kernel_size = 5,
   pool_size = 4,
   units_lstm = 128,
   words = NULL,
-  fitted_embeddings = NULL,
   maxsenlen = 100,
+  wordembeddim = 30,
+  cnnlayer = TRUE,
+  fitted_embeddings = NULL,
   optimizer = "adam",
   loss = "categorical_crossentropy",
   metrics = "categorical_accuracy",
@@ -33,26 +30,9 @@ textmodel_cnnlstmemb(
 in \code{train}.  (These will be converted to factors if not already
 factors.)}
 
-\item{dropout1}{A floating variable bound between 0 and 1. It determines the
+\item{dropout}{A floating variable bound between 0 and 1. It determines the
 rate at which units are dropped for the linear transformation of the
 inputs for the embedding layer.}
-
-\item{dropout2}{A floating variable bound between 0 and 1. It determines the
-rate at which units are dropped for the linear transformation of the
-inputs for the CNN layer.}
-
-\item{dropout3}{A floating variable bound between 0 and 1. It determines the
-rate at which units are dropped for the linear transformation of the
-inputs for the recurrent layer.}
-
-\item{dropout4}{A floating variable bound between 0 and 1. It determines the
-rate at which units are dropped for the linear transformation of the
-inputs for the recurrent layer.}
-
-\item{wordembeddim}{The number of word embedding dimensions to be fit}
-
-\item{cnnlayer}{A logical parameter that allows user to include or exclude a
-convolutional layer in the neural network model}
 
 \item{filter}{The number of output filters in the convolution}
 
@@ -67,11 +47,16 @@ length of the 1D convolution window}
 \item{words}{The maximum number of words used to train model. Defaults to the
 number of features in \code{x}}
 
+\item{maxsenlen}{The maximum sentence length of training data}
+
+\item{wordembeddim}{The number of word embedding dimensions to be fit}
+
+\item{cnnlayer}{A logical parameter that allows user to include or exclude a
+convolutional layer in the neural network model'}
+
 \item{fitted_embeddings}{A fitted embeddings model formatted such that the
 columns include a word identifier and embedding dimensions.The rows should
 represent individual tokens.}
-
-\item{maxsenlen}{The maximum sentence length of training data}
 
 \item{optimizer}{optimizer used to fit model to training data, see
 \code{\link[keras:compile.keras.engine.training.Model]{keras::compile.keras.engine.training.Model()}}}

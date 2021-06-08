@@ -4,7 +4,7 @@
 \alias{remove_features}
 \title{Function that applies feature reduction to data set}
 \usage{
-remove_features(x, data, maxsenlen, keepn)
+remove_features(x, data, maxsenlen, keepn, keep_beginning)
 }
 \arguments{
 \item{x}{List of token IDs}
@@ -14,6 +14,9 @@ remove_features(x, data, maxsenlen, keepn)
 \item{maxsenlen}{the maximum sentence length kept in output matrix}
 
 \item{keepn}{the maximum number of features to keep}
+
+\item{keep_beginning}{Boolean indicating whether tokens kept are
+those at the beginning of the text sequence or the end}
 }
 \description{
 Function that applies feature reduction to data set

@@ -11,9 +11,11 @@ textmodel_evaluate(
   fun = "f1_score",
   k = 5,
   parameters = list(),
+  parameters_fixed = list(),
   seed = as.numeric(Sys.time()),
   time = TRUE,
-  by_class = FALSE
+  by_class = FALSE,
+  verbose = TRUE
 )
 }
 \arguments{
@@ -32,7 +34,10 @@ learning model. Can take the values "accuracy", "precision", "recall", or
 
 \item{k}{number of folds}
 
-\item{parameters}{model hyperparameters}
+\item{parameters}{model hyperparameters that vary across model iterations}
+
+\item{parameters_fixed}{model hyperparameters that are held constant across
+model iterations}
 
 \item{seed}{a seed that can allow for replication of k training data splits.
 If seed is not provided a seed is chosen based on the current time.}
@@ -42,6 +47,9 @@ training time (in seconds) of model}
 
 \item{by_class}{estimates a separate value of provided evaluation function
 for every class of the true vector}
+
+\item{verbose}{Boolean parameter that determines whether the model provides
+updates regarding model-fitting progress}
 }
 \description{
 Designed to streamline the parameter tuning and evaluation process. Users
