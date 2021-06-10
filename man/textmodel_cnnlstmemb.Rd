@@ -13,7 +13,7 @@ textmodel_cnnlstmemb(
   pool_size = 4,
   units_lstm = 128,
   words = NULL,
-  maxsenlen = 100,
+  maxsenlen = NULL,
   wordembeddim = 30,
   cnnlayer = TRUE,
   fitted_embeddings = NULL,
