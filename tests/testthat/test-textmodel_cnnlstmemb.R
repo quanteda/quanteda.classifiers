@@ -9,7 +9,7 @@ test_that("the cnnlstmemb model works", {
 
     toks <- tokens(texts(corp))
     label <- ifelse(docvars(corp, "crowd_subsidy_label") == "Pro-Subsidy", 1, 0)
-    tmod <- textmodel_cnnlstmemb(toks, y = label, epochs = 8)
+    tmod <- textmodel_cnnlstmemb(x = toks, y = label, epochs = 8)
 
     expect_output(
         print(tmod),
