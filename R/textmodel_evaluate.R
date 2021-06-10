@@ -254,5 +254,6 @@ print.textmodel_evaluate <- function(x, ...) {
     # output
     cat("Evaluation of", attr(x, "model"), "using the", attr(x, "fun"), "function.",
         "\n")
-    #return(head(x, 4))
+    return(head(as.data.frame(x), 4))
 }
+
