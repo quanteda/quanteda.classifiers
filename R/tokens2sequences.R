@@ -335,3 +335,33 @@ tokens2sequences_subset <- function(x, indexes) {
     class(output) <- "tokens2sequences"
     return(output)
 }
+
+
+#' Convert a matrix and label dictionary to a [tokens2sequences()] object
+#' @param mat A matrix containing numeric representations of tokens of dimensions n x k, where n is the document level and k represents the maximum 
+#' sequence length
+#' @param dict A data frame with one numeric column representing 
+#' @export
+tokens2sequences_convert <- function(mat, dict) {
+    stopifnot(is.matrix(mat))
+    stopifnot(is.data.frame(dict))
+    stopifnot(ncol(dict) == 2)
+    stopifnot("character" %in% sapply(dict, class))
+    stopifnot("numeric" %in% sapply(dict, class) | "integer" %in% sapply(dict, class))
+    
+    # Extracting feature and label columns
+    features <- dict[,sapply(dict, class) == "character"]
+    labels <- dict[,sapply(dict, class) %in% c("numeric", "integer")]
+    
+    stopifnot(sum(!(unique(c(matrix)) %in% labels)) <= 1)
+    tfeq <- sort(table(c(mat)), decreasing = T)
+    data <- data.frame(features = features, # Create a dataframe that maps each token to its id and frequency
+                       label = labels,
+                       freq = as.integer(tfeq[as.character(labels)]),
+                       stringsAsFactors = FALSE)
+    data <- data[order(data$label, decreasing = FALSE),
+                 c("features", "label", "freq")]
+    output <- list(matrix = mat, nfeatures = nrow(data), features = data)
+    class(output) <- "tokens2sequences"
+    return(output)
+}
