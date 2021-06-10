@@ -64,7 +64,7 @@
 #' }
 textmodel_cnnlstmemb <- function(x, y, dropout = 0.2,filter = 48, 
                                  kernel_size = 5, pool_size = 4, units_lstm = 128, 
-                                 words = NULL,maxsenlen = 100,
+                                 words = NULL,maxsenlen = NULL,
                                  wordembeddim = 30, cnnlayer = TRUE,
                                  fitted_embeddings = NULL,
                                  optimizer = "adam",
@@ -76,7 +76,7 @@ textmodel_cnnlstmemb <- function(x, y, dropout = 0.2,filter = 48,
 #' @export
 textmodel_cnnlstmemb.tokens <- function(x, y, dropout = 0.2,filter = 48, 
                                  kernel_size = 5, pool_size = 4, units_lstm = 128, 
-                                 words = NULL,maxsenlen = 100,
+                                 words = NULL, maxsenlen = NULL,
                                  wordembeddim = 30, cnnlayer = TRUE,
                                  fitted_embeddings = NULL, 
                                  optimizer = "adam",
@@ -87,7 +87,7 @@ textmodel_cnnlstmemb.tokens <- function(x, y, dropout = 0.2,filter = 48,
     y <- as.factor(y)
     result <- list(x = x, y = y, call = match.call(), classnames = levels(y))
     # trim missings for fitting model
-    
+    if(is.null(maxsenlen)) maxsenlen <- max(lengths(x))
     x <- tokens2sequences(x, maxsenlen = maxsenlen, keepn = words)
     full_ind <- which(!is.na(y))
     if (length(full_ind) < length(y)) {
@@ -95,7 +95,6 @@ textmodel_cnnlstmemb.tokens <- function(x, y, dropout = 0.2,filter = 48,
         x <- tokens2sequences_subset(x, full_ind)
     }
     words <- x$nfeatures
-    maxsenlen <- ncol(x$matrix)
     
     if(!is.null(fitted_embeddings)){
         test_embeddings(fitted_embeddings)
@@ -157,7 +156,7 @@ textmodel_cnnlstmemb.tokens <- function(x, y, dropout = 0.2,filter = 48,
 #' @export
 textmodel_cnnlstmemb.tokens2sequences <- function(x, y, dropout = 0.2,filter = 48, 
                                  kernel_size = 5, pool_size = 4, units_lstm = 128, 
-                                 words = NULL, maxsenlen = 100,
+                                 words = NULL, maxsenlen = NULL,
                                  wordembeddim = 30, cnnlayer = TRUE,
                                  fitted_embeddings = NULL, 
                                  optimizer = "adam",
@@ -166,6 +165,7 @@ textmodel_cnnlstmemb.tokens2sequences <- function(x, y, dropout = 0.2,filter = 4
     stopifnot(nrow(x$matrix) == length(y))
     stopifnot(is.tokens2sequences(x))
     if(is.null(maxsenlen)) maxsenlen <- ncol(x$matrix)
+    if(is.null(words)) words <- x$nfeatures
     y <- as.factor(y)
     
     result <- list(x = x, y = y, call = match.call(), classnames = levels(y))
@@ -177,8 +177,6 @@ textmodel_cnnlstmemb.tokens2sequences <- function(x, y, dropout = 0.2,filter = 4
         y <- y[full_ind]
         x <- tokens2sequences_subset(x, full_ind)
     }
-    words <- x$nfeatures
-    maxsenlen <- ncol(x$matrix)
     # "one-hot" encode y
     y2 <- to_categorical(as.integer(y) - 1, num_classes = nlevels(y))
     
