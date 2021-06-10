@@ -66,7 +66,7 @@ textmodel_cnnlstmemb <- function(x, y, dropout = 0.2,filter = 48,
                                  kernel_size = 5, pool_size = 4, units_lstm = 128, 
                                  words = NULL,maxsenlen = NULL,
                                  wordembeddim = 30, cnnlayer = TRUE,
-                                 fitted_embeddings = NULL,
+                                 fitted_embeddings = NULL, trainable = NULL,
                                  optimizer = "adam",
                                  loss = "categorical_crossentropy",
                                  metrics = "categorical_accuracy", ...) {
@@ -78,7 +78,7 @@ textmodel_cnnlstmemb.tokens <- function(x, y, dropout = 0.2,filter = 48,
                                  kernel_size = 5, pool_size = 4, units_lstm = 128, 
                                  words = NULL, maxsenlen = NULL,
                                  wordembeddim = 30, cnnlayer = TRUE,
-                                 fitted_embeddings = NULL, 
+                                 fitted_embeddings = NULL, trainable = NULL,
                                  optimizer = "adam",
                                  loss = "categorical_crossentropy",
                                  metrics = "categorical_accuracy", ...) {
@@ -158,7 +158,7 @@ textmodel_cnnlstmemb.tokens2sequences <- function(x, y, dropout = 0.2,filter = 4
                                  kernel_size = 5, pool_size = 4, units_lstm = 128, 
                                  words = NULL, maxsenlen = NULL,
                                  wordembeddim = 30, cnnlayer = TRUE,
-                                 fitted_embeddings = NULL, 
+                                 fitted_embeddings = NULL, trainable = NULL,
                                  optimizer = "adam",
                                  loss = "categorical_crossentropy",
                                  metrics = "categorical_accuracy", ...) {
@@ -191,9 +191,9 @@ textmodel_cnnlstmemb.tokens2sequences <- function(x, y, dropout = 0.2,filter = 4
         fitted_embeddings <- replace(fitted_embeddings, is.na(fitted_embeddings), 0) %>% 
             as.matrix() %>% 
             list()
-        trainable <- FALSE
+        if(is.null(trainable)) trainable <- FALSE
     } else {
-        trainable <- TRUE
+        if(is.null(trainable)) trainable <- TRUE
     }
     # use keras to fit the model
     #model <- cnnlstm_model(x, y2)

@@ -17,6 +17,7 @@ textmodel_cnnlstmemb(
   wordembeddim = 30,
   cnnlayer = TRUE,
   fitted_embeddings = NULL,
+  trainable = NULL,
   optimizer = "adam",
   loss = "categorical_crossentropy",
   metrics = "categorical_accuracy",
