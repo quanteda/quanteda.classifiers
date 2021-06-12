@@ -23,22 +23,38 @@ crossval <- function(x, k = 5, by_class = FALSE) {
 crossval.textmodel <- function(x, k = 5, by_class = FALSE) {
     # create folds vector - many ways to do this, I chose something available
     folds <- fold(data.frame(doc_id = docnames(x)), k = k)[[".folds"]]
+    folds <- as.integer(folds)
     
     # result list (could be a df, I'm old-fashioned though)
     results <- list()
     
-    # loop across folds and refit model, add to results list
-    for (i in seq_len(k)) {
-        this_mod <- do.call(gsub("\\.dfm", "", as.character(x$call)[1]),
-                            args = list(x = dfm_subset(x$x, folds != i),
-                                        y = x$y[folds != i]))
-        this_pred <- predict(this_mod, newdata = dfm_subset(x$x, folds == i),
-                             type = "class")
-        results <- c(results,
-                     structure(list(c(performance(this_pred, x$y[folds == i]),
-                                      list(obs = split(seq_len(ndoc(x)), folds)[[k]]))),
-                               names = paste0("fold_", k)))
+    if(is.tokens2sequences(x$x)) {
+        for (i in seq_len(k)) {
+            this_mod <- do.call(gsub("\\..*$", "", as.character(x$call)[1]),
+                                args = list(x = tokens2sequences_subset(x$x, folds != i),
+                                            y = x$y[folds != i]))
+            this_pred <- predict(this_mod, newdata = tokens2sequences_subset(x$x, folds == i),
+                                 type = "class")
+            results <- c(results,
+                         structure(list(c(performance(this_pred, x$y[folds == i]),
+                                          list(obs = split(seq_len(nrow(x$x$matrix)), folds)[[k]]))),
+                                   names = paste0("fold_", k)))
+        }
+    } else {
+        for (i in seq_len(k)) {
+            this_mod <- do.call(gsub("\\.dfm", "", as.character(x$call)[1]),
+                                args = list(x = dfm_subset(x$x, folds != i),
+                                            y = x$y[folds != i]))
+            this_pred <- predict(this_mod, newdata = dfm_subset(x$x, folds == i),
+                                 type = "class")
+            results <- c(results,
+                         structure(list(c(performance(this_pred, x$y[folds == i]),
+                                          list(obs = split(seq_len(ndoc(x)), folds)[[k]]))),
+                                   names = paste0("fold_", k)))
+        }
     }
+    # loop across folds and refit model, add to results list
+
     
     summ <- summarize_results(results)
     
