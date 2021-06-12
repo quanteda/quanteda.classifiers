@@ -59,6 +59,8 @@ convolutional layer in the neural network model'}
 columns include a word identifier and embedding dimensions.The rows should
 represent individual tokens.}
 
+\item{trainable}{If true, fitted embeddings are fitted to training text}
+
 \item{optimizer}{optimizer used to fit model to training data, see
 \code{\link[keras:compile.keras.engine.training.Model]{keras::compile.keras.engine.training.Model()}}}
 

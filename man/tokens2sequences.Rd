@@ -9,7 +9,7 @@ tokens2sequences(
   maxsenlen = 100,
   keepn = NULL,
   tolower = TRUE,
-  keep_beginning = TRUE
+  keep_beginning = FALSE
 )
 }
 \arguments{
