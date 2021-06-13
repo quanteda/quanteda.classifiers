@@ -25,7 +25,6 @@
 #' @param fitted_embeddings A fitted embeddings model formatted such that the 
 #'   columns include a word identifier and embedding dimensions.The rows should 
 #'   represent individual tokens.
-#' @param trainable If true, fitted embeddings are fitted to training text
 #' @param optimizer optimizer used to fit model to training data, see
 #'   [keras::compile.keras.engine.training.Model()]
 #' @param loss objective loss function, see
@@ -67,7 +66,7 @@ textmodel_cnnlstmemb <- function(x, y, dropout = 0.2,filter = 48,
                                  kernel_size = 5, pool_size = 4, units_lstm = 128, 
                                  words = NULL,maxsenlen = NULL,
                                  wordembeddim = 30, cnnlayer = TRUE,
-                                 fitted_embeddings = NULL, trainable = NULL,
+                                 fitted_embeddings = NULL,
                                  optimizer = "adam",
                                  loss = "categorical_crossentropy",
                                  metrics = "categorical_accuracy", ...) {
@@ -79,7 +78,7 @@ textmodel_cnnlstmemb.tokens <- function(x, y, dropout = 0.2,filter = 48,
                                  kernel_size = 5, pool_size = 4, units_lstm = 128, 
                                  words = NULL, maxsenlen = NULL,
                                  wordembeddim = 30, cnnlayer = TRUE,
-                                 fitted_embeddings = NULL, trainable = NULL,
+                                 fitted_embeddings = NULL, 
                                  optimizer = "adam",
                                  loss = "categorical_crossentropy",
                                  metrics = "categorical_accuracy", ...) {
@@ -108,9 +107,9 @@ textmodel_cnnlstmemb.tokens <- function(x, y, dropout = 0.2,filter = 48,
         fitted_embeddings <- replace(fitted_embeddings, is.na(fitted_embeddings), 0) %>% 
             as.matrix() %>% 
             list()
-        if(is.null(trainable)) trainable <- FALSE
+        trainable <- FALSE
     } else {
-        if(is.null(trainable)) trainable <- TRUE
+        trainable <- TRUE
     }
     
     # "one-hot" encode y
@@ -159,7 +158,7 @@ textmodel_cnnlstmemb.tokens2sequences <- function(x, y, dropout = 0.2,filter = 4
                                  kernel_size = 5, pool_size = 4, units_lstm = 128, 
                                  words = NULL, maxsenlen = NULL,
                                  wordembeddim = 30, cnnlayer = TRUE,
-                                 fitted_embeddings = NULL, trainable = NULL,
+                                 fitted_embeddings = NULL, 
                                  optimizer = "adam",
                                  loss = "categorical_crossentropy",
                                  metrics = "categorical_accuracy", ...) {
@@ -192,9 +191,9 @@ textmodel_cnnlstmemb.tokens2sequences <- function(x, y, dropout = 0.2,filter = 4
         fitted_embeddings <- replace(fitted_embeddings, is.na(fitted_embeddings), 0) %>% 
             as.matrix() %>% 
             list()
-        if(is.null(trainable)) trainable <- FALSE
+        trainable <- FALSE
     } else {
-        if(is.null(trainable)) trainable <- TRUE
+        trainable <- TRUE
     }
     # use keras to fit the model
     #model <- cnnlstm_model(x, y2)
@@ -324,6 +323,7 @@ print.predict.textmodel_cnnlstmemb <- function(x, ...) {
 #' @rdname save.textmodel_mlp
 #' @importFrom keras serialize_model
 #' @method save textmodel_cnnlstmemb
+#' @export
 save.textmodel_cnnlstmemb <- function(x, ...) {
     x$clefitted <- serialize_model(x$clefitted)
     save(x, ...)
@@ -332,6 +332,7 @@ save.textmodel_cnnlstmemb <- function(x, ...) {
 #' @rdname save.textmodel_mlp
 #' @importFrom keras unserialize_model
 #' @method load textmodel_cnnlstmemb
+#' @export
 load.textmodel_cnnlstmemb <- function(x, ...) {
     load(x, ...)
     x$clefitted <- unserialize_model(x$clefitted)

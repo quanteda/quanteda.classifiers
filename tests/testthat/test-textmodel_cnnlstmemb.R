@@ -74,16 +74,3 @@ test_that("cnnlstmemb works with tokens2sequences", {
     expect_equal(colnames(probmat), tmod2$classnames)
     expect_equal(unname(rowSums(probmat)), rep(1, nrow(probmat)), tol = .000001)
 })
-
-test_that("cnnlstmemb works with crossval", {
-    skip_on_cran()
-
-    vars <- docvars(data_corpus_EPcoaldebate)
-    set.seed(50)
-    corp <- corpus_sample(data_corpus_EPcoaldebate, size = 1000)
-    toks1 <- tokens2sequences(x = tokens(corp),keepn = 1000, keep_beginning = FALSE)
-    y <- as.character(docvars(corp, "crowd_subsidy_label"))
-    eval_mod <- textmodel_cnnlstmemb(x = toks1, y = y) %>% 
-        crossval(k = 2, by_class = FALSE)
-    expect_true(!is.nan(sum(eval_mod)))
-})

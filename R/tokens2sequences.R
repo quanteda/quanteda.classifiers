@@ -23,12 +23,12 @@
 #' print(corp)
 #' seqs <- tokens2sequences(corptok, maxsenlen = 200)
 #' print(seqs)
-tokens2sequences <- function(x, maxsenlen = 100, keepn = NULL, tolower = TRUE, keep_beginning = FALSE) {
+tokens2sequences <- function(x, maxsenlen = 100, keepn = NULL, tolower = TRUE, keep_beginning = TRUE) {
     UseMethod("tokens2sequences")
 }
 
 #' @export
-tokens2sequences.tokens <- function(x, maxsenlen = 100, keepn = NULL, tolower = TRUE, keep_beginning = FALSE) {
+tokens2sequences.tokens <- function(x, maxsenlen = 100, keepn = NULL, tolower = TRUE, keep_beginning = TRUE) {
     stopifnot(is.tokens(x))
     if(tolower) x <- lapply(x, function(y) tolower(y)) %>% 
             tokens()
@@ -74,7 +74,7 @@ tokens2sequences.tokens <- function(x, maxsenlen = 100, keepn = NULL, tolower = 
 }
 
 #' @export
-tokens2sequences.character <- function(x, maxsenlen = 100, keepn = NULL, tolower = TRUE, keep_beginning = FALSE) {
+tokens2sequences.character <- function(x, maxsenlen = 100, keepn = NULL, tolower = TRUE, keep_beginning = TRUE) {
     stopifnot(is.character(x))
     if(tolower) x <- tolower(x)
     x <- tokens(x)
@@ -119,7 +119,7 @@ tokens2sequences.character <- function(x, maxsenlen = 100, keepn = NULL, tolower
 }
 
 #' @export
-tokens2sequences.tokens2sequences <- function(x, maxsenlen = 100, keepn = NULL, tolower = TRUE, keep_beginning = FALSE) {
+tokens2sequences.tokens2sequences <- function(x, maxsenlen = 100, keepn = NULL, tolower = TRUE, keep_beginning = TRUE) {
     stopifnot(is.tokens2sequences(x))
     doc_nam <- rownames(x$matrix) # Store docnames from tokens object for future use
     data <- x$features
@@ -216,6 +216,7 @@ tokens2sequences_conform <- function(x, y) {
 #' @export
 #' @importFrom stats na.omit
 tokens2sequences_conform.tokens2sequences <- function(x, y) {
+    stopifnot(is.tokens2sequences(x))
     if("tokens2sequences" %in% class(y)){
         joint_feat <- merge(x$features, y$features[, -3], by = "features",
                         all.x = TRUE)
@@ -299,14 +300,13 @@ remove_features <- function(x, data, maxsenlen, keepn, keep_beginning){
     return(list(data = data, mapping = mapping))
 }
 
-#' Subset a tokens2sequences object using index numbers or a Boolean vector
+#' Subset a tokens2sequences object using index numbers
 #' @param x [tokens2sequences()] object that will be subsetted
-#' @param indexes [tokens2sequences()] range of indexes or logical values indicating rows of tokens2sequences object that will be kept
+#' @param indexes [tokens2sequences()] range of indexes indicating rows of tokens2sequences object that will be kept
 #' @export
 tokens2sequences_subset <- function(x, indexes) {
     stopifnot(is.tokens2sequences(x))
-    stopifnot(class(indexes) %in% c("integer", "logical"))
-    if(is.logical(indexes)) indexes <- which(indexes)
+    stopifnot(class(indexes) == "integer")
     stopifnot(length(setdiff(indexes, 1:nrow(x$matrix))) == 0)
     doc_nam <- rownames(x$matrix) # Store docnames from tokens object for future use
     data <- x$features
@@ -343,11 +343,6 @@ tokens2sequences_subset <- function(x, indexes) {
 #' @param dict A data frame with one numeric column representing 
 #' @export
 tokens2sequences_convert <- function(mat, dict) {
-    UseMethod("tokens2sequences_convert")
-}
-
-#' @export
-tokens2sequences_convert.matrix <- function(mat, dict) {
     stopifnot(is.matrix(mat))
     stopifnot(is.data.frame(dict))
     stopifnot(ncol(dict) == 2)
@@ -369,20 +364,4 @@ tokens2sequences_convert.matrix <- function(mat, dict) {
     output <- list(matrix = mat, nfeatures = nrow(data), features = data)
     class(output) <- "tokens2sequences"
     return(output)
-}
-
-#' Returns docnames from an tokens2sequences or textmodel_cnnlstmemb object
-#' @param x output from [tokens2sequences()]
-#' @param ... additional arguments not used
-#' @keywords textmodel
-#' @method docnames tokens2sequences
-#' @importFrom quanteda docnames
-#' @export
-docnames.tokens2sequences <- function(x, ...) {
-    return(rownames(x$matrix))
-}
-
-#' @export
-docnames.textmodel_cnnlstmemb <- function(x, ...) {
-    return(rownames(x$x$matrix))
 }
