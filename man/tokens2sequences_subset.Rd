@@ -2,15 +2,15 @@
 % Please edit documentation in R/tokens2sequences.R
 \name{tokens2sequences_subset}
 \alias{tokens2sequences_subset}
-\title{Subset a tokens2sequences object using index numbers}
+\title{Subset a tokens2sequences object using index numbers or a Boolean vector}
 \usage{
 tokens2sequences_subset(x, indexes)
 }
 \arguments{
 \item{x}{\code{\link[=tokens2sequences]{tokens2sequences()}} object that will be subsetted}
 
-\item{indexes}{\code{\link[=tokens2sequences]{tokens2sequences()}} range of indexes indicating rows of tokens2sequences object that will be kept}
+\item{indexes}{\code{\link[=tokens2sequences]{tokens2sequences()}} range of indexes or logical values indicating rows of tokens2sequences object that will be kept}
 }
 \description{
-Subset a tokens2sequences object using index numbers
+Subset a tokens2sequences object using index numbers or a Boolean vector
 }
