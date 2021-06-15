@@ -123,14 +123,15 @@ tokens2sequences.tokens2sequences <- function(x, maxsenlen = 100, keepn = NULL, 
     stopifnot(is.tokens2sequences(x))
     doc_nam <- rownames(x$matrix) # Store docnames from tokens object for future use
     data <- x$features
-    tfeq <- sort(table(unlist(x)), decreasing = T) # Creates a table of tokens and their frequencies sorted from most common to least
     names(data)[names(data) %in% c("label", "freq")] <- c('label1', "freq1")
     x <- x$matrix
+    colnames(x) <- NULL
     x <- lapply(1:nrow(x), function(y) {
         j <- x[y, ]
         return(j[j != 0])
     })
-    out <- remove_features(x, data, maxsenlen, keepn, keep_beginning = keep_beginning)
+    tfeq <- sort(table(unlist(x)), decreasing = T) # Creates a table of tokens and their frequencies sorted from most common to least
+    out <- remove_features(x, data, maxsenlen, keepn, keep_beginning)
     data <- out$data
     keep_tokens <- data$label1[-which.max(data$label)]
     
@@ -278,9 +279,9 @@ remove_features <- function(x, data, maxsenlen, keepn, keep_beginning){
         if (keepn > nrow(data)) keepn <- nrow(data) # Makes sure that we are not attempting to keep more features than exist
         if(keep_beginning) {
             x1 <- lapply(x, function(y) if(length(y) > maxsenlen) y[1:maxsenlen] else y)
-            x2 <- lapply(x, function(y) if(length(y) > maxsenlen) y[(maxsenlen + 1):length(y)] else NULL)            
+            x2 <- lapply(x, function(y) if(length(y) > maxsenlen) y[(maxsenlen + 1):length(y)] else y)            
         } else {
-            x1 <- lapply(x, function(y) if(length(y) > maxsenlen) y[(length(y) - maxsenlen + 1):length(y)] else NULL)
+            x1 <- lapply(x, function(y) if(length(y) > maxsenlen) y[(length(y) - maxsenlen + 1):length(y)] else y)
             x2 <- lapply(x, function(y) if(length(y) > maxsenlen) y[1:(length(y) - maxsenlen)] else y)
         }
         x1_unique = unique(unlist(x1))
@@ -353,7 +354,8 @@ tokens2sequences_convert.matrix <- function(mat, dict) {
     stopifnot(ncol(dict) == 2)
     stopifnot("character" %in% sapply(dict, class))
     stopifnot("numeric" %in% sapply(dict, class) | "integer" %in% sapply(dict, class))
-    
+    doc_nam <- rownames(mat) # Store docnames from tokens object for future use
+    if(is.null(doc_nam)) doc_nam <- 1:nrow(mat)
     # Extracting feature and label columns
     features <- dict[,sapply(dict, class) == "character"]
     labels <- dict[,sapply(dict, class) %in% c("numeric", "integer")]
@@ -366,6 +368,8 @@ tokens2sequences_convert.matrix <- function(mat, dict) {
                        stringsAsFactors = FALSE)
     data <- data[order(data$label, decreasing = FALSE),
                  c("features", "label", "freq")]
+    rownames(mat) <- doc_nam # Adds docname to each row of the matrix
+    colnames(mat) <- as.character(1:ncol(mat)) # Adds a numeric label to each column
     output <- list(matrix = mat, nfeatures = nrow(data), features = data)
     class(output) <- "tokens2sequences"
     return(output)
