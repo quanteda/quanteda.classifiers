@@ -83,7 +83,7 @@ test_that("cnnlstmemb works with crossval", {
     corp <- corpus_sample(data_corpus_EPcoaldebate, size = 1000)
     toks1 <- tokens2sequences(x = tokens(corp),keepn = 1000, keep_beginning = FALSE)
     y <- as.character(docvars(corp, "crowd_subsidy_label"))
-    eval_mod <- textmodel_cnnlstmemb(x = toks1, y = y) %>% 
+    eval_mod <- textmodel_cnnlstmemb(x = toks1, y = y, units_lstm = 64) %>% 
         crossval(k = 2, by_class = FALSE)
     expect_true(!is.nan(sum(eval_mod)))
 })
