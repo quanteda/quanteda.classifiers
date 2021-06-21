@@ -31,8 +31,8 @@ crossval.textmodel <- function(x, k = 5, by_class = FALSE) {
     if(is.tokens2sequences(x$x)) {
         for (i in seq_len(k)) {
             this_mod <- do.call(gsub("\\..*$", "", as.character(x$call)[1]),
-                                args = list(x = tokens2sequences_subset(x$x, folds != i),
-                                            y = x$y[folds != i]))
+                                args = c(list(x = tokens2sequences_subset(x$x, folds != i)),
+                                            list(y = x$y[folds != i]), as.list(x$call[!(names(x$call) %in% c("x", "y", ""))])))
             this_pred <- predict(this_mod, newdata = tokens2sequences_subset(x$x, folds == i),
                                  type = "class")
             results <- c(results,
@@ -43,8 +43,8 @@ crossval.textmodel <- function(x, k = 5, by_class = FALSE) {
     } else {
         for (i in seq_len(k)) {
             this_mod <- do.call(gsub("\\.dfm", "", as.character(x$call)[1]),
-                                args = list(x = dfm_subset(x$x, folds != i),
-                                            y = x$y[folds != i]))
+                                args = c(list(x = dfm_subset(x$x, folds != i)),
+                                            list(y = x$y[folds != i]), as.list(x$call[!(names(x$call) %in% c("x", "y", ""))])))
             this_pred <- predict(this_mod, newdata = dfm_subset(x$x, folds == i),
                                  type = "class")
             results <- c(results,
