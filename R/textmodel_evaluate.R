@@ -69,8 +69,15 @@ textmodel_evaluate.dfm <- function(x, y, model, fun = "f1_score", k = 5,
     folds <- cut(seq(1, length(y)), breaks = k, labels = FALSE)
     folds <- sample(folds, length(folds), replace = FALSE)
     output <- list()
-    params_df <- expand.grid(parameters, stringsAsFactors = FALSE)
-    param_len <- ifelse(length(parameters) != 0, nrow(params_df), 1)
+    if(class(parameters) == "list") {
+        params_df <- expand.grid(parameters, stringsAsFactors = FALSE)
+        param_len <- ifelse(length(parameters) != 0, nrow(params_df), 1)    
+    } else if(class(parameters) == "data.frame") {
+        params_df <- parameters
+        param_len <- ifelse(nrow(parameters) != 0, nrow(params_df), 1)    
+    } else {
+        stop("Parameters must be a named list or data frame")
+    }
     w <- 1
     for (t in 1:param_len) {
         # drop = FALSE ensures that params_df remains a data.frame even if
@@ -131,8 +138,15 @@ textmodel_evaluate.tokens <- function(x, y, model, fun = "f1_score", k = 5,
     folds <- cut(seq(1, length(y)), breaks = k, labels = FALSE)
     folds <- sample(folds, length(folds), replace = FALSE)
     output <- list()
-    params_df <- expand.grid(parameters, stringsAsFactors = FALSE)
-    param_len <- ifelse(length(parameters) != 0, nrow(params_df), 1)
+    if(class(parameters) == "list") {
+        params_df <- expand.grid(parameters, stringsAsFactors = FALSE)
+        param_len <- ifelse(length(parameters) != 0, nrow(params_df), 1)    
+    } else if(class(parameters) == "data.frame") {
+        params_df <- parameters
+        param_len <- ifelse(nrow(parameters) != 0, nrow(params_df), 1)    
+    } else {
+        stop("Parameters must be a named list or data frame")
+    }
     w <- 1
     for (t in 1:param_len) {
         param_list <- as.list(params_df[t, , drop = FALSE]) # drop = FALSE ensures that params_df remains a data.frame even if there is only a single input parameter
@@ -191,8 +205,15 @@ textmodel_evaluate.tokens2sequences <- function(x, y, model, fun = "f1_score", k
     folds <- cut(seq(1, length(y)), breaks = k, labels = FALSE)
     folds <- sample(folds, length(folds), replace = FALSE)
     output <- list()
-    params_df <- expand.grid(parameters, stringsAsFactors = FALSE)
-    param_len <- ifelse(length(parameters) != 0, nrow(params_df), 1)
+    if(class(parameters) == "list") {
+        params_df <- expand.grid(parameters, stringsAsFactors = FALSE)
+        param_len <- ifelse(length(parameters) != 0, nrow(params_df), 1)    
+    } else if(class(parameters) == "data.frame") {
+        params_df <- parameters
+        param_len <- ifelse(nrow(parameters) != 0, nrow(params_df), 1)    
+    } else {
+        stop("Parameters must be a named list or data frame")
+    }
     w <- 1
     for (t in 1:param_len) {
         # drop = FALSE ensures that params_df remains a data.frame even if
