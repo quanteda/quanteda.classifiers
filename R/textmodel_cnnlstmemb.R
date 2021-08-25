@@ -103,7 +103,7 @@ textmodel_cnnlstmemb.tokens <- function(x, y, dropout = 0.2,filter = 48,
         names(fitted_embeddings) <- c('features',paste('dim',1:(ncol(fitted_embeddings) - 1),sep = '_'))
         dic <- x$features[, c("features"), drop = FALSE]
         fitted_embeddings <- dic %>% 
-            merge(y = fitted_embeddings, by = "features", all.x = TRUE) 
+            merge(y = fitted_embeddings, by = "features", all.x = TRUE, sort = FALSE) 
         fitted_embeddings <- fitted_embeddings[, 2:ncol(fitted_embeddings)]
         fitted_embeddings <- replace(fitted_embeddings, is.na(fitted_embeddings), 0) %>% 
             as.matrix() %>% 
@@ -188,7 +188,7 @@ textmodel_cnnlstmemb.tokens2sequences <- function(x, y, dropout = 0.2,filter = 4
         names(fitted_embeddings) <- c('features',paste('dim',1:(ncol(fitted_embeddings) - 1),sep = '_'))
         dic <- x$features[, c("features"), drop = FALSE]
         fitted_embeddings <- dic %>% 
-            merge(y = fitted_embeddings, by = "features", all.x = TRUE) 
+            merge(y = fitted_embeddings, by = "features", all.x = TRUE, sort = FALSE) 
         fitted_embeddings <- fitted_embeddings[, 2:ncol(fitted_embeddings)]
         fitted_embeddings <- replace(fitted_embeddings, is.na(fitted_embeddings), 0) %>% 
             as.matrix() %>% 
