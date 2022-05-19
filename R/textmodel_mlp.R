@@ -101,7 +101,6 @@ textmodel_mlp.dfm <- function(x, y, units = 512, dropout = .2,
 #'   "probability"`).
 #' @seealso [textmodel_mlp()]
 #' @keywords textmodel internal
-#' @importFrom keras predict_classes predict_proba
 #' @importFrom stats predict
 #' @export
 predict.textmodel_mlp <- function(object, newdata = NULL,
@@ -125,11 +124,12 @@ predict.textmodel_mlp <- function(object, newdata = NULL,
     }
 
     if (type == "class") {
-        pred_y <- predict_classes(object$seqfitted, x = data)
-        pred_y <- factor(pred_y, labels = object$classnames, levels = (seq_along(object$classnames) - 1))
+        pred_y <- predict(object$seqfitted, x = data)
+        pred_y <- apply(pred_y, 1, which.max)
+        pred_y <- factor(pred_y, labels = object$classnames, levels = seq_along(object$classnames))
         names(pred_y) <- docnames(data)
     } else if (type == "probability") {
-        pred_y <- predict_proba(object$seqfitted, x = data)
+        pred_y <- predict(object$seqfitted, x = data)
         colnames(pred_y) <- object$classnames
         rownames(pred_y) <- docnames(data)
     }

@@ -250,7 +250,6 @@ textmodel_cnnlstmemb.tokens2sequences <- function(x, y, dropout = 0.2,filter = 4
 #'   "probability"`).
 #' @seealso [textmodel_cnnlstmemb()]
 #' @keywords textmodel internal
-#' @importFrom keras predict_classes predict_proba
 #' @importFrom stats predict
 #' @export
 predict.textmodel_cnnlstmemb <- function(object, newdata = NULL,
@@ -271,12 +270,12 @@ predict.textmodel_cnnlstmemb <- function(object, newdata = NULL,
     }
 
     if (type == "class") {
-        pred_y <- predict_classes(object$clefitted, x = data$matrix)
-        pred_y <- factor(pred_y, labels = object$classnames,
-                         levels = (seq_along(object$classnames) - 1))
-        names(pred_y) <- rownames(data$matrix)
+        pred_y <- predict(object$clefitted, x = data$matrix)
+        pred_y <- apply(pred_y, 1, which.max)
+        pred_y <- factor(pred_y, labels = object$classnames, levels = seq_along(object$classnames))
+        names(pred_y) <- docnames(data)
     } else if (type == "probability") {
-        pred_y <- predict_proba(object$clefitted, x = data$matrix)
+        pred_y <- predict(object$clefitted, x = data$matrix)
         colnames(pred_y) <- object$classnames
         rownames(pred_y) <- rownames(data$matrix)
     }

@@ -6,8 +6,8 @@ test_that("the mlp model works", {
     set.seed(100)
     corp_train <- corpus_sample(data_corpus_EPcoaldebate, size = 3000, by = crowd_subsidy_label)
     corp_test <- corpus_sample(data_corpus_EPcoaldebate, size = 10, by = crowd_subsidy_label)
-    dfmat_train <- dfm(corp_train)
-    dfmat_test <- dfm(corp_test)
+    dfmat_train <- corp_train %>% tokens() %>% dfm()
+    dfmat_test <- corp_test %>% tokens() %>% dfm()
 
     tmod <- textmodel_mlp(dfmat_train, y = docvars(dfmat_train, "crowd_subsidy_label"), epoch = 5)
 
