@@ -9,7 +9,8 @@
 #' @examples
 #' library("quanteda")
 #' library("quanteda.textmodels")
-#' dfmat <- dfm(data_corpus_moviereviews)
+#' dfmat <- tokens(data_corpus_moviereviews) |>
+#'   dfm()
 #' tmod <- textmodel_nb(dfmat, y = data_corpus_moviereviews$sentiment)
 #' crossval(tmod, k = 5, by_class = TRUE)
 #' crossval(tmod, k = 5, by_class = FALSE)
