@@ -22,6 +22,7 @@ Suggests:
 URL: https://github.com/quanteda/quanteda.classifiers
 BugReports: https://github.com/quanteda/quanteda.classifiers/issues
 LazyData: TRUE
-RoxygenNote: 7.1.1
+LazyDataCompression: bzip2
+RoxygenNote: 7.2.3
 Language: en-GB
 Roxygen: list(markdown = TRUE)
