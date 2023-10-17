@@ -4,6 +4,7 @@ test_that("the cnnlstmemb model works", {
     skip()
     skip_on_cran()
 
+    data(data_corpus_EPcoaldebate, package = "quanteda.textmodels")
     corp <- corpus_subset(data_corpus_EPcoaldebate,
                           subset = language == "English") %>%
         corpus_sample(500)

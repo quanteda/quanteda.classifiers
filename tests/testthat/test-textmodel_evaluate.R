@@ -4,6 +4,8 @@ test_that("textmodel_evaluate works", {
     skip("until rewritten")
     skip_on_cran()
     
+    data(data_corpus_EPcoaldebate, package = "quanteda.textmodels")
+    
     set.seed(100)
     corp <- corpus_sample(data_corpus_EPcoaldebate, size = 500, by = "crowd_subsidy_label")
     dfmat <- dfm(corp) %>% 
