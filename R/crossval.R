@@ -9,7 +9,8 @@
 #' @examples
 #' library("quanteda")
 #' library("quanteda.textmodels")
-#' dfmat <- dfm(data_corpus_moviereviews)
+#' dfmat <- tokens(data_corpus_moviereviews) |>
+#'   dfm()
 #' tmod <- textmodel_nb(dfmat, y = data_corpus_moviereviews$sentiment)
 #' crossval(tmod, k = 5, by_class = TRUE)
 #' crossval(tmod, k = 5, by_class = FALSE)
@@ -38,8 +39,8 @@ crossval.textmodel <- function(x, k = 5, by_class = FALSE, verbose = FALSE) {
                              type = "class")
         results <- c(results,
                      structure(list(c(performance(this_pred, x$y[folds == i]),
-                                      list(obs = split(seq_len(ndoc(x)), folds)[[k]]))),
-                               names = paste0("fold_", k)))
+                                      list(obs = split(seq_len(ndoc(x)), folds)[[i]]))),
+                               names = paste0("fold_", i)))
     }
 
     summ <- summarize_results(results)
@@ -66,8 +67,8 @@ summarize_results <- function(x) {
 
     # make into a 3D array
     x_df <- lapply(x, data.frame)
-    x_array <- array(unlist(x), dim <- c(dim(x_df[[1]]), length(x_df)),
-                     dimnames = c(dimnames(x_df[[1]]), list(names(x))))
+    x_array <- array(unlist(x_df), dim <- c(dim(x_df[[1]]), length(x_df)),
+                     dimnames = c(dimnames(x_df[[1]]), list(names(x_df))))
 
     apply(x_array, c(1, 2), mean)
 }

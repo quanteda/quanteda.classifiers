@@ -1,8 +1,11 @@
 context("test textmodel_mlp")
 
 test_that("the mlp model works", {
+    skip("because of tensorflow install problems")
     skip_on_cran()
 
+    data(data_corpus_EPcoaldebate, package = "quanteda.textmodels")
+    
     set.seed(100)
     corp_train <- corpus_sample(data_corpus_EPcoaldebate, size = 3000, by = "crowd_subsidy_label")
     corp_test <- corpus_sample(data_corpus_EPcoaldebate, size = 10, by = "crowd_subsidy_label")

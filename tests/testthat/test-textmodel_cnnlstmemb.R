@@ -1,13 +1,15 @@
 context("test textmodel_cnnlstmemb")
 
 test_that("the cnnlstmemb model works", {
+    skip()
     skip_on_cran()
 
+    data(data_corpus_EPcoaldebate, package = "quanteda.textmodels")
     corp <- corpus_subset(data_corpus_EPcoaldebate,
                           subset = language == "English") %>%
         corpus_sample(500)
 
-    toks <- tokens(texts(corp))
+    toks <- tokens(corp)
     label <- ifelse(docvars(corp, "crowd_subsidy_label") == "Pro-Subsidy", 1, 0)
     tmod <- textmodel_cnnlstmemb(toks, y = label, epochs = 8)
 
@@ -36,6 +38,7 @@ test_that("the cnnlstmemb model works", {
 })
 
 test_that("multiclass prediction works", {
+    skip()
     skip_on_cran()
 
     data(data_corpus_irishbudget2010, package = "quanteda.textmodels")
@@ -56,6 +59,7 @@ test_that("multiclass prediction works", {
 })
 
 test_that("cnnlstmemb works with tokens2sequences", {
+    skip()
     skip_on_cran()
 
     data(data_corpus_irishbudget2010, package = "quanteda.textmodels")
