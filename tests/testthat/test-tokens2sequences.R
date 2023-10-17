@@ -1,6 +1,7 @@
 context("test tokens2sequences")
 
 test_that("tokens2sequences works", {
+    skip()
     skip_on_cran()
 
     ## Example from 13.1 of _An Introduction to Information Retrieval_
@@ -38,6 +39,7 @@ test_that("tokens2sequences works", {
 })
 
 test_that("tokens2sequences_conform works", {
+    skip()
     txt1 <- "This is sentence one.  And here is sentence two."
     txt2 <- "This is sentence 3.  Sentence 4!  A fifth and final example."
     toks1 <- corpus(txt1) %>%

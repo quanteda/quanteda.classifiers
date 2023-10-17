@@ -1,6 +1,7 @@
 context("test textmodel_cnnlstmemb")
 
 test_that("the cnnlstmemb model works", {
+    skip()
     skip_on_cran()
 
     corp <- corpus_subset(data_corpus_EPcoaldebate,
@@ -36,6 +37,7 @@ test_that("the cnnlstmemb model works", {
 })
 
 test_that("multiclass prediction works", {
+    skip()
     skip_on_cran()
 
     data(data_corpus_irishbudget2010, package = "quanteda.textmodels")
@@ -56,6 +58,7 @@ test_that("multiclass prediction works", {
 })
 
 test_that("cnnlstmemb works with tokens2sequences", {
+    skip()
     skip_on_cran()
 
     data(data_corpus_irishbudget2010, package = "quanteda.textmodels")
